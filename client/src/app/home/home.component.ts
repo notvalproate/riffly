@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -10,10 +10,11 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
+    private router: Router = inject(Router);
+    private cookieService: CookieService = inject(CookieService);
+
     username : string = '';
     url : string = '';
-
-    constructor(private router: Router, private cookieService: CookieService) { }
 
     ngOnInit(): void {
         if(!this.cookieService.get('authToken')) {

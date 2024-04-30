@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -11,9 +11,11 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
-    private apiUrl: string = 'http://localhost:4000';
+    private http: HttpClient = inject(HttpClient);
+    private router: Router = inject(Router);
+    private cookieService: CookieService = inject(CookieService);
 
-    constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) { }
+    private apiUrl: string = 'http://localhost:4000';
 
     ngOnInit(): void {
         if(this.cookieService.get('authToken')) {
