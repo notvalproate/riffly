@@ -1,20 +1,11 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const querystring = require("querystring");
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-    console.log('Connected to MongoDB');
-})
-.catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
-});
-
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     next();
@@ -27,18 +18,16 @@ const redirectURI = 'http://localhost:4000/callback';
 app.get('/login', (req, res) => {
     const state = generateRandomString(128);
     const scope = 'user-read-private user-read-email';
-  
-    res.send({
-        url:
-        'https://accounts.spotify.com/authorize?' +
-        querystring.stringify({
-            response_type: 'code',
-            client_id: clientID,
-            scope: scope,
-            redirect_uri: redirectURI,
-            state: state
-        })
+
+    const params = new URLSearchParams({
+        response_type: 'code',
+        client_id: clientID,
+        scope: scope,
+        redirect_uri: redirectURI,
+        state: state
     });
+
+    res.send({ url: 'https://accounts.spotify.com/authorize?' + params.toString() });
 });
 
 app.get('/callback', async (req, res) => {
@@ -66,13 +55,14 @@ function generateRandomString(length) {
 }
 
 async function getAccessToken(code, verifier) {
-    const params = new URLSearchParams();
-    params.append("client_id", clientID);
-    params.append("client_secret", clientSecret);
-    params.append("grant_type", "authorization_code");
-    params.append("code", code);
-    params.append("redirect_uri", "http://localhost:4000/callback");
-    params.append("code_verifier", verifier);
+    const params = new URLSearchParams({
+        client_id: clientID,
+        client_secret: clientSecret,
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: "http://localhost:4000/callback",
+        code_verifier: verifier,
+    });
 
     const result = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
