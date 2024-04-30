@@ -1,26 +1,25 @@
 const express = require("express");
+const { SpotifyAuth } = require('./spotifyAuth.js');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Origin', SpotifyAuth.clientURL);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     next();
 });
 
-const { clientURL, apiURL, generateSpotifyAuthLink, getAuthInfo } = require('./spotifyAuth.js');
-
 app.get('/login', (req, res) => {
-    res.send({ url: generateSpotifyAuthLink() });
+    res.send({ url: SpotifyAuth.generateSpotifyAuthLink() });
 });
 
 app.get('/callback', async (req, res) => {
     if(req.query.error) {
-        res.redirect(clientURL);
+        res.redirect(SpotifyAuth.clientURL);
     } else {
-        const authInfo = await getAuthInfo(req.query.code, req.query.state);
-        res.redirect(clientURL + `/?authToken=${authInfo.access_token}`);
+        const authInfo = await SpotifyAuth.getAuthInfo(req.query.code, req.query.state);
+        res.redirect(SpotifyAuth.clientURL + `/?authToken=${authInfo.access_token}`);
     }
 })
 
