@@ -25,7 +25,7 @@ const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 const redirectURI = 'http://localhost:4000/callback';
 
 app.get('/login', (req, res) => {
-    const state = generateRandomString(16);
+    const state = generateRandomString(128);
     const scope = 'user-read-private user-read-email';
   
     res.send({
