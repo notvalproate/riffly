@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'home',
@@ -10,11 +11,12 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
     username : string = '';
+    url : string = '';
 
-    constructor(private router: Router) { }
+    constructor(private router: Router, private cookieService: CookieService) { }
 
     ngOnInit(): void {
-        if(!window.localStorage.getItem('authToken')) {
+        if(!this.cookieService.get('authToken')) {
             this.router.navigate(['login']);
             return;
         }
@@ -24,9 +26,12 @@ export class HomeComponent implements OnInit {
 
     async getUsername() {
         const result = await fetch("https://api.spotify.com/v1/me", {
-            method: "GET", headers: { Authorization: `Bearer ${window.localStorage.getItem('authToken')}` }
+            method: "GET", headers: { Authorization: `Bearer ${this.cookieService.get('authToken')}` }
         });
 
-        console.log(await result.json());
+        const userInfo = await result.json();
+
+        this.username = userInfo.display_name;
+        this.url = userInfo.external_urls.spotify;
     }
 }

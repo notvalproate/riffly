@@ -7,7 +7,7 @@ const clientURL = 'http://localhost:4200'
 const apiPORT = process.env.PORT || 4000;
 const apiURL = 'http://localhost:' + apiPORT;
 
-const redirectURI = apiURL + '/callback';
+const redirectURI = clientURL + '/login';
 
 class SpotifyAuth {
     static get clientURL() { return clientURL; }
@@ -34,7 +34,7 @@ class SpotifyAuth {
             client_secret: clientSecret,
             grant_type: 'authorization_code',
             code: code,
-            redirect_uri: apiURL + '/callback',
+            redirect_uri: redirectURI,
             code_verifier: verifier,
         });
 
