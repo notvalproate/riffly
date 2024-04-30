@@ -1,65 +1,44 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 import { CookieService } from 'ngx-cookie-service';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'login',
   standalone: true,
-  imports: [HttpClientModule],
+  imports: [],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
-    private http: HttpClient = inject(HttpClient);
     private router: Router = inject(Router);
     private cookieService: CookieService = inject(CookieService);
-
-    private apiUrl: string = 'http://localhost:4000';
+    private auth: AuthService = inject(AuthService);
 
     ngOnInit(): void {
-        if(this.cookieService.get('authToken')) {
+        if(this.auth.hasAuthToken()) {
             this.router.navigate(['home']);
             return;
         }
 
-        const params : URLSearchParams = new URLSearchParams(window.location.search);
-
-        if(params.size === 0) {
-            return;
-        }
-
-        const error : any = params.get('error');
-
-        if(error) {
+        if(this.auth.hasError()) {
             this.router.navigate(['login']);
             return;
         }
 
-        const code : any = params.get('code');
-        const state : any = params.get('state');
+        this.auth.authorizeWithParams()?.subscribe((resp:any) => {
+            this.cookieService.set('authToken', resp.authToken, 3600);
+            this.cookieService.set('refreshToken', resp.refreshToken, 3600);
 
-        if(code && state) {
-            const authParams : URLSearchParams = new URLSearchParams({
-                code: code,
-                state: state
-            });
-
-            console.log('making request to get auth info');
-            this.http.get(this.apiUrl + '/getAuthInfo?' + authParams.toString()).subscribe((resp:any) => {
-                this.cookieService.set('authToken', resp.authToken, 3600);
-                this.cookieService.set('refreshToken', resp.refreshToken, 3600);
-
-                this.router.navigate(['home']);
-            });
-        }
+            this.router.navigate(['home']);
+        });
     }
 
     onSubmit(event: Event) {
         event.preventDefault();
 
-        this.http.get(this.apiUrl + '/login').subscribe((resp:any) => {
-            window.location.href = resp.url;
+        this.auth.getOAuthURL().subscribe((res: any) => {
+            window.location.href = res.url;
         });
     }
 }

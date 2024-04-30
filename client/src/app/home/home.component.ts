@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'home',
@@ -12,12 +13,13 @@ import { CookieService } from 'ngx-cookie-service';
 export class HomeComponent implements OnInit {
     private router: Router = inject(Router);
     private cookieService: CookieService = inject(CookieService);
+    private auth: AuthService = inject(AuthService);
 
     username : string = '';
-    url : string = '';
+    url : string = 'spotify.com';
 
     ngOnInit(): void {
-        if(!this.cookieService.get('authToken')) {
+        if(!this.auth.hasAuthToken()) {
             this.router.navigate(['login']);
             return;
         }
