@@ -24,10 +24,7 @@ export class LoginComponent implements OnInit {
         event.preventDefault();
 
         this.http.get(this.apiUrl + '/login').subscribe((resp:any) => {
-            if(resp.response == "Logged in!") {
-                window.localStorage.setItem('auth', 'kanva');
-                this.router.navigate(['home']);
-            }
+            window.location.href = resp.url;
         });
     }
 }
