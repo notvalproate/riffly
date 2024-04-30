@@ -10,6 +10,7 @@ export class AuthService {
     private cookieService: CookieService = inject(CookieService);
 
     private apiUrl: string = 'http://localhost:4000';
+    private params : URLSearchParams = new URLSearchParams(window.location.search);
 
     hasAuthToken() {
         if(this.cookieService.get('authToken')) {
@@ -20,9 +21,7 @@ export class AuthService {
     }
 
     hasError() {
-        const params : URLSearchParams = new URLSearchParams(window.location.search);
-
-        if(params.get('error')) {
+        if(this.params.get('error')) {
             return true;
         }
 
@@ -34,10 +33,8 @@ export class AuthService {
     }
 
     authorizeWithParams() {
-        const params : URLSearchParams = new URLSearchParams(window.location.search);
-
-        const code : any = params.get('code');
-        const state : any = params.get('state');
+        const code : any = this.params.get('code');
+        const state : any = this.params.get('state');
 
         if(code && state) {
             const authParams : URLSearchParams = new URLSearchParams({
