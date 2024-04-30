@@ -21,25 +21,38 @@ app.use(function (req, res, next) {
 });
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
+const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 const redirectURI = 'http://localhost:4000/callback';
 
-app.get('/login', function(req, res) {
+app.get('/login', (req, res) => {
     const state = generateRandomString(16);
     const scope = 'user-read-private user-read-email';
   
-    res.send({url:'https://accounts.spotify.com/authorize?' +
-      querystring.stringify({
-        response_type: 'code',
-        client_id: clientID,
-        scope: scope,
-        redirect_uri: redirectURI,
-        state: state
-      })});
+    res.send({
+        url:
+        'https://accounts.spotify.com/authorize?' +
+        querystring.stringify({
+            response_type: 'code',
+            client_id: clientID,
+            scope: scope,
+            redirect_uri: redirectURI,
+            state: state
+        })
+    });
 });
 
-app.get('/callback', (req, res)=>{
-    res.send({ response: "Logged in!" });
+app.get('/callback', async (req, res) => {
+    if(req.query.error) {
+        res.redirect('http://localhost:4200');
+    } else {
+        const accessToken = await getAccessToken(req.query.code, req.query.state);
+        res.redirect(`http://localhost:4200/?authToken=${accessToken}`);
+    }
 })
+
+app.listen(PORT, () => {
+    console.log("Server running on http://localhost:" + PORT + "/");
+});
 
 function generateRandomString(length) {
     var text = '';
@@ -52,6 +65,21 @@ function generateRandomString(length) {
     return text;
 }
 
-app.listen(PORT, () => {
-    console.log("Server running on http://localhost:" + PORT + "/");
-});
+async function getAccessToken(code, verifier) {
+    const params = new URLSearchParams();
+    params.append("client_id", clientID);
+    params.append("client_secret", clientSecret);
+    params.append("grant_type", "authorization_code");
+    params.append("code", code);
+    params.append("redirect_uri", "http://localhost:4000/callback");
+    params.append("code_verifier", verifier);
+
+    const result = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params
+    });
+
+    const { access_token } = await result.json();
+    return access_token;
+}
