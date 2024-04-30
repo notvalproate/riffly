@@ -15,7 +15,16 @@ export class LoginComponent implements OnInit {
     constructor(private http: HttpClient, private router: Router) { }
 
     ngOnInit(): void {
-        if(window.localStorage.getItem('auth') === 'kanva') {
+        if(window.localStorage.getItem('authToken')) {
+            this.router.navigate(['home']);
+            return;
+        }
+
+        const parameters : URLSearchParams = new URLSearchParams(window.location.search);
+        const authToken : any = parameters.get('authToken');
+
+        if(authToken) {
+            window.localStorage.setItem('authToken', authToken);
             this.router.navigate(['home']);
         }
     }
@@ -23,7 +32,12 @@ export class LoginComponent implements OnInit {
     onSubmit(event: Event) {
         event.preventDefault();
 
-        this.http.get(this.apiUrl + '/login').subscribe((resp:any) => {
+        var params : string = '';
+        if(localStorage.getItem('authToken')) {
+            params += `?hasAuthToken=true`;
+        }
+
+        this.http.get(this.apiUrl + '/login' + params).subscribe((resp:any) => {
             window.location.href = resp.url;
         });
     }
