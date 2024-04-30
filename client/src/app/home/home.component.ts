@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
     ngOnInit(): void {
         if(!window.localStorage.getItem('authToken')) {
             this.router.navigate(['login']);
+            return;
         }
 
         this.getUsername();
