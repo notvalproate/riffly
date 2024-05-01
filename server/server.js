@@ -1,7 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
-const { SpotifyAuth } = require('./spotifyAuth.js');
+const { SpotifyAuth } = require('./spotify/spotifyAuth.js');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
