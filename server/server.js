@@ -13,8 +13,8 @@ app.use(cors({
 app.use(cookieParser());
 
 
-app.get('/login', (req, res) => {
-    res.send({ url: SpotifyAuth.generateSpotifyAuthLink() });
+app.get('/login', async (req, res) => {
+    res.send({ url: await SpotifyAuth.generateSpotifyAuthLink() });
 });
 
 
@@ -45,6 +45,8 @@ app.get('/getUserInfo', async (req, res) => {
     });
 
     const userInfo = await result.json();
+
+    SpotifyAuth.refreshCurrentTokens(req, res);
 
     res.json(userInfo);
 })

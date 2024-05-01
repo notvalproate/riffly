@@ -1,6 +1,3 @@
-const fetch = require('cross-fetch');
-
-const { URLSearchParams } = require('url');
 require("dotenv").config();
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
@@ -21,16 +18,21 @@ class SpotifyAuth {
         return false;
     }
 
-    static generateSpotifyAuthLink() {
-        const state = generateRandomString(128);
+    static async generateSpotifyAuthLink() {
+        const state = generateRandomCode(128);
+        const hashed = await generateCodeChallenge(state);
+        const codeChallenge = base64Encode(hashed);
+
         const scope = 'user-read-private user-read-email user-top-read user-read-playback-state';
     
         const params = new URLSearchParams({
             response_type: 'code',
             client_id: clientID,
             scope: scope,
+            state: state,
+            code_challenge_method: 'S256',
+            code_challenge: codeChallenge,
             redirect_uri: redirectURI,
-            state: state
         });
     
         return 'https://accounts.spotify.com/authorize?' + params.toString();
@@ -38,10 +40,9 @@ class SpotifyAuth {
 
     static async getAuthInfo(code, verifier) {
         const params = new URLSearchParams({
-            client_id: clientID,
-            client_secret: clientSecret,
             grant_type: 'authorization_code',
             code: code,
+            client_id: clientID,
             redirect_uri: redirectURI,
             code_verifier: verifier,
         });
@@ -55,12 +56,12 @@ class SpotifyAuth {
         return await result.json();
     }
 
-    static async refreshCurrentTokens(refreshToken) {
+    static async refreshCurrentTokens(req, res) {
         const params = new URLSearchParams({
             grant_type: 'refresh_token',
-            refresh_token: refreshToken,
+            refresh_token: req.cookies.refreshToken,
             client_id: clientID,
-            client_secret: clientSecret
+            client_secret: clientSecret,
         });
 
         const result = await fetch("https://accounts.spotify.com/api/token", {
@@ -69,11 +70,23 @@ class SpotifyAuth {
             body: params
         });
 
-        return await result.json();
+        const newAuthInfo = await result.json();
+
+        const cookieOptions = {
+            httpOnly: true,
+            domain: 'localhost',
+            path: '/',
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+        };
+
+        //console.log(newAuthInfo);
+        
+        //res.cookie('authToken', newAuthInfo.accessToken, cookieOptions);
+        //res.cookie('refreshToken', newAuthInfo.refreshToken, cookieOptions);
     }
 };
 
-function generateRandomString(length) {
+function generateRandomCode(length) {
     var text = '';
     var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   
@@ -82,6 +95,21 @@ function generateRandomString(length) {
     }
   
     return text;
+}
+
+const { subtle } = globalThis.crypto;
+
+async function generateCodeChallenge(plain) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plain);
+    return subtle.digest('SHA-256', data);
+}
+
+function base64Encode(input) {
+    return btoa(String.fromCharCode(...new Uint8Array(input)))
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
 }
 
 async function authenticate(req, res, next) {
