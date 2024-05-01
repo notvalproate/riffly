@@ -31,7 +31,7 @@ app.get('/getAuthInfo', async (req, res) => {
         httpOnly: true,
         domain: 'localhost',
         path: '/',
-        maxAge: 60 * 60 * 24 * 7 * 1000,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
     };
 
     res.cookie('authToken', authInfo.access_token, cookieOptions);
@@ -55,9 +55,15 @@ app.get('/getTrack', async (req, res) => {
         method: "GET", headers: { Authorization: `Bearer ${req.cookies.authToken}` }
     });
 
-    const playerInfo = await result.json();
+    let playerInfo = {};
+    let isPlaying = false;
 
-    res.json(playerInfo);
+    if(result.body !== null) {
+        isPlaying = true;
+        playerInfo = await result.json();
+    }
+
+    res.json({ isPlaying: isPlaying, playerInfo: playerInfo });
 })
 
 

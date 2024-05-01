@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit {
 
     username: string = '';
     url: string = 'spotify.com';
+    isPlaying: boolean = false;
     imgUrl: string = '';
     songTitle: string = '';
     artist: string = '';
@@ -48,9 +49,13 @@ export class HomeComponent implements OnInit {
         this.userInfoService.getTrackInfo().subscribe((resp: any) => {
             console.log(resp.body);
 
-            this.songTitle = resp.body.item.album.name;
-            this.artist = resp.body.item.album.artists[0].name;
-            this.imgUrl = resp.body.item.album.images[0].url;
+            this.isPlaying = resp.body.isPlaying;
+
+            if(this.isPlaying) {
+                this.songTitle = resp.body.playerInfo.item.album.name;
+                this.artist = resp.body.playerInfo.item.album.artists[0].name;
+                this.imgUrl = resp.body.playerInfo.item.album.images[0].url;
+            }
         })
     }
 }
