@@ -23,7 +23,7 @@ class SpotifyAuth {
 
     static generateSpotifyAuthLink() {
         const state = generateRandomString(128);
-        const scope = 'user-read-private user-read-email user-top-read user-read-currently-playing';
+        const scope = 'user-read-private user-read-email user-top-read user-read-playback-state';
     
         const params = new URLSearchParams({
             response_type: 'code',

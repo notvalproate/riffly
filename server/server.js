@@ -50,6 +50,16 @@ app.get('/getUserInfo', async (req, res) => {
     res.json(userInfo);
 })
 
+app.get('/getTrack', async (req, res) => {
+    const result = await fetch("https://api.spotify.com/v1/me/player", {
+        method: "GET", headers: { Authorization: `Bearer ${req.cookies.authToken}` }
+    });
+
+    const playerInfo = await result.json();
+
+    res.json(playerInfo);
+})
+
 
 app.listen(PORT, () => {
     console.log("Server running on http://localhost:" + PORT + "/");

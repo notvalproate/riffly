@@ -15,8 +15,12 @@ export class HomeComponent implements OnInit {
     private auth: AuthService = inject(AuthService);
     private userInfoService: UserInfoService = inject(UserInfoService);
 
-    username : string = '';
-    url : string = 'spotify.com';
+    username: string = '';
+    url: string = 'spotify.com';
+    imgUrl: string = '';
+    songTitle: string = '';
+    artist: string = '';
+    trackPolling: any = undefined;
 
     ngOnInit(): void {
         this.auth.hasAuthToken().subscribe((resp: any) => {
@@ -26,6 +30,10 @@ export class HomeComponent implements OnInit {
             }
 
             this.getUserInfo();
+
+            this.trackPolling = setInterval(() => {
+                this.getCurrentTrack();
+            }, 2000);
         })
     }
 
@@ -33,6 +41,16 @@ export class HomeComponent implements OnInit {
         this.userInfoService.getUserInfo().subscribe((resp: any) => {
             this.username = resp.body.display_name;
             this.url = resp.body.external_urls.spotify;
+        })
+    }
+
+    async getCurrentTrack() {
+        this.userInfoService.getTrackInfo().subscribe((resp: any) => {
+            console.log(resp.body);
+
+            this.songTitle = resp.body.item.album.name;
+            this.artist = resp.body.item.album.artists[0].name;
+            this.imgUrl = resp.body.item.album.images[0].url;
         })
     }
 }
