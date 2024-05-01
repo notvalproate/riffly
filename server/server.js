@@ -7,11 +7,10 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', SpotifyAuth.clientURL);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    next();
-});
+app.use(cors({
+    origin: 'http://localhost:4200',
+    credentials: true
+}))
 app.use(cookieParser());
 
 
@@ -23,7 +22,18 @@ app.get('/login', (req, res) => {
 app.get('/getAuthInfo', async (req, res) => {
     const authInfo = await SpotifyAuth.getAuthInfo(req.query.code, req.query.state);
 
-    res.json({ authToken: authInfo.access_token, refreshToken: authInfo.refresh_token });
+    res.cookie('authToken', authInfo.access_token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 3600),
+    });
+    res.cookie('refreshToken', authInfo.refresh_token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 3600),
+    });
+
+    console.log("Came to set cookie:\n", res.getHeaders());
+
+    res.json({ authSuccessful: true });
 })
 
 
