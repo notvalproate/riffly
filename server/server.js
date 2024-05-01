@@ -46,8 +46,6 @@ app.get('/getUserInfo', async (req, res) => {
 
     const userInfo = await result.json();
 
-    SpotifyAuth.refreshCurrentTokens(req, res);
-
     res.json(userInfo);
 })
 

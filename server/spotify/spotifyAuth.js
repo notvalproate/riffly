@@ -56,7 +56,7 @@ class SpotifyAuth {
         return await result.json();
     }
 
-    static async refreshCurrentTokens(req, res) {
+    static async refreshAuthInfo(req, res) {
         const params = new URLSearchParams({
             grant_type: 'refresh_token',
             refresh_token: req.cookies.refreshToken,
@@ -78,11 +78,11 @@ class SpotifyAuth {
             path: '/',
             maxAge: 1000 * 60 * 60 * 24 * 7,
         };
-
-        //console.log(newAuthInfo);
         
-        //res.cookie('authToken', newAuthInfo.accessToken, cookieOptions);
-        //res.cookie('refreshToken', newAuthInfo.refreshToken, cookieOptions);
+        console.log(newAuthInfo);
+
+        res.cookie('authToken', newAuthInfo.access_token, cookieOptions);
+        res.cookie('refreshToken', newAuthInfo.refresh_token, cookieOptions);
     }
 };
 
