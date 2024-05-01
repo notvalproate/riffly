@@ -20,13 +20,7 @@ app.get('/login', (req, res) => {
 
 
 app.get('/hasAuthToken', (req, res) => {
-    hasToken = false;
-
-    if(req.cookies.authToken) {
-        hasToken = true;
-    }
-
-    res.json({ hasToken: hasToken });
+    res.json({ hasToken: SpotifyAuth.hasAuthToken(req) });
 });
 
 
@@ -37,7 +31,7 @@ app.get('/getAuthInfo', async (req, res) => {
         httpOnly: true,
         domain: 'localhost',
         path: '/',
-        expires: new Date(Date.now() + 60 * 60 * 24 * 7),
+        maxAge: 60 * 60 * 24 * 7 * 1000,
     };
 
     res.cookie('authToken', authInfo.access_token, cookieOptions);

@@ -13,6 +13,14 @@ class SpotifyAuth {
     static get clientURL() { return clientURL; }
     static get apiURL() { return apiURL; }
 
+    static hasAuthToken(req) {
+        if(req.cookies.authToken) {
+            return true;
+        }
+
+        return false;
+    }
+
     static generateSpotifyAuthLink() {
         const state = generateRandomString(128);
         const scope = 'user-read-private user-read-email';
