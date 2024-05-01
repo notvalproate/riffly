@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from '../services/auth.service';
+import { UserInfoService } from '../services/user-info.service';
 
 @Component({
   selector: 'home',
@@ -12,28 +12,26 @@ import { AuthService } from '../services/auth.service';
 })
 export class HomeComponent implements OnInit {
     private router: Router = inject(Router);
-    private cookieService: CookieService = inject(CookieService);
     private auth: AuthService = inject(AuthService);
+    private userInfoService: UserInfoService = inject(UserInfoService);
 
     username : string = '';
     url : string = 'spotify.com';
 
     ngOnInit(): void {
-        if(!this.auth.hasAuthToken()) {
-            //this.router.navigate(['login']);
-            return;
-        }
-        //this.getUsername();
+        this.auth.hasAuthToken().subscribe((resp: any) => {
+            if(!resp.body.hasToken) {
+                this.router.navigate(['login']);
+            }
+        })
+
+        this.getUserInfo();
     }
 
-    async getUsername() {
-        const result = await fetch("https://api.spotify.com/v1/me", {
-            method: "GET", headers: { Authorization: `Bearer ${this.cookieService.get('authToken')}` }
-        });
-
-        const userInfo = await result.json();
-
-        this.username = userInfo.display_name;
-        this.url = userInfo.external_urls.spotify;
+    async getUserInfo() {
+        this.userInfoService.getUserInfo().subscribe((resp: any) => {
+            this.username = resp.body.display_name;
+            this.url = resp.body.external_urls.spotify;
+        })
     }
 }

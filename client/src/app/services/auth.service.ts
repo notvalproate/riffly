@@ -1,23 +1,18 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
     private http: HttpClient = inject(HttpClient);
-    private cookieService: CookieService = inject(CookieService);
 
     private apiUrl: string = 'http://localhost:4000';
     private params : URLSearchParams = new URLSearchParams(window.location.search);
+    private requestOptions : any = { observe: 'response', withCredentials: true };
 
     hasAuthToken() {
-        if(this.cookieService.get('authToken')) {
-            return true;
-        }
-
-        return false;
+        return this.http.get(this.apiUrl + '/hasAuthToken', this.requestOptions);
     }
 
     hasError() {
@@ -42,7 +37,7 @@ export class AuthService {
                 state: state
             });
 
-           return this.http.get(this.apiUrl + '/getAuthInfo?' + authParams.toString(), { observe: 'response', withCredentials: true });
+           return this.http.get(this.apiUrl + '/getAuthInfo?' + authParams.toString(), this.requestOptions);
         }
 
         return undefined;

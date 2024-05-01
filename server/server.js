@@ -19,21 +19,43 @@ app.get('/login', (req, res) => {
 });
 
 
+app.get('/hasAuthToken', (req, res) => {
+    console.log(req.headers);
+
+    hasToken = false;
+
+    if(req.cookies.authToken) {
+        hasToken = true;
+    }
+
+    res.json({ hasToken: hasToken });
+});
+
+
 app.get('/getAuthInfo', async (req, res) => {
     const authInfo = await SpotifyAuth.getAuthInfo(req.query.code, req.query.state);
 
-    res.cookie('authToken', authInfo.access_token, {
+    const cookieOptions = {
         httpOnly: true,
-        expires: new Date(Date.now() + 3600),
-    });
-    res.cookie('refreshToken', authInfo.refresh_token, {
-        httpOnly: true,
-        expires: new Date(Date.now() + 3600),
-    });
+        domain: 'localhost',
+        path: '/',
+        expires: new Date(Date.now() + 60 * 60 * 24 * 7),
+    };
 
-    console.log("Came to set cookie:\n", res.getHeaders());
+    res.cookie('authToken', authInfo.access_token, cookieOptions);
+    res.cookie('refreshToken', authInfo.refresh_token, cookieOptions);
 
     res.json({ authSuccessful: true });
+});
+
+app.get('/getUserInfo', async (req, res) => {
+    const result = await fetch("https://api.spotify.com/v1/me", {
+        method: "GET", headers: { Authorization: `Bearer ${req.cookies.authToken}` }
+    });
+
+    const userInfo = await result.json();
+
+    res.json(userInfo);
 })
 
 

@@ -1,7 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'login',
@@ -12,23 +11,24 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class LoginComponent implements OnInit {
     private router: Router = inject(Router);
-    private cookieService: CookieService = inject(CookieService);
     private auth: AuthService = inject(AuthService);
 
     ngOnInit(): void {
-        if(this.auth.hasAuthToken()) {
-            this.router.navigate(['home']);
-            return;
-        }
+        this.auth.hasAuthToken().subscribe((resp: any) => {
+            if(resp.body.hasToken) {
+                this.router.navigate(['home']);
+                return;
+            }
 
-        if(this.auth.hasError()) {
-            this.router.navigate(['login']);
-            return;
-        }
+            if(this.auth.hasError()) {
+                this.router.navigate(['login']);
+                return;
+            }
 
-        this.auth.authorizeWithParams()?.subscribe((resp:any) => {
-            this.router.navigate(['home']);
-        });
+            this.auth.authorizeWithParams()?.subscribe((resp: any) => {
+                this.router.navigate(['home']);
+            });
+        })
     }
 
     onSubmit(event: Event) {
