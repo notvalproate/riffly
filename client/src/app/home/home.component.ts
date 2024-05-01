@@ -22,10 +22,11 @@ export class HomeComponent implements OnInit {
         this.auth.hasAuthToken().subscribe((resp: any) => {
             if(!resp.body.hasToken) {
                 this.router.navigate(['login']);
+                return;
             }
-        })
 
-        this.getUserInfo();
+            this.getUserInfo();
+        })
     }
 
     async getUserInfo() {
