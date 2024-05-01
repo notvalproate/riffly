@@ -40,22 +40,27 @@ export class HomeComponent implements OnInit {
 
     async getUserInfo() {
         this.userInfoService.getUserInfo().subscribe((resp: any) => {
+            if(resp.status === 401) {
+                console.log('Error: Bad Authentication');
+                return;
+            }
+
             this.username = resp.body.display_name;
             this.url = resp.body.external_urls.spotify;
-        })
+        });
     }
 
     async getCurrentTrack() {
         this.userInfoService.getTrackInfo().subscribe((resp: any) => {
-            console.log(resp.body);
-
-            this.isPlaying = resp.body.isPlaying;
-
-            if(this.isPlaying) {
-                this.songTitle = resp.body.playerInfo.item.album.name;
-                this.artist = resp.body.playerInfo.item.album.artists[0].name;
-                this.imgUrl = resp.body.playerInfo.item.album.images[0].url;
+            if(resp.status === 204) {
+                this.isPlaying = false;
+                return;
             }
-        })
+
+            this.isPlaying = true;
+            this.songTitle = resp.body.item.name;
+            this.artist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
+            this.imgUrl = resp.body.item.album.images[0].url;
+        });
     }
 }

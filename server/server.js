@@ -2,6 +2,8 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
 const { SpotifyAuth } = require('./spotify/spotifyAuth.js');
+const { SpotifyAPI } = require('./spotify/spotifyApi.js');
+const { populate } = require("dotenv");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -40,29 +42,15 @@ app.get('/getAuthInfo', async (req, res) => {
 });
 
 app.get('/getUserInfo', async (req, res) => {
-    const result = await fetch("https://api.spotify.com/v1/me", {
-        method: "GET", headers: { Authorization: `Bearer ${req.cookies.authToken}` }
-    });
-
-    const userInfo = await result.json();
+    const userInfo = await SpotifyAPI.Get('/me', req, res);
 
     res.json(userInfo);
 })
 
 app.get('/getTrack', async (req, res) => {
-    const result = await fetch("https://api.spotify.com/v1/me/player", {
-        method: "GET", headers: { Authorization: `Bearer ${req.cookies.authToken}` }
-    });
+    const playerInfo = await SpotifyAPI.Get('/me/player', req, res);
 
-    let playerInfo = {};
-    let isPlaying = false;
-
-    if(result.body !== null) {
-        isPlaying = true;
-        playerInfo = await result.json();
-    }
-
-    res.json({ isPlaying: isPlaying, playerInfo: playerInfo });
+    res.json(playerInfo);
 })
 
 

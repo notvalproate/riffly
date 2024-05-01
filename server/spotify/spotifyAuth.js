@@ -78,8 +78,7 @@ class SpotifyAuth {
             path: '/',
             maxAge: 1000 * 60 * 60 * 24 * 7,
         };
-        
-        console.log(newAuthInfo);
+
 
         res.cookie('authToken', newAuthInfo.access_token, cookieOptions);
         res.cookie('refreshToken', newAuthInfo.refresh_token, cookieOptions);
