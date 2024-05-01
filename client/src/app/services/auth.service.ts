@@ -1,15 +1,11 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
-    private http: HttpClient = inject(HttpClient);
-
-    private apiUrl: string = 'http://localhost:4000';
+export class AuthService extends ApiService {
     private params : URLSearchParams = new URLSearchParams(window.location.search);
-    private requestOptions : any = { observe: 'response', withCredentials: true };
 
     hasAuthToken() {
         return this.http.get(this.apiUrl + '/hasAuthToken', this.requestOptions);

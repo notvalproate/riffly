@@ -20,8 +20,6 @@ app.get('/login', (req, res) => {
 
 
 app.get('/hasAuthToken', (req, res) => {
-    console.log(req.headers);
-
     hasToken = false;
 
     if(req.cookies.authToken) {
