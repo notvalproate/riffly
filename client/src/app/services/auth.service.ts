@@ -42,7 +42,7 @@ export class AuthService {
                 state: state
             });
 
-           return this.http.get(this.apiUrl + '/getAuthInfo?' + authParams.toString());
+           return this.http.get(this.apiUrl + '/getAuthInfo?' + authParams.toString(), { observe: 'response', withCredentials: true });
         }
 
         return undefined;

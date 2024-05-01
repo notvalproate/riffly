@@ -20,11 +20,10 @@ export class HomeComponent implements OnInit {
 
     ngOnInit(): void {
         if(!this.auth.hasAuthToken()) {
-            this.router.navigate(['login']);
+            //this.router.navigate(['login']);
             return;
         }
-
-        this.getUsername();
+        //this.getUsername();
     }
 
     async getUsername() {

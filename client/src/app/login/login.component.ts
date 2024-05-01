@@ -27,9 +27,6 @@ export class LoginComponent implements OnInit {
         }
 
         this.auth.authorizeWithParams()?.subscribe((resp:any) => {
-            this.cookieService.set('authToken', resp.authToken, 3600);
-            this.cookieService.set('refreshToken', resp.refreshToken, 3600);
-
             this.router.navigate(['home']);
         });
     }
