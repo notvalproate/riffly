@@ -1,5 +1,5 @@
 const { subtle } = globalThis.crypto;
-require("dotenv").config();
+require('dotenv').config();
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -9,11 +9,15 @@ const apiURL = 'http://localhost:' + apiPORT;
 const redirectURI = clientURL + '/login';
 
 class SpotifyAuth {
-    static get clientURL() { return clientURL; }
-    static get apiURL() { return apiURL; }
+    static get clientURL() {
+        return clientURL;
+    }
+    static get apiURL() {
+        return apiURL;
+    }
 
     static hasAuthToken(req) {
-        if(req.cookies.authToken) {
+        if (req.cookies.authToken) {
             return true;
         }
         return false;
@@ -24,8 +28,9 @@ class SpotifyAuth {
         const hashed = await generateCodeChallenge(state);
         const codeChallenge = base64Encode(hashed);
 
-        const scope = 'user-read-private user-read-email user-top-read user-read-playback-state';
-    
+        const scope =
+            'user-read-private user-read-email user-top-read user-read-playback-state';
+
         const params = new URLSearchParams({
             response_type: 'code',
             client_id: clientID,
@@ -35,7 +40,7 @@ class SpotifyAuth {
             code_challenge: codeChallenge,
             redirect_uri: redirectURI,
         });
-    
+
         return 'https://accounts.spotify.com/authorize?' + params.toString();
     }
 
@@ -48,14 +53,14 @@ class SpotifyAuth {
             code_verifier: req.query.state,
         });
 
-        const result = await fetch("https://accounts.spotify.com/api/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: params
+        const result = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params,
         });
 
         res.status(result.status);
-            
+
         const authInfo = await result.json();
 
         this.setCookieTokens(authInfo, res);
@@ -69,10 +74,10 @@ class SpotifyAuth {
             client_secret: clientSecret,
         });
 
-        const result = await fetch("https://accounts.spotify.com/api/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: params
+        const result = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params,
         });
 
         res.status(result.status);
@@ -91,7 +96,7 @@ class SpotifyAuth {
 
         res.clearCookie('authToken', cookieOptions);
         res.clearCookie('refreshToken', cookieOptions);
-    }   
+    }
 
     static setCookieTokens(authInfo, res) {
         const cookieOptions = {
@@ -104,16 +109,17 @@ class SpotifyAuth {
         res.cookie('authToken', authInfo.access_token, cookieOptions);
         res.cookie('refreshToken', authInfo.refresh_token, cookieOptions);
     }
-};
+}
 
 function generateRandomCode(length) {
     var text = '';
-    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  
+    var possible =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
     for (var i = 0; i < length; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
-  
+
     return text;
 }
 
@@ -125,9 +131,9 @@ async function generateCodeChallenge(plain) {
 
 function base64Encode(input) {
     return btoa(String.fromCharCode(...new Uint8Array(input)))
-      .replace(/=/g, '')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_');
+        .replace(/=/g, '')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_');
 }
 
 // async function authenticate(req, res, next) {
@@ -176,5 +182,5 @@ function base64Encode(input) {
 // }
 
 module.exports = {
-    SpotifyAuth
+    SpotifyAuth,
 };

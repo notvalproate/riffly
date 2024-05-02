@@ -8,14 +8,14 @@ router.get('/login', async (req, res) => {
 router.get('/refresh', async (req, res) => {
     await SpotifyAuth.refreshCurrentTokens(req, res);
 
-    res.send("Refreshed your tokens!");
+    res.send('Refreshed your tokens!');
 });
 
 router.get('/logout', (req, res) => {
     SpotifyAuth.deleteCookieTokens(res);
 
     res.send({ loggedOut: true });
-})
+});
 
 router.get('/hasAuthToken', (req, res) => {
     res.json({ hasToken: SpotifyAuth.hasAuthToken(req) });
