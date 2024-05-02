@@ -56,7 +56,7 @@ class SpotifyAuth {
         return await result.json();
     }
 
-    static async refreshAuthInfo(req, res) {
+    static async refreshCurrentTokens(req, res) {
         const params = new URLSearchParams({
             grant_type: 'refresh_token',
             refresh_token: req.cookies.refreshToken,
@@ -70,6 +70,8 @@ class SpotifyAuth {
             body: params
         });
 
+        res.status(result.status);
+
         const newAuthInfo = await result.json();
 
         const cookieOptions = {
@@ -79,10 +81,22 @@ class SpotifyAuth {
             maxAge: 1000 * 60 * 60 * 24 * 7,
         };
 
-
         res.cookie('authToken', newAuthInfo.access_token, cookieOptions);
         res.cookie('refreshToken', newAuthInfo.refresh_token, cookieOptions);
     }
+
+    static async deleteCurrentTokens(res) {
+        const cookieOptions = {
+            httpOnly: true,
+            domain: 'localhost',
+            path: '/',
+        };
+
+        res.clearCookie('authToken', cookieOptions);
+        res.clearCookie('refreshToken', cookieOptions);
+
+        res.status(200);
+    }   
 };
 
 function generateRandomCode(length) {
@@ -111,50 +125,50 @@ function base64Encode(input) {
       .replace(/\//g, '_');
 }
 
-async function authenticate(req, res, next) {
-    const refreshToken = req.cookies.refreshToken;
-    const accessToken = req.cookies.accessToken;
-    let tokenExpiration = req.cookies.tokenExpiration;
+// async function authenticate(req, res, next) {
+//     const refreshToken = req.cookies.refreshToken;
+//     const accessToken = req.cookies.accessToken;
+//     let tokenExpiration = req.cookies.tokenExpiration;
 
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken, tokenExpiration: newTokenExpiration } = await refreshOrGetAccessToken(refreshToken, accessToken, tokenExpiration);
+//     const { accessToken: newAccessToken, refreshToken: newRefreshToken, tokenExpiration: newTokenExpiration } = await refreshOrGetAccessToken(refreshToken, accessToken, tokenExpiration);
 
-    if (newAccessToken !== accessToken || newRefreshToken !== refreshToken || newTokenExpiration !== tokenExpiration) {
-        res.cookie('accessToken', newAccessToken, { maxAge: newTokenExpiration - Date.now() / 1000 });
-        res.cookie('refreshToken', newRefreshToken);
-        res.cookie('tokenExpiration', newTokenExpiration);
-    }
+//     if (newAccessToken !== accessToken || newRefreshToken !== refreshToken || newTokenExpiration !== tokenExpiration) {
+//         res.cookie('accessToken', newAccessToken, { maxAge: newTokenExpiration - Date.now() / 1000 });
+//         res.cookie('refreshToken', newRefreshToken);
+//         res.cookie('tokenExpiration', newTokenExpiration);
+//     }
 
-    req.accessToken = newAccessToken;
-    req.refreshToken = newRefreshToken;
-    req.tokenExpiration = newTokenExpiration;
+//     req.accessToken = newAccessToken;
+//     req.refreshToken = newRefreshToken;
+//     req.tokenExpiration = newTokenExpiration;
 
-    next();
-}
+//     next();
+// }
 
-function isTokenExpired(tokenExpiration) {
-    return tokenExpiration < Date.now() / 1000;
-}
+// function isTokenExpired(tokenExpiration) {
+//     return tokenExpiration < Date.now() / 1000;
+// }
 
-async function refreshOrGetAccessToken(refreshToken, accessToken, tokenExpiration) {
-    if (!accessToken || isTokenExpired(tokenExpiration)) {
-        const { access_token, expires_in, refresh_token } = await SpotifyAuth.refreshCurrentTokens(refreshToken);
-        const newTokenExpiration = Date.now() / 1000 + expires_in;
-        return { accessToken: access_token, refreshToken: refresh_token, tokenExpiration: newTokenExpiration };
-    } else {
-        return { accessToken, refreshToken, tokenExpiration };
-    }
-}
+// async function refreshOrGetAccessToken(refreshToken, accessToken, tokenExpiration) {
+//     if (!accessToken || isTokenExpired(tokenExpiration)) {
+//         const { access_token, expires_in, refresh_token } = await SpotifyAuth.refreshCurrentTokens(refreshToken);
+//         const newTokenExpiration = Date.now() / 1000 + expires_in;
+//         return { accessToken: access_token, refreshToken: refresh_token, tokenExpiration: newTokenExpiration };
+//     } else {
+//         return { accessToken, refreshToken, tokenExpiration };
+//     }
+// }
 
-async function getUserData(req, res) {
-    try {
-        const { accessToken, refreshToken, tokenExpiration } = req;
+// async function getUserData(req, res) {
+//     try {
+//         const { accessToken, refreshToken, tokenExpiration } = req;
 
-        res.status(200).json({ message: "API call successful" });
-    } catch (error) {
-        console.error("Error making API call:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-}
+//         res.status(200).json({ message: "API call successful" });
+//     } catch (error) {
+//         console.error("Error making API call:", error);
+//         res.status(500).json({ error: "Internal server error" });
+//     }
+// }
 
 module.exports = {
     SpotifyAuth

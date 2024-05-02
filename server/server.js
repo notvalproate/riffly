@@ -19,6 +19,18 @@ app.get('/login', async (req, res) => {
     res.send({ url: await SpotifyAuth.generateSpotifyAuthLink() });
 });
 
+app.get('/refresh', async (req, res) => {
+    await SpotifyAuth.refreshCurrentTokens(req, res);
+
+    res.send("Refreshed your tokens!");
+});
+
+app.get('/logout', (req, res) => {
+    SpotifyAuth.deleteCurrentTokens(res);
+
+    res.send("Logged out!");
+})
+
 
 app.get('/hasAuthToken', (req, res) => {
     res.json({ hasToken: SpotifyAuth.hasAuthToken(req) });
@@ -40,6 +52,7 @@ app.get('/getAuthInfo', async (req, res) => {
 
     res.json({ authSuccessful: true });
 });
+
 
 app.get('/getUserInfo', async (req, res) => {
     const userInfo = await SpotifyAPI.Get('/me', req, res);
