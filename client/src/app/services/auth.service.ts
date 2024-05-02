@@ -6,7 +6,7 @@ import { ApiService } from './api.service';
 })
 export class AuthService extends ApiService {
     hasAuthToken() {
-        return this.http.get(this.apiUrl + '/hasAuthToken', this.requestOptions);
+        return this.http.get(this.authUrl + '/hasAuthToken', this.requestOptions);
     }
 
     hasError() {
@@ -20,7 +20,7 @@ export class AuthService extends ApiService {
     }
 
     getOAuthURL() {
-        return this.http.get(this.apiUrl + '/login');
+        return this.http.get(this.authUrl + '/login');
     }
 
     authorizeWithParams() {
@@ -37,13 +37,13 @@ export class AuthService extends ApiService {
 
             console.log(code, state);
 
-            return this.http.get(this.apiUrl + '/getAuthInfo?' + authParams.toString(), this.requestOptions);
+            return this.http.get(this.authUrl + '/getAuthInfo?' + authParams.toString(), this.requestOptions);
         }
 
         return undefined;
     }
 
     logout() {
-        return this.http.get(this.apiUrl + '/logout', this.requestOptions);
+        return this.http.get(this.authUrl + '/logout', this.requestOptions);
     }
 }
