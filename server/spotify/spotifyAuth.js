@@ -38,13 +38,13 @@ class SpotifyAuth {
         return 'https://accounts.spotify.com/authorize?' + params.toString();
     }
 
-    static async getAuthInfo(code, verifier) {
+    static async getAuthInfo(req, res) {
         const params = new URLSearchParams({
             grant_type: 'authorization_code',
-            code: code,
+            code: req.query.code,
             client_id: clientID,
             redirect_uri: redirectURI,
-            code_verifier: verifier,
+            code_verifier: req.query.state,
         });
 
         const result = await fetch("https://accounts.spotify.com/api/token", {
@@ -53,7 +53,11 @@ class SpotifyAuth {
             body: params
         });
 
-        return await result.json();
+        res.status(result.status);
+            
+        const authInfo = await result.json();
+
+        this.setCookieTokens(authInfo, res);
     }
 
     static async refreshCurrentTokens(req, res) {
@@ -74,18 +78,10 @@ class SpotifyAuth {
 
         const newAuthInfo = await result.json();
 
-        const cookieOptions = {
-            httpOnly: true,
-            domain: 'localhost',
-            path: '/',
-            maxAge: 1000 * 60 * 60 * 24 * 7,
-        };
-
-        res.cookie('authToken', newAuthInfo.access_token, cookieOptions);
-        res.cookie('refreshToken', newAuthInfo.refresh_token, cookieOptions);
+        this.setCookieTokens(newAuthInfo, res);
     }
 
-    static async deleteCurrentTokens(res) {
+    static async deleteCookieTokens(res) {
         const cookieOptions = {
             httpOnly: true,
             domain: 'localhost',
@@ -95,6 +91,18 @@ class SpotifyAuth {
         res.clearCookie('authToken', cookieOptions);
         res.clearCookie('refreshToken', cookieOptions);
     }   
+
+    static setCookieTokens(authInfo, res) {
+        const cookieOptions = {
+            httpOnly: true,
+            domain: 'localhost',
+            path: '/',
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+        };
+
+        res.cookie('authToken', authInfo.access_token, cookieOptions);
+        res.cookie('refreshToken', authInfo.refresh_token, cookieOptions);
+    }
 };
 
 function generateRandomCode(length) {

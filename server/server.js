@@ -26,29 +26,17 @@ app.get('/refresh', async (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    SpotifyAuth.deleteCurrentTokens(res);
+    SpotifyAuth.deleteCookieTokens(res);
 
     res.send({ loggedOut: true });
 })
-
 
 app.get('/hasAuthToken', (req, res) => {
     res.json({ hasToken: SpotifyAuth.hasAuthToken(req) });
 });
 
-
 app.get('/getAuthInfo', async (req, res) => {
-    const authInfo = await SpotifyAuth.getAuthInfo(req.query.code, req.query.state);
-
-    const cookieOptions = {
-        httpOnly: true,
-        domain: 'localhost',
-        path: '/',
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-    };
-
-    res.cookie('authToken', authInfo.access_token, cookieOptions);
-    res.cookie('refreshToken', authInfo.refresh_token, cookieOptions);
+    await SpotifyAuth.getAuthInfo(req, res);
 
     res.json({ authSuccessful: true });
 });
