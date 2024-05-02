@@ -1,3 +1,4 @@
+const { subtle } = globalThis.crypto;
 require("dotenv").config();
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
@@ -115,8 +116,6 @@ function generateRandomCode(length) {
   
     return text;
 }
-
-const { subtle } = globalThis.crypto;
 
 async function generateCodeChallenge(plain) {
     const encoder = new TextEncoder();
