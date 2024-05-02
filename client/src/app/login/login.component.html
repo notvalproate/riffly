@@ -1,3 +1,18 @@
-<form (submit)="onSubmit($event)">
-    <button type="submit">Login with spotify!</button>
-</form>
+<div class="backGround slantGradient center">
+    <div class="foreGround blackGradient center shadow">
+        <div class="logo">
+            <img src="..\assets\logos\RifflyLogo.png" alt="RifflyLogo Loading...">
+        </div>
+        <div class="center">
+            <form (submit)="onSubmit($event)">
+                <button class="spotifyLogin" type="submit">
+                    <span class="spotifyLoginString">Login with spotify</span>
+                </button>
+            </form>
+            <button class="needHelp">
+                <span>Need help?</span>
+            </button>
+        </div>
+    </div>
+</div>
+
