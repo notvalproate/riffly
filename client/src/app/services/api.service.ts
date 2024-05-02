@@ -8,6 +8,6 @@ export class ApiService {
     protected http: HttpClient = inject(HttpClient);
 
     protected apiUrl: string = 'http://localhost:4000/api';
-    protected authUrl: string = 'http://localhost:4000/auth';
+    protected apiAuthUrl: string = 'http://localhost:4000/auth';
     protected requestOptions : any = { observe: 'response', withCredentials: true };
 }
