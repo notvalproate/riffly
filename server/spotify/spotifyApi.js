@@ -6,7 +6,6 @@ class SpotifyAPI {
             method: "GET", headers: { Authorization: `Bearer ${req.cookies.authToken}` }
         });
 
-
         return await this.handleResponseStatus(result, res);
     }
 

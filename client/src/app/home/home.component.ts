@@ -45,18 +45,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     async getUserInfo() {
-        // this.userInfoService.getUserInfo().subscribe(
-        // (resp: any) => {
-        //     if(resp.status === 401) {
-        //         console.log('Error: Bad Authentication');
-        //         return;
-        //     }
-
-        //     this.username = resp.body.display_name;
-        //     this.url = resp.body.external_urls.spotify;
-        // }
-        // );
-
         this.userInfoService.getUserInfo().subscribe({
             next: (resp: any) => {
                 this.username = resp.body.display_name;
