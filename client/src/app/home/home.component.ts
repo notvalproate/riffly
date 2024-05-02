@@ -45,28 +45,41 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     async getUserInfo() {
-        this.userInfoService.getUserInfo().subscribe((resp: any) => {
-            if(resp.status === 401) {
-                console.log('Error: Bad Authentication');
-                return;
-            }
+        // this.userInfoService.getUserInfo().subscribe(
+        // (resp: any) => {
+        //     if(resp.status === 401) {
+        //         console.log('Error: Bad Authentication');
+        //         return;
+        //     }
 
-            this.username = resp.body.display_name;
-            this.url = resp.body.external_urls.spotify;
+        //     this.username = resp.body.display_name;
+        //     this.url = resp.body.external_urls.spotify;
+        // }
+        // );
+
+        this.userInfoService.getUserInfo().subscribe({
+            next: (resp: any) => {
+                this.username = resp.body.display_name;
+                this.url = resp.body.external_urls.spotify;
+            },
+            error: (resp: any) => {
+                console.log(resp.error);
+            }
         });
     }
 
     async getCurrentTrack() {
-        this.userInfoService.getTrackInfo().subscribe((resp: any) => {
-            if(resp.status === 204) {
+        this.userInfoService.getTrackInfo().subscribe({
+            next: (resp: any) => {
+                this.isPlaying = true;
+                this.songTitle = resp.body.item.name;
+                this.artist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
+                this.imgUrl = resp.body.item.album.images[0].url;
+            },
+            error: (resp: any) => {
                 this.isPlaying = false;
-                return;
+                console.log(resp.error);
             }
-
-            this.isPlaying = true;
-            this.songTitle = resp.body.item.name;
-            this.artist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
-            this.imgUrl = resp.body.item.album.images[0].url;
         });
     }
 
