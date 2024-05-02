@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
@@ -10,7 +10,7 @@ import { UserInfoService } from '../services/user-info.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
     private router: Router = inject(Router);
     private auth: AuthService = inject(AuthService);
     private userInfoService: UserInfoService = inject(UserInfoService);
@@ -36,6 +36,12 @@ export class HomeComponent implements OnInit {
                 this.getCurrentTrack();
             }, 2000);
         })
+    }
+
+    ngOnDestroy() {
+        if (this.trackPolling) {
+          clearInterval(this.trackPolling);
+        }
     }
 
     async getUserInfo() {
