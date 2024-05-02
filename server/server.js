@@ -28,7 +28,7 @@ app.get('/refresh', async (req, res) => {
 app.get('/logout', (req, res) => {
     SpotifyAuth.deleteCurrentTokens(res);
 
-    res.send("Logged out!");
+    res.send({ loggedOut: true });
 })
 
 

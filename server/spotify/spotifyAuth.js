@@ -94,8 +94,6 @@ class SpotifyAuth {
 
         res.clearCookie('authToken', cookieOptions);
         res.clearCookie('refreshToken', cookieOptions);
-
-        res.status(200);
     }   
 };
 

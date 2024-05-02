@@ -5,14 +5,14 @@ import { ApiService } from './api.service';
   providedIn: 'root'
 })
 export class AuthService extends ApiService {
-    private params : URLSearchParams = new URLSearchParams(window.location.search);
-
     hasAuthToken() {
         return this.http.get(this.apiUrl + '/hasAuthToken', this.requestOptions);
     }
 
     hasError() {
-        if(this.params.get('error')) {
+        const params : URLSearchParams = new URLSearchParams(window.location.search);
+
+        if(params.get('error')) {
             return true;
         }
 
@@ -24,8 +24,10 @@ export class AuthService extends ApiService {
     }
 
     authorizeWithParams() {
-        const code : any = this.params.get('code');
-        const state : any = this.params.get('state');
+        const params : URLSearchParams = new URLSearchParams(window.location.search);
+
+        const code : any = params.get('code');
+        const state : any = params.get('state');
 
         if(code && state) {
             const authParams : URLSearchParams = new URLSearchParams({
@@ -33,9 +35,15 @@ export class AuthService extends ApiService {
                 state: state
             });
 
-           return this.http.get(this.apiUrl + '/getAuthInfo?' + authParams.toString(), this.requestOptions);
+            console.log(code, state);
+
+            return this.http.get(this.apiUrl + '/getAuthInfo?' + authParams.toString(), this.requestOptions);
         }
 
         return undefined;
+    }
+
+    logout() {
+        return this.http.get(this.apiUrl + '/logout', this.requestOptions);
     }
 }

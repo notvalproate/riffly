@@ -63,4 +63,10 @@ export class HomeComponent implements OnInit {
             this.imgUrl = resp.body.item.album.images[0].url;
         });
     }
+
+    async onLogout() {
+        this.auth.logout().subscribe((resp: any) => {
+            this.router.navigate(['login']);
+        });
+    }
 }
