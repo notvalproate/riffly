@@ -59,6 +59,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     async getCurrentTrack() {
         this.userInfoService.getTrackInfo().subscribe({
             next: (resp: any) => {
+                if(resp.status === 204) {
+                    this.isPlaying = false;
+                    return;
+                }
+
                 this.isPlaying = true;
                 this.songTitle = resp.body.item.name;
                 this.artist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
