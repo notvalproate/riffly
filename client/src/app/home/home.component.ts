@@ -15,13 +15,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     private auth: AuthService = inject(AuthService);
     private userInfoService: UserInfoService = inject(UserInfoService);
 
-    username: string = '';
-    url: string = 'spotify.com';
-    isPlaying: boolean = false;
-    imgUrl: string = '';
-    songTitle: string = '';
-    artist: string = '';
-    lyrics: string[] = [];
+    profileName: string = '';
+    profileUrl: string = '';
+
+    isPlayerActive: boolean = false;
+
+    currentSongImgUrl: string = '';
+    currentSongTitle: string = '';
+    currentArtist: string = '';
+    currentLyrics: string[] = [];
+
     trackPolling: any = undefined;
 
     ngOnInit(): void {
@@ -48,8 +51,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     async getUserInfo() {
         this.userInfoService.getUserInfo().subscribe({
             next: (resp: any) => {
-                this.username = resp.body.display_name;
-                this.url = resp.body.external_urls.spotify;
+                this.profileName = resp.body.display_name;
+                this.profileUrl = resp.body.external_urls.spotify;
             },
             error: (resp: any) => {
                 console.log(resp.error);
@@ -58,30 +61,30 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     async getCurrentTrack() {
-        this.userInfoService.getTrackInfo(this.songTitle).subscribe({
+        this.userInfoService.getTrackInfo(this.currentSongTitle).subscribe({
             next: (resp: any) => {
                 if(resp.status === 204) {
-                    this.isPlaying = false;
+                    this.isPlayerActive = false;
                     return;
                 }
 
-                this.isPlaying = true;
-                this.songTitle = resp.body.item.name;
-                this.artist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
-                this.imgUrl = resp.body.item.album.images[0].url;
+                this.isPlayerActive = true;
+                this.currentSongTitle = resp.body.item.name;
+                this.currentArtist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
+                this.currentSongImgUrl = resp.body.item.album.images[0].url;
 
                 if(!resp.body.update_lyrics) {
                     return;
                 }
 
                 if(resp.body.lyrics) {
-                    this.lyrics = resp.body.lyrics.split("\n");;
+                    this.currentLyrics = resp.body.lyrics.split("\n");;
                 } else {
-                    this.lyrics = [];
+                    this.currentLyrics = [];
                 }
             },
             error: (resp: any) => {
-                this.isPlaying = false;
+                this.isPlayerActive = false;
                 console.log(resp.error);
             }
         });
