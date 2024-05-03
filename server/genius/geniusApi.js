@@ -7,6 +7,11 @@ class GeniusAPI {
 
     static async getLyrics(artist, song) {
         const searches = await this.geniusClient.songs.search(`${artist} ${song}`);
+
+        if(searches.length === 0) {
+            return null;
+        }
+
         const topSearch = searches[0];
 
         if(song !== topSearch.title) {
