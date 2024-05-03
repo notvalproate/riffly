@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     imgUrl: string = '';
     songTitle: string = '';
     artist: string = '';
+    lyrics: string = '';
     trackPolling: any = undefined;
 
     ngOnInit(): void {
@@ -57,7 +58,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     async getCurrentTrack() {
-        this.userInfoService.getTrackInfo().subscribe({
+        this.userInfoService.getTrackInfo(this.songTitle).subscribe({
             next: (resp: any) => {
                 if(resp.status === 204) {
                     this.isPlaying = false;
@@ -68,6 +69,16 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.songTitle = resp.body.item.name;
                 this.artist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
                 this.imgUrl = resp.body.item.album.images[0].url;
+
+                if(!resp.body.update_lyrics) {
+                    return;
+                }
+
+                if(resp.body.lyrics) {
+                    this.lyrics = resp.body.lyrics;
+                } else {
+                    this.lyrics = "No lyrics available";
+                }
             },
             error: (resp: any) => {
                 this.isPlaying = false;

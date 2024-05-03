@@ -9,7 +9,11 @@ export class UserInfoService extends ApiService {
         return this.http.get(this.apiUrl + '/getUserInfo', this.requestOptions);
     }
 
-    getTrackInfo() {
-        return this.http.get(this.apiUrl + '/getTrack', this.requestOptions);
+    getTrackInfo(currentSong : string) {
+        const params = new URLSearchParams({
+            current_song: currentSong,
+        })
+
+        return this.http.get(this.apiUrl + '/getTrack?test=hi&' + params.toString(), this.requestOptions);
     }
 }
