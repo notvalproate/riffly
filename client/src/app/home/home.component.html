@@ -6,12 +6,12 @@
     <img src="{{currentSongImgUrl}}" alt="trackImage" style="width: 100px;">
     <h2>{{currentSongTitle}}</h2>
     <h5>{{currentArtist}}</h5>
+    @for (item of currentLyrics; track $index) {
+        <span>{{item}}</span><br>
+    } @empty {
+        <span>No Lyrics Available</span>
+    }
 } @else {
     <h3>Not listening to anything</h3>
-}
-
-@for (item of currentLyrics; track $index) {
-    <span>{{item}}</span><br>
-} @empty {
     <span>No Lyrics Available</span>
 }

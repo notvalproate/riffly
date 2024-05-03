@@ -14,6 +14,6 @@ export class UserInfoService extends ApiService {
             current_song: currentSong,
         })
 
-        return this.http.get(this.apiUrl + '/getTrack?test=hi&' + params.toString(), this.requestOptions);
+        return this.http.get(this.apiUrl + '/getTrack?' + params.toString(), this.requestOptions);
     }
 }
