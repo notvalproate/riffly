@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     imgUrl: string = '';
     songTitle: string = '';
     artist: string = '';
-    lyrics: string = '';
+    lyrics: string[] = [];
     trackPolling: any = undefined;
 
     ngOnInit(): void {
@@ -75,9 +75,9 @@ export class HomeComponent implements OnInit, OnDestroy {
                 }
 
                 if(resp.body.lyrics) {
-                    this.lyrics = resp.body.lyrics;
+                    this.lyrics = resp.body.lyrics.split("\n");;
                 } else {
-                    this.lyrics = "No lyrics available";
+                    this.lyrics = [];
                 }
             },
             error: (resp: any) => {
