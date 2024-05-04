@@ -114,7 +114,10 @@ class GeniusAPI {
                 continue;
             }
 
-            let includesTitle = simplifyText(item.title).includes(simplifyText(reqTitle));
+            let simplifiedTitle = simplifyText(item.title);
+            let simplifiedReqTitle = simplifyText(reqTitle);
+
+            let includesTitle = simplifiedTitle.includes(simplifyText(simplifiedReqTitle)) || simplifiedReqTitle.includes(simplifiedTitle);
 
             console.log(`\n\n${i++}>\n`);
             console.log(`Required Title: ${reqTitle} || Current: ${item.title}`);
@@ -175,7 +178,9 @@ function simplifyText(text) {
         .toLowerCase()
         .replaceAll(' ', '')
         .replaceAll('’', "'")
-        .replace(/[–—]/g, '-');
+        .replace(/[–—]/g, '-')
+        .replaceAll('˃', '>')
+        .replaceAll('˂', '<');
 }
 
 module.exports = { 
