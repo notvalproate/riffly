@@ -13,6 +13,8 @@ router.get('/getTrack', async (req, res) => {
 
     if(playerInfo.item) {   
         if(playerInfo.item.name !== req.query.current_song) {
+            console.log(playerInfo.item);
+
             let lyrics = await GeniusAPI.getLyrics(playerInfo.item.artists, playerInfo.item.name);
 
             playerInfo.update_lyrics = true;

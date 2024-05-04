@@ -7,14 +7,24 @@ class GeniusAPI {
 
     static async getLyrics(artists, title) {
         try {
+            title = cleanTitleForSearch(title);
+            console.log("CLEANED TITLE TO: " + title);
+
             // FIRST SEARCH WITH FULL ARTISTS
-            let searches = await this.geniusClient.songs.search(`${artists.map(artist => artist.name).join(' ')} ${title}`);
+            let searches = await this.geniusClient.songs.search(`${artists.map(artist => artist.name).join(' ')} ${title}`, {
+                sanitizeQuery: false,
+            });
+
+            console.log(`${artists.map(artist => artist.name).join(' ')} ${title}`);
+
             let allArtist = true;
 
             if(searches.length === 0) {
                 console.log("No All Artist Hits");
                 allArtist = false;
-                searches = await this.geniusClient.songs.search(`${artists[0].name} ${title}`);
+                searches = await this.geniusClient.songs.search(`${artists[0].name} ${title}`, {
+                    sanitizeQuery: false,
+                });
             }
 
             if(searches.length === 0) {
@@ -30,6 +40,7 @@ class GeniusAPI {
                 console.log("First Result was null!");
 
                 if(allArtist) {
+                    console.log("Find next result");
                     searches = await this.geniusClient.songs.search(`${artists[0].name} ${title}`);
                     topSearch = this.getAccurateResult(searches, artists, title);
                 } else {
@@ -70,7 +81,7 @@ class GeniusAPI {
             
             console.log(`\n\n${i++}>\n`);
             
-            for(let reqArtist of reqArtists) {
+            for(let reqArtist of reqArtists) {  
                 console.log(`Required Artist: ${reqArtist.name} || Current: ${item.artist.name}`);
                 if(simplifyText(item.artist.name).includes(simplifyText(reqArtist.name))) {
                     console.log("ABOVE HAS ARTIST");
@@ -86,7 +97,6 @@ class GeniusAPI {
             let titleMatches = ( simplifyText(item.title) == simplifyText(reqTitle) );
 
             console.log(`Required Title: ${simplifyText(item.title)} || Current: ${simplifyText(reqTitle)}`);
-            console.log(`|${simplifyText(item.title)}|${simplifyText(reqTitle)}|`);
 
             if(titleMatches) {
                 console.log('ABOVE IS TITLE');
@@ -115,6 +125,25 @@ class GeniusAPI {
             }
         }
 
+        // THIRD PASS, ALLOW GENIUS AS ARTIST
+        console.log("########################################### THIRD PASS ###########################################");
+
+        for(let item of searches) {
+            let includesTitle = simplifyText(item.title).includes(simplifyText(reqTitle));
+
+            if(!includesTitle) {
+                continue;
+            }
+
+            let includesGenius = simplifyText(item.artist.name).includes('genius');
+            console.log(`Required Artist: ${'Genius'} || Current: ${item.artist.name}`);
+
+            if(includesGenius) {
+                console.log('ABOVE HAS GENIUS');
+                return item;
+            }
+        }
+
         console.log("################# NO RESULT #################");
 
         return null;
@@ -123,11 +152,30 @@ class GeniusAPI {
     }
 };
 
+function cleanTitleForSearch(title) {
+    const featIndex = title.indexOf('(feat');
+    
+    if (featIndex !== -1) {
+        title = title.slice(0, featIndex);
+    }
+
+    title.replace(/[–—]/g, '-');
+
+    const hyphenIndex = title.indexOf('-');
+
+    if (hyphenIndex !== -1) {
+        title = title.slice(0, hyphenIndex);
+    }
+
+    return title;
+}
+
 function simplifyText(text) {
     return text
         .toLowerCase()
         .replaceAll(' ', '')
-        .replaceAll('’', "'");
+        .replaceAll('’', "'")
+        .replace(/[–—]/g, '-');
 }
 
 module.exports = { 
