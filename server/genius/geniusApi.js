@@ -65,10 +65,37 @@ class GeniusAPI {
         return this.getBestSearch(hits, artists, title);
     }
 
+    static compareArtistNames(first, second) {
+        const simpFirst = simplifyText(first);
+        const simpSecond = simplifyText(second);
+
+        const included = simpFirst.includes(simpSecond) || simpSecond.includes(simpFirst);
+
+        if(included) {
+            return true;
+        }
+
+        // Dirty checking, really desperate at this point to match artists, even skiley cant match.
+        // EXPERIMENTAL, IF YOU DONT GET PROPER RESULTS FROM A SONG U THINK U SHUD GET, COMMENT THIS PART OUT AND TRY
+
+        const cleanedFirst = simplifyArtist(first).split(' ');
+        const cleanedSecond = simplifyArtist(second).split(' ');
+
+        const atLeastOnePartExists = cleanedFirst.some(part => cleanedSecond.includes(part));
+
+        if(atLeastOnePartExists) {
+            return true;
+        }
+
+        const atLeastOneGeniusPartExists = cleanedSecond.some(part => cleanedFirst.includes(part));
+
+        return atLeastOneGeniusPartExists;        
+    }
+
     static getBestSearch(searches, reqArtists, reqTitle) {
         // FIRST PASS, EQUALS
         console.log("########################################### FIRST PASS ###########################################");
-        
+
         let i = 1;
 
         const simplifiedReqTitle = simplifyText(reqTitle);
@@ -77,10 +104,11 @@ class GeniusAPI {
             item.hasArtists = false;
             
             console.log(`\n\n${i++}>\n`);
-            
-            for(let reqArtist of reqArtists) {  
-                console.log(`Required Artist: ${reqArtist} || Current: ${item.artist.name}`);
-                if(simplifyText(item.artist.name).includes(simplifyText(reqArtist))) {
+
+            for(let reqArtist of reqArtists) {
+                console.log(`Required Artist:${item.artist.name}||Current:${reqArtist}|`);
+
+                if(this.compareArtistNames(item.artist.name, reqArtist)) {
                     console.log("ABOVE HAS ARTIST");
                     item.hasArtists = true;
                     break;
@@ -95,12 +123,13 @@ class GeniusAPI {
 
             let titleMatches = ( simplifiedTitle == simplifiedReqTitle );
 
-            console.log(`Required Title: ${simplifiedReqTitle} || Current: ${simplifiedTitle}`);
+            console.log(`Required Title:${simplifiedReqTitle}||Current:${simplifiedTitle}|`);
 
             if(titleMatches) {
                 console.log('ABOVE IS TITLE');
                 return item;
             }
+            console.log('ABOVE IS NOT TITLE');
         }
 
         i = 1;
@@ -207,6 +236,14 @@ function simplifyText(text) {
         .replaceAll('˃', '>')
         .replaceAll('˂', '<')
         .replaceAll('…', '...')
+        .normalize('NFC');
+}
+
+function simplifyArtist(artist) {
+    return artist
+        .toLowerCase()
+        .replace(/[()–—\-'’˃>˂<…\.]/g, ' ')
+        .replaceAll('.', '')
         .normalize('NFC');
 }
 
