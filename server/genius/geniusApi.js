@@ -11,39 +11,39 @@ class GeniusAPI {
             console.log("CLEANED TITLE TO: " + title);
 
             // FIRST SEARCH WITH FULL ARTISTS
-            let searches = await this.geniusClient.songs.search(`${title} ${artists.map(artist => artist.name).join(' ')}`, {
+            let hits = await this.geniusClient.songs.search(`${title} ${artists.map(artist => artist.name).join(' ')}`, {
                 sanitizeQuery: false,
             });
 
             let allArtist = true;
 
-            if(searches.length === 0) {
+            if(hits.length === 0) {
                 console.log("No All Artist Hits");
                 allArtist = false;
 
                 if(artists.length > 1) {
-                    searches = await this.geniusClient.songs.search(`${title} ${artists[0].name}`, {
+                    hits = await this.geniusClient.songs.search(`${title} ${artists[0].name}`, {
                         sanitizeQuery: false,
                     });
                 }
             }
 
-            if(searches.length === 0) {
+            if(hits.length === 0) {
                 console.log("No Main Artist Hits");
                 return null;
             }
 
             console.log("Got searches");
     
-            let topSearch = this.getAccurateResult(searches, artists, title);
+            let topSearch = this.getAccurateResult(hits, artists, title);
             
             if(topSearch === null) {
                 console.log("First Result was null!");
 
                 if(allArtist && artists.length > 1) {
                     console.log("Find next result");
-                    searches = await this.geniusClient.songs.search(`${title} ${artists[0].name}`);
-                    topSearch = this.getAccurateResult(searches, artists, title);
+                    hits = await this.geniusClient.songs.search(`${title} ${artists[0].name}`);
+                    topSearch = this.getAccurateResult(hits, artists, title);
                 } else {
                     return null;
                 }
