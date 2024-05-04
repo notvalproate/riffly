@@ -29,9 +29,31 @@ class GeniusAPI {
     }
 
     static async getBestLyrics(artists, title) {
-        console.log(`SEARCHING FOR: ${title} ${artists.join(' ')}`);
+        const jointArists = artists.join(' ');
+        let searchQueryOne = `${title} ${jointArists}`;
+        let searchQueryTwo = `${jointArists} ${title}`;
 
-        const hits = await this.geniusClient.songs.search(`${title} ${artists.join(' ')}`, {
+        const firstResult = await this.getBySearchQuery(searchQueryOne, artists, title);
+
+        if(firstResult !== null) {
+            return await firstResult.lyrics();
+        }
+
+        const secondResult = await this.getBySearchQuery(searchQueryTwo, artists, title);
+
+        if(secondResult !== null) {
+            return await secondResult.lyrics();
+        }
+
+        return null;
+    }
+
+    
+    static async getBySearchQuery(searchQuery, artists, title) {
+        console.log(`\n\n\n`);
+        console.log(`################# SEARCHING FOR: ${searchQuery} #################`);
+
+        const hits = await this.geniusClient.songs.search(searchQuery, {
             sanitizeQuery: false,
         });
 
@@ -40,21 +62,13 @@ class GeniusAPI {
             return null;
         }
 
-        let bestSearch = this.getBestSearch(hits, artists, title);
-        
-        if(bestSearch === null) {
-            return null;
-        }
-
-        const lyrics = await bestSearch.lyrics();
-
-        return lyrics;
+        return this.getBestSearch(hits, artists, title);
     }
-    
+
     static getBestSearch(searches, reqArtists, reqTitle) {
         // FIRST PASS, EQUALS
         console.log("########################################### FIRST PASS ###########################################");
-
+        
         let i = 1;
 
         const simplifiedReqTitle = simplifyText(reqTitle);
