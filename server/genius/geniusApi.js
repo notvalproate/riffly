@@ -29,9 +29,9 @@ class GeniusAPI {
     }
 
     static async getBestLyrics(artists, title) {
-        const jointArists = artists.join(' ');
-        let searchQueryOne = `${title} ${jointArists}`;
-        let searchQueryTwo = `${jointArists} ${title}`;
+        const jointArtists = artists.join(' ');
+        let searchQueryOne = `${title} ${jointArtists}`;
+        let searchQueryTwo = `${jointArtists} ${title}`;
 
         const firstResult = await this.getBySearchQuery(searchQueryOne, artists, title);
 
