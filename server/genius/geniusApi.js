@@ -7,19 +7,39 @@ class GeniusAPI {
 
     static async getLyrics(artists, title) {
         try {
-            const searches = await this.geniusClient.songs.search(`${artists.map((artist) => artist.name).join(' ')} ${title}`);
+            // FIRST SEARCH WITH FULL ARTISTS
+            let searches = await this.geniusClient.songs.search(`${artists.map(artist => artist.name).join(' ')} ${title}`);
+            let allArtist = true;
 
             if(searches.length === 0) {
-                console.log("No Hits");
+                console.log("No All Artist Hits");
+                allArtist = false;
+                searches = await this.geniusClient.songs.search(`${artists[0].name} ${title}`);
+            }
+
+            if(searches.length === 0) {
+                console.log("No Main Artist Hits");
                 return null;
             }
 
             console.log("Got searches");
     
-            const topSearch = this.getAccurateResult(searches, artists, title);
+            let topSearch = this.getAccurateResult(searches, artists, title);
             
             if(topSearch === null) {
-                console.log("Result was null!");
+                console.log("First Result was null!");
+
+                if(allArtist) {
+                    searches = await this.geniusClient.songs.search(`${artists[0].name} ${title}`);
+                    topSearch = this.getAccurateResult(searches, artists, title);
+                } else {
+                    return null;
+                }
+            }
+
+            if(topSearch === null) {
+                console.log("All Results was null!");
+
                 return null;
             }
 
