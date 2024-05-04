@@ -68,6 +68,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                     return;
                 }
 
+                console.log(resp.body.item);
+
                 let currentTitle = this.currentSongTitle;
 
                 this.isPlayerActive = true;
@@ -96,6 +98,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             error: (resp: any) => {
                 this.isPlayerActive = false;
                 this.currentLyrics = [];
+                this.currentSongTitle = '';
                 console.log(resp.error);
             }
         });
