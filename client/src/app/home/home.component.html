@@ -1,12 +1,17 @@
-<p>You logged in successfully as <a href="{{url}}" target="_blank">{{username}}</a>!</p>
+<p>You logged in successfully as <a href="{{profileUrl}}" target="_blank">{{profileName}}</a>!</p>
+<button (click)="onLogout()">Logout</button>
 
-@if (isPlaying) {
+@if (isPlayerActive) {
     <h3>Currently Listening to:</h3>
-    <img src="{{imgUrl}}" alt="trackImage" style="width: 100px;">
-    <h2>{{songTitle}}</h2>
-    <h5>{{artist}}</h5>
+    <img src="{{currentSongImgUrl}}" alt="trackImage" style="width: 100px;">
+    <h2>{{currentSongTitle}}</h2>
+    <h5>{{currentArtist}}</h5>
+    @for (item of currentLyrics; track $index) {
+        <span>{{item}}</span><br>
+    } @empty {
+        <span>No Lyrics Available</span>
+    }
 } @else {
     <h3>Not listening to anything</h3>
+    <span>No Lyrics Available</span>
 }
-
-<button (click)="onLogout()">Logout</button>

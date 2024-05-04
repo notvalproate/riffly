@@ -2,12 +2,17 @@ class SpotifyAPI {
     static spotifyApiUri = 'https://api.spotify.com/v1';
 
     static async Get(path, req, res) {
-        const result = await fetch(this.spotifyApiUri + path, {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${req.cookies.authToken}` },
-        });
-
-        return await this.handleResponseStatus(result, res);
+        try {
+            const result = await fetch(this.spotifyApiUri + path, {
+                method: 'GET',
+                headers: { Authorization: `Bearer ${req.cookies.authToken}` },
+            });
+            
+            return await this.handleResponseStatus(result, res);
+        } catch (err) {
+            res.status(500);
+            return err;
+        }
     }
 
     static async handleResponseStatus(result, res) {

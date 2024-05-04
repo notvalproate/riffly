@@ -15,12 +15,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     private auth: AuthService = inject(AuthService);
     private userInfoService: UserInfoService = inject(UserInfoService);
 
-    username: string = '';
-    url: string = 'spotify.com';
-    isPlaying: boolean = false;
-    imgUrl: string = '';
-    songTitle: string = '';
-    artist: string = '';
+    profileName: string = '';
+    profileUrl: string = '';
+
+    isPlayerActive: boolean = false;
+
+    currentSongImgUrl: string = '';
+    currentSongTitle: string = '';
+    currentArtist: string = '';
+    currentLyrics: string[] = [];
+
     trackPolling: any = undefined;
 
     ngOnInit(): void {
@@ -47,8 +51,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     async getUserInfo() {
         this.userInfoService.getUserInfo().subscribe({
             next: (resp: any) => {
-                this.username = resp.body.display_name;
-                this.url = resp.body.external_urls.spotify;
+                this.profileName = resp.body.display_name;
+                this.profileUrl = resp.body.external_urls.spotify;
             },
             error: (resp: any) => {
                 console.log(resp.error);
@@ -57,20 +61,44 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     async getCurrentTrack() {
-        this.userInfoService.getTrackInfo().subscribe({
+        this.userInfoService.getTrackInfo(this.currentSongTitle).subscribe({
             next: (resp: any) => {
                 if(resp.status === 204) {
-                    this.isPlaying = false;
+                    this.isPlayerActive = false;
                     return;
                 }
 
-                this.isPlaying = true;
-                this.songTitle = resp.body.item.name;
-                this.artist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
-                this.imgUrl = resp.body.item.album.images[0].url;
+                console.log(resp.body.item);
+
+                let currentTitle = this.currentSongTitle;
+
+                this.isPlayerActive = true;
+                this.currentSongTitle = resp.body.item.name;
+                this.currentArtist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
+                this.currentSongImgUrl = resp.body.item.album.images[0].url;
+
+                if(currentTitle !== resp.body.item.name) {
+                    this.currentLyrics = ['Loading Lyrics...'];
+                    this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
+                        next: (resp: any) => {
+                            if(resp.body.lyrics === null) {
+                                this.currentLyrics = [];
+                                return;
+                            }
+
+                            this.currentLyrics = resp.body.lyrics.split('\n');
+                        },
+                        error: (resp: any) => {
+                            this.currentLyrics = [];
+                            console.log(resp.error);
+                        }
+                    });
+                }
             },
             error: (resp: any) => {
-                this.isPlaying = false;
+                this.isPlayerActive = false;
+                this.currentLyrics = [];
+                this.currentSongTitle = '';
                 console.log(resp.error);
             }
         });

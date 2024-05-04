@@ -9,7 +9,18 @@ export class UserInfoService extends ApiService {
         return this.http.get(this.apiUrl + '/getUserInfo', this.requestOptions);
     }
 
-    getTrackInfo() {
-        return this.http.get(this.apiUrl + '/getTrack', this.requestOptions);
+    getTrackInfo(currentSong : string) {
+        const params = new URLSearchParams({
+            current_song: currentSong,
+        })
+
+        return this.http.get(this.apiUrl + '/getTrack?' + params.toString(), this.requestOptions);
+    }
+
+    getLyrics(artists: string[], title : string) {
+        const params = new URLSearchParams(artists.map(artist => ['artists', artist]));
+        params.append('title', title);
+
+        return this.http.get(this.apiUrl + '/getLyrics?' + params.toString(), this.requestOptions);
     }
 }
