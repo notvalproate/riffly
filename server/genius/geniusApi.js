@@ -161,7 +161,7 @@ function cleanTitleForSearch(title) {
 
     title.replace(/[–—]/g, '-');
 
-    const hyphenIndex = title.indexOf('-');
+    const hyphenIndex = title.indexOf(' - ');
 
     if (hyphenIndex !== -1) {
         title = title.slice(0, hyphenIndex);
