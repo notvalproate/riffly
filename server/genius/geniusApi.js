@@ -85,8 +85,8 @@ class GeniusAPI {
             console.log(`\n\n${i++}>\n`);
             
             for(let reqArtist of reqArtists) {  
-                console.log(`Required Artist: ${reqArtist.name} || Current: ${item.artist.name}`);
-                if(simplifyText(item.artist.name).includes(simplifyText(reqArtist.name))) {
+                console.log(`Required Artist: ${reqArtist} || Current: ${item.artist.name}`);
+                if(simplifyText(item.artist.name).includes(simplifyText(reqArtist))) {
                     console.log("ABOVE HAS ARTIST");
                     item.hasArtists = true;
                     break;

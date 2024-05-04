@@ -68,19 +68,20 @@ export class HomeComponent implements OnInit, OnDestroy {
                     return;
                 }
 
+                let currentTitle = this.currentSongTitle;
+
                 this.isPlayerActive = true;
                 this.currentSongTitle = resp.body.item.name;
                 this.currentArtist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
                 this.currentSongImgUrl = resp.body.item.album.images[0].url;
 
-                if(!resp.body.update_lyrics) {
-                    return;
-                }
-
-                if(resp.body.lyrics) {
-                    this.currentLyrics = resp.body.lyrics.split("\n");;
-                } else {
-                    this.currentLyrics = [];
+                if(currentTitle !== resp.body.item.name) {
+                    this.currentLyrics = ['Loading Lyrics...'];
+                    this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
+                        next: (resp: any) => {
+                            this.currentLyrics = resp.body.lyrics.split('\n');
+                        }
+                    });
                 }
             },
             error: (resp: any) => {
