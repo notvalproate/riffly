@@ -8,70 +8,50 @@ class GeniusAPI {
     static async getLyrics(artists, title) {
         try {
             title = cleanTitleForSearch(title);
-            console.log("CLEANED TITLE TO: " + title);
 
-            // FIRST SEARCH WITH FULL ARTISTS
-            let hits = await this.geniusClient.songs.search(`${title} ${artists.map(artist => artist.name).join(' ')}`, {
-                sanitizeQuery: false,
-            });
+            const hasMultipleArtists = Array.isArray(artists);
 
-            let allArtist = true;
-
-            if(hits.length === 0) {
-                console.log("No All Artist Hits");
-                allArtist = false;
-
-                if(artists.length > 1) {
-                    hits = await this.geniusClient.songs.search(`${title} ${artists[0].name}`, {
-                        sanitizeQuery: false,
-                    });
-                }
+            if(!hasMultipleArtists) {
+                return await this.getBestLyrics([artists], title);
             }
 
-            if(hits.length === 0) {
-                console.log("No Main Artist Hits");
-                return null;
+            const resultOne = await this.getBestLyrics(artists, title);
+
+            if(resultOne === null) {
+                return await this.getBestLyrics([artists[0]], title);
             }
 
-            console.log("Got searches");
-    
-            let topSearch = this.getAccurateResult(hits, artists, title);
-            
-            if(topSearch === null) {
-                console.log("First Result was null!");
-
-                if(allArtist && artists.length > 1) {
-                    console.log("Find next result");
-                    hits = await this.geniusClient.songs.search(`${title} ${artists[0].name}`);
-                    topSearch = this.getAccurateResult(hits, artists, title);
-                } else {
-                    return null;
-                }
-            }
-
-            if(topSearch === null) {
-                console.log("All Results was null!");
-
-                return null;
-            }
-
-            console.log("Got accurate result");
-    
-            try {
-                const lyrics = await topSearch.lyrics();
-                console.log("Got lyrics");
-                return lyrics;
-            } catch (err) {
-                console.log('No Lyrics');
-                return null;
-            }
+            return resultOne;
         } catch (err) {
             console.log(err);
             return null;
         }
     }
 
-    static getAccurateResult(searches, reqArtists, reqTitle) {
+    static async getBestLyrics(artists, title) {
+        console.log(`SEARCHING FOR: ${title} ${artists.join(' ')}`);
+
+        const hits = await this.geniusClient.songs.search(`${title} ${artists.join(' ')}`, {
+            sanitizeQuery: false,
+        });
+
+        if(hits.length === 0) {
+            console.log("NO HITS");
+            return null;
+        }
+
+        let bestSearch = this.getBestSearch(hits, artists, title);
+        
+        if(bestSearch === null) {
+            return null;
+        }
+
+        const lyrics = await bestSearch.lyrics();
+
+        return lyrics;
+    }
+    
+    static getBestSearch(searches, reqArtists, reqTitle) {
         // FIRST PASS, EQUALS
         console.log("########################################### FIRST PASS ###########################################");
 
@@ -132,8 +112,22 @@ class GeniusAPI {
             }
         }
 
-        // THIRD PASS, ALLOW GENIUS AS ARTIST
+        // THIRD PASS, CHECK FOR TITLE TO BE EXACTLY SAME
         console.log("########################################### THIRD PASS ###########################################");
+
+        for(let item of searches) {
+            let includesTitle = simplifyText(item.title) === simplifiedReqTitle;
+
+            if(!includesTitle) {
+                continue;
+            }
+
+            console.log('ABOVE HAS SAME TITLE');
+            return item;
+        }
+
+        // FOURTH PASS ALLOW GENIUS AS ARTIST
+        console.log("########################################### FOURTH PASS ###########################################");
 
         for(let item of searches) {
             let includesTitle = simplifyText(item.title).includes(simplifiedReqTitle);
@@ -160,18 +154,31 @@ class GeniusAPI {
 };
 
 function cleanTitleForSearch(title) {
-    const featIndex = title.toLowerCase().indexOf('(feat');
-    
-    if (featIndex !== -1) {
-        title = title.slice(0, featIndex);
-    }
-
     title.replace(/[–—]/g, '-');
 
     const hyphenIndex = title.indexOf(' - ');
 
     if (hyphenIndex !== -1) {
         title = title.slice(0, hyphenIndex);
+    }
+
+    const featIndex = title.toLowerCase().indexOf('(feat');
+    
+    if (featIndex !== -1) {
+        title = title.slice(0, featIndex);
+    }
+
+    const fromIndex = title.toLowerCase().indexOf('(from');
+    
+    if (fromIndex !== -1) {
+        title = title.slice(0, fromIndex);
+    }
+
+    const parenthesisIndex = title.toLowerCase().indexOf('(');
+    const endingIndex = title.toLowerCase().indexOf(')');
+
+    if(parenthesisIndex > 0 && endingIndex === title.length - 1) {
+        title = title.slice(0, parenthesisIndex);
     }
 
     return title;

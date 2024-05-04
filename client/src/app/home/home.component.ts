@@ -79,7 +79,16 @@ export class HomeComponent implements OnInit, OnDestroy {
                     this.currentLyrics = ['Loading Lyrics...'];
                     this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
                         next: (resp: any) => {
+                            if(resp.body.lyrics === null) {
+                                this.currentLyrics = [];
+                                return;
+                            }
+
                             this.currentLyrics = resp.body.lyrics.split('\n');
+                        },
+                        error: (resp: any) => {
+                            this.currentLyrics = [];
+                            console.log(resp.error);
                         }
                     });
                 }
