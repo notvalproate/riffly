@@ -22,9 +22,12 @@ class GeniusAPI {
             if(searches.length === 0) {
                 console.log("No All Artist Hits");
                 allArtist = false;
-                searches = await this.geniusClient.songs.search(`${artists[0].name} ${title}`, {
-                    sanitizeQuery: false,
-                });
+
+                if(artists.length > 1) {
+                    searches = await this.geniusClient.songs.search(`${artists[0].name} ${title}`, {
+                        sanitizeQuery: false,
+                    });
+                }
             }
 
             if(searches.length === 0) {
@@ -39,7 +42,7 @@ class GeniusAPI {
             if(topSearch === null) {
                 console.log("First Result was null!");
 
-                if(allArtist) {
+                if(allArtist && artists.length > 1) {
                     console.log("Find next result");
                     searches = await this.geniusClient.songs.search(`${artists[0].name} ${title}`);
                     topSearch = this.getAccurateResult(searches, artists, title);
@@ -180,7 +183,8 @@ function simplifyText(text) {
         .replaceAll('’', "'")
         .replace(/[–—]/g, '-')
         .replaceAll('˃', '>')
-        .replaceAll('˂', '<');
+        .replaceAll('˂', '<')
+        .replaceAll('…', '...');
 }
 
 module.exports = { 
