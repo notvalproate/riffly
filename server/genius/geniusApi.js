@@ -15,13 +15,21 @@ class GeniusAPI {
                 return await this.getBestLyrics([artists], title);
             }
 
-            const resultOne = await this.getBestLyrics([artists[0]], title);
+            let result;
 
-            if(resultOne === null) {
+            for(let i = 0; i < artists.length; i++) {
+                result = await this.getBestLyrics([artists[i]], title);
+
+                if(result !== null) {
+                    break;
+                }
+            }
+
+            if(result === null) {
                 return await this.getBestLyrics(artists, title);
             }
 
-            return resultOne;
+            return result;
         } catch (err) {
             console.log(err);
             return null;
@@ -106,7 +114,7 @@ class GeniusAPI {
             console.log(`\n\n${i++}>\n`);
             
             for(let reqArtist of reqArtists) {
-                console.log(`Required Artist:${item.artist.name}||Current:${reqArtist}|`);
+                console.log(`Required Artist:${reqArtist}||Current:${item.artist.name}|`);
 
                 if(this.compareArtistNames(item.artist.name, reqArtist)) {
                     console.log("ABOVE HAS ARTIST");
@@ -144,7 +152,7 @@ class GeniusAPI {
 
             let simplifiedTitle = simplifyText(item.title);
 
-            let includesTitle = simplifiedTitle.includes(simplifyText(simplifiedReqTitle)) || simplifiedReqTitle.includes(simplifiedTitle);
+            let includesTitle = simplifiedTitle.includes(simplifiedReqTitle) || simplifiedReqTitle.includes(simplifiedTitle);
 
             console.log(`\n\n${i++}>\n`);
             console.log(`Required Title: ${simplifiedReqTitle} || Current: ${simplifiedTitle}`);
@@ -175,7 +183,7 @@ class GeniusAPI {
         console.log("########################################### FOURTH PASS ###########################################");
 
         for(let item of searches) {
-            let includesTitle = simplifyText(item.title).includes(simplifiedReqTitle);
+            let includesTitle = simplifyText(item.title).includes(simplifiedReqTitle) || simplifyText(simplifiedReqTitle).includes(item.title);
 
             if(!includesTitle) {
                 continue;
@@ -243,7 +251,7 @@ function simplifyText(text) {
 function simplifyArtist(artist) {
     return artist
         .toLowerCase()
-        .replace(/[()–—\-'’˃>˂<…\.]/g, ' ')
+        .replace(/[\[\]()–—\-'’˃>˂<…\.]/g, ' ')
         .replaceAll('.', '')
         .normalize('NFC');
 }
