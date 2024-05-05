@@ -9,7 +9,7 @@ class GeniusAPI {
 
     static async getLyrics(artists, title) {
         try {
-            title = cleanTitleForSearch(title);
+            // title = cleanTitleForSearch(title);
 
             const hasMultipleArtists = Array.isArray(artists);
 
@@ -43,9 +43,10 @@ class GeniusAPI {
 
     static async getBestLyrics(artists, title) {
         const jointArtists = artists.join(' ');
+        const cleanTitle = cleanTitleForSearch(title);
         let queries = [
-            `${title} ${jointArtists}`, 
-            `${jointArtists} ${title}`
+            `${cleanTitle} ${jointArtists}`, 
+            `${jointArtists} ${cleanTitle}`
         ];
 
         for(let query of queries) {
@@ -124,11 +125,11 @@ class GeniusAPI {
                 }
             }
 
-            debugLyrics("ABOVE DOESNT HAVE ARTIST");
-
             if(!item.hasArtists) {
                 continue;
             }
+
+            debugLyrics("ABOVE DOESNT HAVE ARTIST");
             
             const simplifiedTitle = simplifyText(item.title);
 
@@ -165,8 +166,28 @@ class GeniusAPI {
             }
         }
 
-        // THIRD PASS, CHECK FOR TITLE TO BE EXACTLY SAME
         debugLyrics("########################################### THIRD PASS ###########################################");
+
+        for(let item of searches) {
+            if(!item.hasArtists) {
+                continue;
+            }
+
+            let simplifiedTitle = simplifyText(item.title);
+            let cleanedReqTitle = simplifyText(cleanTitleForSearch(reqTitle));
+
+            let includesTitle = simplifiedTitle.includes(cleanedReqTitle) || cleanedReqTitle.includes(simplifiedTitle);
+
+            debugLyrics(`\n\n${i++}>\nRequired Title: ${cleanedReqTitle} || Current: ${simplifiedTitle}`);
+
+            if(includesTitle) {
+                debugLyrics('ABOVE HAS TITLE');
+                return item;
+            }
+        }
+
+        // THIRD PASS, CHECK FOR TITLE TO BE EXACTLY SAME
+        debugLyrics("########################################### FOURTH PASS ###########################################");
 
         for(let item of searches) {
             let includesTitle = simplifyText(item.title) === simplifiedReqTitle;
@@ -182,7 +203,7 @@ class GeniusAPI {
         }
 
         // FOURTH PASS ALLOW GENIUS AS ARTIST
-        debugLyrics("########################################### FOURTH PASS ###########################################");
+        debugLyrics("########################################### FIFTH PASS ###########################################");
 
         for(let item of searches) {
             let includesTitle = simplifyText(item.title).includes(simplifiedReqTitle) || simplifyText(simplifiedReqTitle).includes(item.title);
