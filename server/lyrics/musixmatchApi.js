@@ -11,13 +11,13 @@ class MusixmatchAPI {
                 return null;
             }
 
-            let bestSearch = this.getBestSearch(searches, artists, title);
-
-            if(bestSearch === null) {
-                return null;
+            if(!Array.isArray(artists)) {
+                artists = [artists];
             }
 
-            if(bestSearch.has_lyrics !== 1) {
+            let bestSearch = this.getBestSearch(searches, artists, title);
+
+            if(bestSearch === null || bestSearch.has_lyrics !== 1) {
                 return null;
             }
 
@@ -112,6 +112,14 @@ class MusixmatchAPI {
 
             if(isTitle) {
                 return item.track;
+            }
+        }
+
+        for(let item of searches) {
+            for(let reqArtist of reqArtists) {
+                if(simplifyText(item.track.artist_name) === simplifyText(reqArtist)) {
+                    return item.track;
+                }
             }
         }
 
