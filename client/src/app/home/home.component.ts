@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
+import { PollingService } from '../services/polling.service';
 
 @Component({
   selector: 'home',
@@ -14,6 +15,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router = inject(Router);
     private auth: AuthService = inject(AuthService);
     private userInfoService: UserInfoService = inject(UserInfoService);
+    private playerPoller: PollingService = inject(PollingService);
 
     profileName: string = '';
     profileUrl: string = '';
@@ -24,8 +26,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     currentSongTitle: string = '';
     currentSongUrl: string = '';
     currentSongID: string = '';
+
     currentArtists: string[] = [];
     currentArtistsUrls: string[] = [];
+
     currentLyrics: string[] = [];
 
     trackPolling: any = undefined;
@@ -39,16 +43,12 @@ export class HomeComponent implements OnInit, OnDestroy {
 
             this.getUserInfo();
 
-            this.trackPolling = setInterval(() => {
-                this.getCurrentTrack();
-            }, 2000);
+            this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
         })
     }
 
     ngOnDestroy() {
-        if (this.trackPolling) {
-          clearInterval(this.trackPolling);
-        }
+        this.playerPoller.stopPolling();
     }
 
     async getUserInfo() {
@@ -73,14 +73,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                 let currentID = this.currentSongID;
 
-                console.log(resp.body.item);
-
                 this.isPlayerActive = true;
 
                 this.currentSongImgUrl = resp.body.item.album.images[0].url;
                 this.currentSongTitle = resp.body.item.name;
                 this.currentSongUrl = resp.body.item.external_urls.spotify;
                 this.currentSongID = resp.body.item.id;
+
                 this.currentArtists = resp.body.item.artists.map((artist: any) => artist.name);
                 this.currentArtistsUrls = resp.body.item.artists.map((artist: any) => artist.external_urls.spotify);
 
@@ -112,8 +111,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     async onLogout() {
-        this.auth.logout().subscribe((resp: any) => {
-            this.router.navigate(['login']);
+        this.auth.logout().subscribe({
+            next: (resp: any) => {
+                this.router.navigate(['login']);
+            },
+            error: (resp: any) => {
+                console.log(resp.error);
+            }
         });
     }
 }

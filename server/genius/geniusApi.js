@@ -17,21 +17,15 @@ class GeniusAPI {
                 return await this.getBestLyrics([artists], title);
             }
 
-            let result;
-
             for(let i = 0; i < artists.length; i++) {
-                result = await this.getBestLyrics([artists[i]], title);
+                const result = await this.getBestLyrics([artists[i]], title);
 
                 if(result !== null) {
-                    break;
+                    return result;
                 }
             }
 
-            if(result === null) {
-                return await this.getBestLyrics(artists, title);
-            }
-
-            return result;
+            return await this.getBestLyrics(artists, title);
         } catch (err) {
             console.log(err);
             return null;
@@ -40,16 +34,16 @@ class GeniusAPI {
 
     static async getBestLyrics(artists, title) {
         const jointArtists = artists.join(' ');
-        let searchQueryOne = `${title} ${jointArtists}`;
-        let searchQueryTwo = `${jointArtists} ${title}`;
+        let titleFirstQuery = `${title} ${jointArtists}`;
+        let artistFirstQuery = `${jointArtists} ${title}`;
 
-        const firstResult = await this.getBySearchQuery(searchQueryOne, artists, title);
+        const firstResult = await this.getBySearchQuery(titleFirstQuery, artists, title);
 
         if(firstResult !== null) {
             return await firstResult.lyrics();
         }
 
-        const secondResult = await this.getBySearchQuery(searchQueryTwo, artists, title);
+        const secondResult = await this.getBySearchQuery(artistFirstQuery, artists, title);
 
         if(secondResult !== null) {
             return await secondResult.lyrics();
@@ -86,19 +80,14 @@ class GeniusAPI {
 
         // Dirty checking, really desperate at this point to match artists, even skiley cant match.
         // EXPERIMENTAL, IF YOU DONT GET PROPER RESULTS FROM A SONG U THINK U SHUD GET, COMMENT THIS PART OUT AND TRY
+        // THIS IS O(N^2) AND MAY GIVE BAD RESULTS, NOT YET FOUND SUCH A CASE THOUGH.
 
         const cleanedFirst = simplifyArtist(first).split(' ');
         const cleanedSecond = simplifyArtist(second).split(' ');
 
         const atLeastOnePartExists = cleanedFirst.some(part => cleanedSecond.includes(part));
 
-        if(atLeastOnePartExists) {
-            return true;
-        }
-
-        const atLeastOneGeniusPartExists = cleanedSecond.some(part => cleanedFirst.includes(part));
-
-        return atLeastOneGeniusPartExists;        
+        return atLeastOnePartExists;       
     }
 
     static getBestSearch(searches, reqArtists, reqTitle) {
@@ -222,6 +211,12 @@ function cleanTitleForSearch(title) {
         title = title.slice(0, featIndex);
     }
 
+    const ftIndex = title.toLowerCase().indexOf('(ft');
+    
+    if (featIndex !== -1) {
+        title = title.slice(0, ftIndex);
+    }
+
     const fromIndex = title.toLowerCase().indexOf('(from');
     
     if (fromIndex !== -1) {
@@ -253,7 +248,7 @@ function simplifyText(text) {
 function simplifyArtist(artist) {
     return artist
         .toLowerCase()
-        .replace(/[\[\]()–—\-'’˃>˂<…\.]/g, ' ')
+        .replace(/[\[\]()–—\-'’˃>˂<…]/g, ' ')
         .replaceAll('.', '')
         .normalize('NFC');
 }
