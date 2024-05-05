@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { SpotifyAPI } = require('../spotify/spotifyApi.js');
 const { GeniusAPI } = require('../lyrics/geniusApi.js');
+const { MusixmatchAPI } = require('../lyrics/musixmatchApi.js');
 
 router.get('/getUserInfo', async (req, res) => {
     const userInfo = await SpotifyAPI.Get('/me', req, res);
@@ -22,7 +23,7 @@ router.get('/getLyrics', async (req, res) => {
         return;
     }
 
-    lyrics = null;
+    lyrics = await MusixmatchAPI.getLyrics(req.query.artists, req.query.title);
 
     res.json(lyrics);
 });

@@ -111,6 +111,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                             this.geniusLyricsUrl = resp.body.url;
 
                             if(resp.body.lyrics === null) {
+                                this.currentLyrics = [];
                                 return;
                             }
 

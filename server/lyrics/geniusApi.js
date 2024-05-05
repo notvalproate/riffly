@@ -253,6 +253,7 @@ function simplifyText(text) {
         .replaceAll('˃', '>')
         .replaceAll('˂', '<')
         .replaceAll('…', '...')
+        .replaceAll(',', '')
         .normalize('NFC');
 }
 
