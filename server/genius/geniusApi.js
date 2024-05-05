@@ -2,6 +2,8 @@ const genius = require("genius-lyrics");
 
 const geniusToken = process.env.GENIUS_CLIENT_TOKEN;
 
+const DEBUG_LYRICS = false;
+
 class GeniusAPI {
     static geniusClient = new genius.Client(geniusToken);
 
@@ -58,15 +60,14 @@ class GeniusAPI {
 
     
     static async getBySearchQuery(searchQuery, artists, title) {
-        console.log(`\n\n\n`);
-        console.log(`################# SEARCHING FOR: ${searchQuery} #################`);
+        debugLyrics(`\n\n\n################# SEARCHING FOR: ${searchQuery} #################`);
 
         const hits = await this.geniusClient.songs.search(searchQuery, {
             sanitizeQuery: false,
         });
 
         if(hits.length === 0) {
-            console.log("NO HITS");
+            debugLyrics("NO HITS");
             return null;
         }
 
@@ -102,7 +103,7 @@ class GeniusAPI {
 
     static getBestSearch(searches, reqArtists, reqTitle) {
         // FIRST PASS, EQUALS
-        console.log("########################################### FIRST PASS ###########################################");
+        debugLyrics("########################################### FIRST PASS ###########################################");
         
         let i = 1;
 
@@ -111,17 +112,19 @@ class GeniusAPI {
         for(let item of searches) {
             item.hasArtists = false;
             
-            console.log(`\n\n${i++}>\n`);
+            debugLyrics(`\n${i++}>\n`);
             
             for(let reqArtist of reqArtists) {
-                console.log(`Required Artist:${reqArtist}||Current:${item.artist.name}|`);
+                debugLyrics(`Required Artist:${reqArtist}||Current:${item.artist.name}|`);
 
                 if(this.compareArtistNames(item.artist.name, reqArtist)) {
-                    console.log("ABOVE HAS ARTIST");
+                    debugLyrics("ABOVE HAS ARTIST");
                     item.hasArtists = true;
                     break;
                 }
             }
+
+            debugLyrics("ABOVE DOESNT HAVE ARTIST");
 
             if(!item.hasArtists) {
                 continue;
@@ -131,19 +134,19 @@ class GeniusAPI {
 
             let titleMatches = ( simplifiedTitle == simplifiedReqTitle );
 
-            console.log(`Required Title:${simplifiedReqTitle}||Current:${simplifiedTitle}|`);
+            debugLyrics(`Required Title:${simplifiedReqTitle}||Current:${simplifiedTitle}|`);
 
             if(titleMatches) {
-                console.log('ABOVE IS TITLE');
+                debugLyrics('ABOVE IS TITLE');
                 return item;
             }
-            console.log('ABOVE IS NOT TITLE');
+            debugLyrics('ABOVE IS NOT TITLE');
         }
 
         i = 1;
 
         // SECOND PASS, INCLUDES
-        console.log("########################################### SECOND PASS ###########################################");
+        debugLyrics("########################################### SECOND PASS ###########################################");
 
         for(let item of searches) {
             if(!item.hasArtists) {
@@ -154,33 +157,32 @@ class GeniusAPI {
 
             let includesTitle = simplifiedTitle.includes(simplifiedReqTitle) || simplifiedReqTitle.includes(simplifiedTitle);
 
-            console.log(`\n\n${i++}>\n`);
-            console.log(`Required Title: ${simplifiedReqTitle} || Current: ${simplifiedTitle}`);
+            debugLyrics(`\n\n${i++}>\nRequired Title: ${simplifiedReqTitle} || Current: ${simplifiedTitle}`);
 
             if(includesTitle) {
-                console.log('ABOVE HAS TITLE');
+                debugLyrics('ABOVE HAS TITLE');
                 return item;
             }
         }
 
         // THIRD PASS, CHECK FOR TITLE TO BE EXACTLY SAME
-        console.log("########################################### THIRD PASS ###########################################");
+        debugLyrics("########################################### THIRD PASS ###########################################");
 
         for(let item of searches) {
             let includesTitle = simplifyText(item.title) === simplifiedReqTitle;
 
-            console.log(`Required Title: ${simplifiedReqTitle} || Current: ${simplifyText(item.title)}`);
+            debugLyrics(`Required Title: ${simplifiedReqTitle} || Current: ${simplifyText(item.title)}`);
 
             if(!includesTitle) {
                 continue;
             }
 
-            console.log('ABOVE HAS SAME TITLE');
+            debugLyrics('ABOVE HAS SAME TITLE');
             return item;
         }
 
         // FOURTH PASS ALLOW GENIUS AS ARTIST
-        console.log("########################################### FOURTH PASS ###########################################");
+        debugLyrics("########################################### FOURTH PASS ###########################################");
 
         for(let item of searches) {
             let includesTitle = simplifyText(item.title).includes(simplifiedReqTitle) || simplifyText(simplifiedReqTitle).includes(item.title);
@@ -190,15 +192,15 @@ class GeniusAPI {
             }
 
             let includesGenius = simplifyText(item.artist.name).includes('genius');
-            console.log(`Required Artist: ${'Genius'} || Current: ${item.artist.name}`);
+            debugLyrics(`Required Artist: ${'Genius'} || Current: ${item.artist.name}`);
 
             if(includesGenius) {
-                console.log('ABOVE HAS GENIUS');
+                debugLyrics('ABOVE HAS GENIUS');
                 return item;
             }
         }
 
-        console.log("################# NO RESULT #################");
+        debugLyrics("################# NO RESULT #################");
 
         return null;
 
@@ -254,6 +256,12 @@ function simplifyArtist(artist) {
         .replace(/[\[\]()–—\-'’˃>˂<…\.]/g, ' ')
         .replaceAll('.', '')
         .normalize('NFC');
+}
+
+function debugLyrics(text) {
+    if(!DEBUG_LYRICS) return;
+
+    console.log(text);
 }
 
 module.exports = { 

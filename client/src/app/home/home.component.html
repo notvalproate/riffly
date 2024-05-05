@@ -4,8 +4,15 @@
 @if (isPlayerActive) {
     <h3>Currently Listening to:</h3>
     <img src="{{currentSongImgUrl}}" alt="trackImage" style="width: 100px;">
-    <h2>{{currentSongTitle}}</h2>
-    <h5>{{currentArtist}}</h5>
+    <h2><a href="{{currentSongUrl}}" target="_blank">{{currentSongTitle}}</a></h2>
+    <h5>
+        @for (artist of currentArtists; track $index) {
+            <a href="{{currentArtistsUrls[$index]}}" target="_blank">{{artist}}</a>
+            @if ($index !== currentArtists.length - 1) {
+                ,&nbsp;
+            }
+        }
+    </h5>
     @for (item of currentLyrics; track $index) {
         <span>{{item}}</span><br>
     } @empty {

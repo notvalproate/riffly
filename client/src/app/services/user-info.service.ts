@@ -9,12 +9,8 @@ export class UserInfoService extends ApiService {
         return this.http.get(this.apiUrl + '/getUserInfo', this.requestOptions);
     }
 
-    getTrackInfo(currentSong : string) {
-        const params = new URLSearchParams({
-            current_song: currentSong,
-        })
-
-        return this.http.get(this.apiUrl + '/getTrack?' + params.toString(), this.requestOptions);
+    getTrackInfo() {
+        return this.http.get(this.apiUrl + '/getTrack', this.requestOptions);
     }
 
     getLyrics(artists: string[], title : string) {

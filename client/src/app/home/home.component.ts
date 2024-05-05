@@ -22,7 +22,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     currentSongImgUrl: string = '';
     currentSongTitle: string = '';
-    currentArtist: string = '';
+    currentSongUrl: string = '';
+    currentSongID: string = '';
+    currentArtists: string[] = [];
+    currentArtistsUrls: string[] = [];
     currentLyrics: string[] = [];
 
     trackPolling: any = undefined;
@@ -61,23 +64,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     async getCurrentTrack() {
-        this.userInfoService.getTrackInfo(this.currentSongTitle).subscribe({
+        this.userInfoService.getTrackInfo().subscribe({
             next: (resp: any) => {
                 if(resp.status === 204) {
                     this.isPlayerActive = false;
                     return;
                 }
 
+                let currentID = this.currentSongID;
+
                 console.log(resp.body.item);
 
-                let currentTitle = this.currentSongTitle;
-
                 this.isPlayerActive = true;
-                this.currentSongTitle = resp.body.item.name;
-                this.currentArtist = resp.body.item.artists.map((artist: any) => artist.name).join(', ');
-                this.currentSongImgUrl = resp.body.item.album.images[0].url;
 
-                if(currentTitle !== resp.body.item.name) {
+                this.currentSongImgUrl = resp.body.item.album.images[0].url;
+                this.currentSongTitle = resp.body.item.name;
+                this.currentSongUrl = resp.body.item.external_urls.spotify;
+                this.currentSongID = resp.body.item.id;
+                this.currentArtists = resp.body.item.artists.map((artist: any) => artist.name);
+                this.currentArtistsUrls = resp.body.item.artists.map((artist: any) => artist.external_urls.spotify);
+
+                if(currentID !== resp.body.item.id) {
                     this.currentLyrics = ['Loading Lyrics...'];
                     this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
                         next: (resp: any) => {
