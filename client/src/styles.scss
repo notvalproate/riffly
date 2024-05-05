@@ -1,18 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
 body {
-    height: 100vh;
     width: 100vw;
     color: white;
     background-color: rgb(24, 24, 24);
-}
-
-a {
-    text-decoration: underline;
-    color: white;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
 }

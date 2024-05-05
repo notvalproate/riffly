@@ -2,37 +2,47 @@
 <button (click)="onLogout()">Logout</button>
 
 @if (isPlayerActive) {
-    <h3>Currently Listening to:</h3>
-    <img src="{{currentSongImgUrl}}" alt="trackImage" style="width: 100px;">
-    <h1><a href="{{currentSongUrl}}" target="_blank">{{currentSongTitle}}</a></h1>
-    <h3>
-        @for (artist of currentArtists; track $index) {
-            <a href="{{currentArtistsUrls[$index]}}" target="_blank">{{artist}}</a>
-            @if ($index !== currentArtists.length - 1) {
-                ,&nbsp;
-            }
-        }
-    </h3>
+    <div class="content-wrapper">
+        <div class="player">
+            <div class="song">
+                <a href="{{currentSongUrl}}" target="_blank" class="song-cover-wrapper">
+                    <img class="song-cover" src="{{currentSongImgUrl}}" alt="trackImage">
+                </a>
+                <div class="song-content">
+                    <h1 class="overflow-elipses"><a class="redirect-link" href="{{currentSongUrl}}" target="_blank">{{currentSongTitle}}</a></h1>
+                    <h3 class="overflow-elipses">
+                        @for (artist of currentArtists; track $index) {
+                            <a class="redirect-link" href="{{currentArtistsUrls[$index]}}" target="_blank">{{artist}}</a>
+                            @if ($index !== currentArtists.length - 1) {,&nbsp;}
+                        }
+                    </h3>
+                </div>
+            </div>
 
-    <div class="progress-wrapper">
-        <div class="progress-bar-wrapper">
-            <div class="progress-bar" [style.width]="currentProgressPercent"></div>
+            <div class="progress-wrapper">
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar" [style.width]="currentProgressPercent"></div>
+                </div>
+                <div class="progress-times">
+                    <span class="progress-time">
+                        {{msToMinutesString(currentSongProgress)}}
+                    </span>
+                    <span class="progress-time">
+                        {{msToMinutesString(currentSongLength)}}
+                    </span>
+                </div>
+            </div>
         </div>
-        <div class="progress-times">
-            <span class="progress-time">
-                {{msToMinutesString(currentSongProgress)}}
-            </span>
-            <span class="progress-time">
-                {{msToMinutesString(currentSongLength)}}
-            </span>
+
+        <div class="lyrics">
+            <h3 class="lyrics-title"><a class="redirect-link" href="{{geniusLyricsUrl}}" target="_blank">LYRICS BY GENIUS</a></h3>
+            @for (item of currentLyrics; track $index) {
+                <span>{{item}}</span><br>
+            } @empty {
+                <span>No Lyrics Available</span>
+            }
         </div>
     </div>
-
-    @for (item of currentLyrics; track $index) {
-        <span>{{item}}</span><br>
-    } @empty {
-        <span>No Lyrics Available</span>
-    }
 } @else {
     <h3>Not listening to anything</h3>
     <span>No Lyrics Available</span>

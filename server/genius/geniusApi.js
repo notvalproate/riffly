@@ -40,13 +40,19 @@ class GeniusAPI {
         const firstResult = await this.getBySearchQuery(titleFirstQuery, artists, title);
 
         if(firstResult !== null) {
-            return await firstResult.lyrics();
+            return {
+                url: firstResult.url,
+                lyrics: await firstResult.lyrics()
+            };
         }
 
         const secondResult = await this.getBySearchQuery(artistFirstQuery, artists, title);
 
         if(secondResult !== null) {
-            return await secondResult.lyrics();
+            return {
+                url: secondResult.url,
+                lyrics: await secondResult.lyrics()
+            };
         }
 
         return null;

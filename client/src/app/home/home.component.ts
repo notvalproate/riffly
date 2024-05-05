@@ -15,8 +15,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router = inject(Router);
     private auth: AuthService = inject(AuthService);
     private userInfoService: UserInfoService = inject(UserInfoService);
-    private playerPoller: PollingService = inject(PollingService);
-    private progressPoller: PollingService = inject(PollingService);
+    private playerPoller: PollingService = new PollingService();
+    private progressPoller: PollingService = new PollingService();
 
     profileName: string = '';
     profileUrl: string = '';
@@ -35,6 +35,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     currentArtistsUrls: string[] = [];
 
     currentLyrics: string[] = [];
+    geniusLyricsUrl: string = 'https://genius.com';
 
     trackPolling: any = undefined;
 
@@ -73,6 +74,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     async getCurrentTrack() {
         this.userInfoService.getTrackInfo().subscribe({
             next: (resp: any) => {
+
                 if(resp.status === 204) {
                     this.isPlayerActive = false;
                     return;
@@ -100,10 +102,12 @@ export class HomeComponent implements OnInit, OnDestroy {
                         next: (resp: any) => {
                             if(resp.body.lyrics === null) {
                                 this.currentLyrics = [];
+                                this.geniusLyricsUrl = 'https://genius.com';
                                 return;
                             }
 
                             this.currentLyrics = resp.body.lyrics.split('\n');
+                            this.geniusLyricsUrl = resp.body.url;
                         },
                         error: (resp: any) => {
                             this.currentLyrics = [];
@@ -153,10 +157,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     @HostListener('document:visibilitychange', ['$event'])
     handleVisibilityChange() {
         if (document.hidden) {
-            console.log('stopped polling');
             this.playerPoller.stopPolling();
         } else {
-            console.log('starting pollying');
             this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
         }
     }
