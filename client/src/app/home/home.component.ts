@@ -123,6 +123,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                             this.currentLyrics = resp.body.lyrics.split('\n');
                         },
                         error: (resp: any) => {
+                            this.loadingLyrics = false;
                             this.currentLyrics = [];
                             this.lyricsUrl = '';
                             this.lyricsProvider = '';
