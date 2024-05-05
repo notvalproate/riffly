@@ -121,7 +121,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             error: (resp: any) => {
                 this.isPlayerActive = false;
                 this.currentLyrics = [];
-                this.currentSongTitle = '';
+                this.currentSongID = '';
                 this.progressPoller.stopPolling();
                 console.log(resp.error);
             }
