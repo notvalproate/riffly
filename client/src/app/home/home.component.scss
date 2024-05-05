@@ -1,0 +1,23 @@
+.progress-wrapper {
+    margin: 10px 0;
+    width: 400px;
+
+    .progress-bar-wrapper {
+        border-radius: 100px;
+        height: 5px;
+        width: 100%;
+        background-color: rgb(112, 112, 112);
+        margin-bottom: 5px;
+    }
+
+    .progress-bar {
+        border-radius: 100px;
+        height: 5px;
+        background-color: rgb(244, 244, 244);
+    }
+
+    .progress-times {
+        display: flex;
+        justify-content: space-between;
+    }
+}

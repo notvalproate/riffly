@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private auth: AuthService = inject(AuthService);
     private userInfoService: UserInfoService = inject(UserInfoService);
     private playerPoller: PollingService = inject(PollingService);
+    private progressPoller: PollingService = inject(PollingService);
 
     profileName: string = '';
     profileUrl: string = '';
@@ -26,6 +27,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     currentSongTitle: string = '';
     currentSongUrl: string = '';
     currentSongID: string = '';
+    currentSongLength: number = 0;
+    currentSongProgress: number = 0;
+    currentProgressPercent: string = '0%';
 
     currentArtists: string[] = [];
     currentArtistsUrls: string[] = [];
@@ -43,6 +47,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
             this.getUserInfo();
 
+            this.progressPoller.config({
+                intervalTime: 1000,
+            });
             this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
         })
     }
@@ -79,11 +86,15 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.currentSongTitle = resp.body.item.name;
                 this.currentSongUrl = resp.body.item.external_urls.spotify;
                 this.currentSongID = resp.body.item.id;
+                this.currentSongLength = resp.body.item.duration_ms;
+                this.currentSongProgress = resp.body.progress_ms;
+                this.currentProgressPercent = ((this.currentSongProgress * 100) / this.currentSongLength) + '%';
 
                 this.currentArtists = resp.body.item.artists.map((artist: any) => artist.name);
                 this.currentArtistsUrls = resp.body.item.artists.map((artist: any) => artist.external_urls.spotify);
 
                 if(currentID !== resp.body.item.id) {
+                    this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
                     this.currentLyrics = ['Loading Lyrics...'];
                     this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
                         next: (resp: any) => {
@@ -105,6 +116,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.isPlayerActive = false;
                 this.currentLyrics = [];
                 this.currentSongTitle = '';
+                this.progressPoller.stopPolling();
                 console.log(resp.error);
             }
         });
@@ -121,14 +133,31 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
     }
 
+    increaseProgressByOneSecond() {
+        this.currentSongProgress += 1000;
+
+        if(this.currentSongProgress >= this.currentSongLength){
+            this.currentSongProgress = this.currentSongLength;
+        }
+
+        this.currentProgressPercent = ((this.currentSongProgress * 100) / this.currentSongLength) + '%';
+    }
+
+    msToMinutesString(ms: number) {
+        const minutes = Math.floor(ms / (1000 * 60));
+        const seconds = Math.floor(ms % (1000 * 60) / 1000);
+
+        return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+    }
+
     @HostListener('document:visibilitychange', ['$event'])
     handleVisibilityChange() {
         if (document.hidden) {
-        this.playerPoller.stopPolling();
-        console.log('Polling stopped');
+            console.log('stopped polling');
+            this.playerPoller.stopPolling();
         } else {
-        this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
-        console.log('Polling resumed');
+            console.log('starting pollying');
+            this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
         }
     }
 }

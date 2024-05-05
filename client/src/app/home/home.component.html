@@ -4,15 +4,30 @@
 @if (isPlayerActive) {
     <h3>Currently Listening to:</h3>
     <img src="{{currentSongImgUrl}}" alt="trackImage" style="width: 100px;">
-    <h2><a href="{{currentSongUrl}}" target="_blank">{{currentSongTitle}}</a></h2>
-    <h5>
+    <h1><a href="{{currentSongUrl}}" target="_blank">{{currentSongTitle}}</a></h1>
+    <h3>
         @for (artist of currentArtists; track $index) {
             <a href="{{currentArtistsUrls[$index]}}" target="_blank">{{artist}}</a>
             @if ($index !== currentArtists.length - 1) {
                 ,&nbsp;
             }
         }
-    </h5>
+    </h3>
+
+    <div class="progress-wrapper">
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar" [style.width]="currentProgressPercent"></div>
+        </div>
+        <div class="progress-times">
+            <span class="progress-time">
+                {{msToMinutesString(currentSongProgress)}}
+            </span>
+            <span class="progress-time">
+                {{msToMinutesString(currentSongLength)}}
+            </span>
+        </div>
+    </div>
+
     @for (item of currentLyrics; track $index) {
         <span>{{item}}</span><br>
     } @empty {
