@@ -15,6 +15,7 @@ export class PollingService {
 
     startPolling(callback: () => void) {
         this.stopPolling();
+        callback();
         this.intervalId = setInterval(() => {
             callback();
         }, this.intervalTime);
