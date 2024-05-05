@@ -32,27 +32,32 @@ class GeniusAPI {
         }
     }
 
+    static async convertResultToLyrics(result) {
+        try {
+            return await result.lyrics();
+        } catch(err) {
+            console.log(err);
+            return null;
+        }
+    }
+
     static async getBestLyrics(artists, title) {
         const jointArtists = artists.join(' ');
-        let titleFirstQuery = `${title} ${jointArtists}`;
-        let artistFirstQuery = `${jointArtists} ${title}`;
+        let queries = [
+            `${title} ${jointArtists}`, 
+            `${jointArtists} ${title}`
+        ];
 
-        const firstResult = await this.getBySearchQuery(titleFirstQuery, artists, title);
+        for(let query of queries) {
+            const result = await this.getBySearchQuery(query, artists, title);
 
-        if(firstResult !== null) {
-            return {
-                url: firstResult.url,
-                lyrics: await firstResult.lyrics()
-            };
-        }
-
-        const secondResult = await this.getBySearchQuery(artistFirstQuery, artists, title);
-
-        if(secondResult !== null) {
-            return {
-                url: secondResult.url,
-                lyrics: await secondResult.lyrics()
-            };
+            if(result !== null) {
+                return {
+                    provider: 'genius',
+                    url: result.url,
+                    lyrics: await this.convertResultToLyrics(result)
+                };
+            }
         }
 
         return null;
