@@ -97,7 +97,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                 if(currentID !== resp.body.item.id) {
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
+
                     this.currentLyrics = ['Loading Lyrics...'];
+
                     this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
                         next: (resp: any) => {
                             if(resp.body.lyrics === null) {
