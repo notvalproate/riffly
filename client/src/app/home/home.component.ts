@@ -102,7 +102,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                     this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
                         next: (resp: any) => {
-                            if(resp.body.lyrics === null) {
+                            if(resp.body === null) {
                                 this.currentLyrics = [];
                                 this.geniusLyricsUrl = 'https://genius.com';
                                 return;
