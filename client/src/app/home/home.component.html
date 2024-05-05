@@ -35,11 +35,17 @@
         </div>
 
         <div class="lyrics">
-            <h3 class="lyrics-title"><a class="redirect-link" href="{{geniusLyricsUrl}}" target="_blank">LYRICS BY GENIUS</a></h3>
-            @for (item of currentLyrics; track $index) {
-                <span>{{item}}</span><br>
-            } @empty {
-                <span>No Lyrics Available</span>
+            @if (loadingLyrics) {
+                <span>Loading Lyrics...</span>
+            } @else {
+                @if (currentLyrics.length > 0) {
+                    <h3 class="lyrics-title"><a class="redirect-link" href="{{lyricsUrl}}" target="_blank">LYRICS BY {{lyricsProvider.toUpperCase()}}</a></h3>
+                }
+                @for (item of currentLyrics; track $index) {
+                    <span>{{item}}</span><br>
+                } @empty {
+                    <span>No Lyrics Available</span>
+                }
             }
         </div>
     </div>

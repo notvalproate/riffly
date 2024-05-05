@@ -18,6 +18,7 @@ router.get('/getTrack', async (req, res) => {
 router.get('/getLyrics', async (req, res) => {
     let lyrics = await GeniusAPI.getLyrics(req.query.artists, req.query.title);
 
+
     if(lyrics !== null) {
         res.json(lyrics);
         return;

@@ -34,8 +34,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     currentArtists: string[] = [];
     currentArtistsUrls: string[] = [];
 
+    loadingLyrics: boolean = false;
     currentLyrics: string[] = [];
-    geniusLyricsUrl: string = 'https://genius.com';
+    lyricsProvider: string = '';
+    lyricsUrl: string = '';
 
     trackPolling: any = undefined;
 
@@ -98,17 +100,20 @@ export class HomeComponent implements OnInit, OnDestroy {
                 if(currentID !== resp.body.item.id) {
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
 
-                    this.currentLyrics = ['Loading Lyrics...'];
+                    this.loadingLyrics = true;
 
                     this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
                         next: (resp: any) => {
+                            this.loadingLyrics = false;
+
                             if(resp.body === null) {
                                 this.currentLyrics = [];
-                                this.geniusLyricsUrl = 'https://genius.com';
+                                this.lyricsUrl = '';
                                 return;
                             }
 
-                            this.geniusLyricsUrl = resp.body.url;
+                            this.lyricsUrl = resp.body.url;
+                            this.lyricsProvider = resp.body.provider;
 
                             if(resp.body.lyrics === null) {
                                 this.currentLyrics = [];
@@ -119,6 +124,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                         },
                         error: (resp: any) => {
                             this.currentLyrics = [];
+                            this.lyricsUrl = '';
+                            this.lyricsProvider = '';
                             console.log(resp.error);
                         }
                     });
