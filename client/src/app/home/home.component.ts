@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
@@ -119,5 +119,16 @@ export class HomeComponent implements OnInit, OnDestroy {
                 console.log(resp.error);
             }
         });
+    }
+
+    @HostListener('document:visibilitychange', ['$event'])
+    handleVisibilityChange() {
+        if (document.hidden) {
+        this.playerPoller.stopPolling();
+        console.log('Polling stopped');
+        } else {
+        this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
+        console.log('Polling resumed');
+        }
     }
 }
