@@ -142,17 +142,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
     }
 
-    async onLogout() {
-        this.auth.logout().subscribe({
-            next: (resp: any) => {
-                this.router.navigate(['login']);
-            },
-            error: (resp: any) => {
-                console.log(resp.error);
-            }
-        });
-    }
-
     increaseProgressByOneSecond() {
         this.currentSongProgress += 1000;
 
@@ -177,5 +166,20 @@ export class HomeComponent implements OnInit, OnDestroy {
         } else {
             this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
         }
+    }
+
+    async onLogout() {
+        this.auth.logout().subscribe({
+            next: (resp: any) => {
+                this.router.navigate(['login']);
+            },
+            error: (resp: any) => {
+                console.log(resp.error);
+            }
+        });
+    }
+
+    goToCharts() {
+        this.router.navigate(['charts']);
     }
 }

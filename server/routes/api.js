@@ -25,4 +25,10 @@ router.get('/getLyrics', async (req, res) => {
     res.json(lyrics);
 });
 
+router.get('/getUserCharts', async (req, res) => {
+    const userCharts = await SpotifyAPI.Get('/me/top/tracks', req, res);
+
+    res.json(userCharts);
+});
+
 module.exports = router;
