@@ -1,0 +1,14 @@
+<button (click)="goHome()">Back Home</button>
+
+@if (topTracks.length) {
+    <div class="track-list">
+        @for (item of topTracks; track $index) {
+            <div class="track-wrapper">
+                <img class="track-image" src="{{item.album.images[0].url}}" alt="trackImage">
+                <span>{{item.name}}</span>
+            </div>
+        }
+    </div>
+} @else {
+    <h2>No Tracks to Show Yet!</h2>
+}
