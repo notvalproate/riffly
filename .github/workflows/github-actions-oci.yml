@@ -1,0 +1,42 @@
+name: Oracle-Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy riffly angular to Oracle on main branch push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.ORACLE_KEY }}
+          REMOTE_HOST: ${{ secrets.ORACLE_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}
+
+      - name: Executing remote ssh commands using oracle ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ORACLE_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.ORACLE_KEY }}
+          script: |
+            sudo apt -y update
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+            nvm install node
+            sudo npm install -g @angular/cli
+            sudo npm install pm2 -g
+            cd home/client
+            sudo npm i
+            sudo pm2 stop riffly
+            sudo pm2 delete riffly
+            sudo pm2 start --name="riffly" ng -- serve --prod --port 80
+            

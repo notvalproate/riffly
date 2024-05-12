@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout the files
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
@@ -32,8 +32,12 @@ jobs:
             sudo apt -y update
             sudo apt install -y nodejs 
             sudo apt install -y npm
+            sudo npm install pm2 -g
             cd home/server
             sudo npm i
             touch .env
-            echo "${{ secrets.ENV_FILE }}" > .env
-            sudo npm run dev
+            echo "${{ secrets.API_ENV }}" > .env
+            sudo pm2 stop server
+            sudo pm2 delete server
+            sudo pm2 start server.js
+            
