@@ -1,4 +1,4 @@
-const { subtle } = globalThis.crypto;
+const crypto = require('crypto');
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -125,7 +125,14 @@ function generateRandomCode(length) {
 async function generateCodeChallenge(plain) {
     const encoder = new TextEncoder();
     const data = encoder.encode(plain);
-    return subtle.digest('SHA-256', data);
+
+    const hash = crypto.createHash('sha256');
+    hash.update(data);
+    const test = hash.digest('hex');
+    const buffer = Buffer.from(test, 'hex');
+    const challenge = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+
+    return challenge;
 }
 
 function base64Encode(input) {
