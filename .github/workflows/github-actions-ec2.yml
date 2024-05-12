@@ -32,7 +32,7 @@ jobs:
             sudo apt -y update
             sudo apt install -y nodejs 
             sudo apt install -y npm
-            cd home/riffly/server
+            cd home/server
             sudo npm i
             touch .env
             echo "${{ secrets.ENV_FILE }}" > .env
