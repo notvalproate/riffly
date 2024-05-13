@@ -32,9 +32,7 @@ jobs:
             sudo apt -y update
             sudo apt install -y nodejs 
             sudo apt install -y npm
-            sudo npm install pm2 -g
-            sudo npm install -g @angular/cli
-            sudo npm install -g http-server 
+            sudo npm install -g pm2 
             cd home/server
             sudo npm i
             touch .env
@@ -42,9 +40,3 @@ jobs:
             sudo pm2 stop server
             sudo pm2 delete server
             sudo pm2 start server.js
-            cd ../client
-            sudo npm i
-            sudo ng build
-            sudo pm2 stop client
-            sudo pm2 delete client
-            sudo pm2 start --name="client" http-server -- dist/ -p 80

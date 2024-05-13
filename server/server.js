@@ -5,10 +5,11 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const clientURL = process.env.CLIENT_URL;
 
 app.use(
     cors({
-        origin: 'http://localhost:4200',
+        origin: clientURL,
         credentials: true,
     })
 );

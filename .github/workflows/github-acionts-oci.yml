@@ -1,0 +1,38 @@
+name: Oracle-Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy riffly to Oracle on main branch push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v4
+
+      - name: Deploy to Oracle
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.ORACLE_KEY }}
+          REMOTE_HOST: ${{ secrets.ORACLE_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}
+
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ORACLE_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.ORACLE_KEY }}
+          script: |
+            sudo apt -y update
+            sudo npm install -g pm2 
+            sudo npm install -g http-server 
+            cd home/client
+            sudo pm2 stop client
+            sudo pm2 delete client
+            sudo pm2 start --name="client" http-server -- dist/client/browser/ -p 80

@@ -2,19 +2,11 @@ const crypto = require('crypto');
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-const clientURL = 'http://localhost:4200';
-const apiPORT = process.env.PORT || 4000;
-const apiURL = 'http://localhost:' + apiPORT;
+const clientURL = process.env.CLIENT_URL;
 const redirectURI = clientURL + '/login';
+const domain = process.env.DOMAIN;
 
 class SpotifyAuth {
-    static get clientURL() {
-        return clientURL;
-    }
-    static get apiURL() {
-        return apiURL;
-    }
-
     static hasAuthToken(req) {
         if (req.cookies.authToken) {
             return true;
@@ -89,7 +81,7 @@ class SpotifyAuth {
     static async deleteCookieTokens(res) {
         const cookieOptions = {
             httpOnly: true,
-            domain: 'localhost',
+            domain: domain,
             path: '/',
         };
 
@@ -100,7 +92,7 @@ class SpotifyAuth {
     static setCookieTokens(authInfo, res) {
         const cookieOptions = {
             httpOnly: true,
-            domain: 'localhost',
+            domain: domain,
             path: '/',
             maxAge: 1000 * 60 * 60 * 24 * 7,
         };

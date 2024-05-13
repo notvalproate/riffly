@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 export class ApiService {
     protected http: HttpClient = inject(HttpClient);
 
-    protected apiUrl: string = 'http://localhost:4000/api';
-    protected apiAuthUrl: string = 'http://localhost:4000/auth';
+    protected apiUrl: string = environment.apiUrl + '/api';
+    protected apiAuthUrl: string = environment.apiUrl + '/auth';
     protected requestOptions : any = { observe: 'response', withCredentials: true };
 }
