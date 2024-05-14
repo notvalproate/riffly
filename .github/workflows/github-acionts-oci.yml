@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'client/**'
+      - 'server/**'
+      - '.github/**'
 
 jobs:
   deploy:
@@ -31,8 +35,8 @@ jobs:
           script: |
             sudo apt -y update
             sudo npm install -g pm2 
-            sudo npm install -g http-server 
+            sudo npm install -g serve
             cd home/client
             sudo pm2 stop client
             sudo pm2 delete client
-            sudo pm2 start --name="client" http-server -- dist/client/browser/ -p 80
+            sudo pm2 start --name="client" sudo -- serve -s dist/client/browser -c ../../../serve.json -l 80

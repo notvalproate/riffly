@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'http://api.riffly.me'
+    apiUrl: 'https://api.riffly.me'
 };
