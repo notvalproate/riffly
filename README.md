@@ -1,6 +1,6 @@
 # riffly
 
-### riffly is an open source platform to discover new music, glance at your Spotify statistics, make friends and recommend songs!
+### [riffly.me](https://riffly.me) is an open source platform to discover new music, glance at your Spotify statistics, make friends and recommend songs!
 > <i>This project is a part of my 6th semester Minor Project. Team members include me, [Aravind Sooryakant](https://github.com/sentieant) and [Kunal L](https://github.com/Kunal-JockL).</i>
 
 <hr>
