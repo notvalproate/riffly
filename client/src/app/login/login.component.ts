@@ -14,21 +14,11 @@ export class LoginComponent implements OnInit {
     private auth: AuthService = inject(AuthService);
 
     ngOnInit(): void {
-        this.auth.hasAuthToken().subscribe((resp: any) => {
-            if(resp.body.hasToken) {
-                this.router.navigate(['home']);
-                return;
-            }
+        this.auth.authorizeWithParams()?.subscribe((resp: any) => {
+            this.router.navigate(['home']);
+        });
 
-            if(this.auth.hasError()) {
-                this.router.navigate(['login']);
-                return;
-            }
-
-            this.auth.authorizeWithParams()?.subscribe((resp: any) => {
-                this.router.navigate(['home']);
-            });
-        })
+        console.log('hi');
     }
 
     onSubmit(event: Event) {

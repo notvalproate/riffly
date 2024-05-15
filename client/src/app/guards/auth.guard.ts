@@ -1,16 +1,33 @@
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs';
 
-export const authGuard: CanActivateFn = (route, state) => {
-    const path: string = state.url;
+export const authGuard: CanActivateFn = (route, state): Observable<boolean | UrlTree> => {
+    const path: string = route.url[0]?.path;
     const auth: AuthService = inject(AuthService);
     const router: Router = inject(Router);
-    let allow: boolean = true;
 
-    auth.hasAuthToken().subscribe((resp: any) => {
-        return resp.body.hasToken;
-    });
+    return auth.hasAuthToken().pipe(
+        map((resp: any) => {
+            let allow = true;
+            let url = '/login';
 
-    return allow;
+            if(!resp.body.hasToken) {
+                allow = false;
+            }
+
+            if(path === undefined || path === 'login') {
+                allow = !allow;
+                url = '/home';
+            }
+
+            if(allow) {
+                return true;
+            }
+
+            return router.parseUrl(url);
+        })
+    );
 };

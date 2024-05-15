@@ -24,10 +24,13 @@ export class AuthService extends ApiService {
     }
 
     authorizeWithParams() {
+
         const params : URLSearchParams = new URLSearchParams(window.location.search);
 
         const code : any = params.get('code');
         const state : any = params.get('state');
+
+        console.log('authorizing with params: ', code, state);
 
         if(code && state) {
             const authParams : URLSearchParams = new URLSearchParams({
