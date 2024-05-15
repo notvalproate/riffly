@@ -18,24 +18,16 @@ export class ChartsComponent implements OnInit {
     topTracks: any = [];
 
     ngOnInit(): void {
-        this.auth.hasAuthToken().subscribe((resp: any) => {
-            if(!resp.body.hasToken) {
-                this.router.navigate(['login']);
-                return;
-            }
-
-            this.getChartsInfo();
-        })
+        this.getChartsInfo();
     }
 
     private getChartsInfo() {
         this.charts.getCharts().subscribe({
             next: (resp: any) => {
                 this.topTracks = resp.body.items;
-                console.log(resp.body);
             },
-            error: (resp: any) => {
-                console.log(resp);
+            error: (err: any) => {
+                console.log(err);
             }
         })
     }

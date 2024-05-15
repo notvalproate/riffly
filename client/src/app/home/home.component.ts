@@ -42,19 +42,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     trackPolling: any = undefined;
 
     ngOnInit(): void {
-        this.auth.hasAuthToken().subscribe((resp: any) => {
-            if(!resp.body.hasToken) {
-                this.router.navigate(['login']);
-                return;
-            }
+        this.getUserInfo();
 
-            this.getUserInfo();
-
-            this.progressPoller.config({
-                intervalTime: 1000,
-            });
-            this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
-        })
+        this.progressPoller.config({
+            intervalTime: 1000,
+        });
+        this.playerPoller.startPolling(this.getCurrentTrack.bind(this));
     }
 
     ngOnDestroy() {
