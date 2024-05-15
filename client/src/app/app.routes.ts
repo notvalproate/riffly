@@ -6,9 +6,9 @@ import { ChartsComponent } from './charts/charts.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-    {'path': '', component:LoginComponent },
-    {'path': 'login', component:LoginComponent },
-    {'path': 'home', component:HomeComponent, canActivate: [authGuard]},
-    {'path': 'charts', component:ChartsComponent, canActivate: [authGuard]},
-    {'path': '**', component:LoginComponent },
+    {'path': '', component:LoginComponent, canActivate: [authGuard]},
+    {'path': 'login', component:LoginComponent, canActivate: [authGuard] },
+    {'path': 'home', component:HomeComponent, canActivate: [authGuard] },
+    {'path': 'charts', component:ChartsComponent, canActivate: [authGuard] },
+    {'path': '**', component:LoginComponent, canActivate: [authGuard] },
 ];
