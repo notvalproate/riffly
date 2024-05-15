@@ -25,10 +25,9 @@ export class ChartsComponent implements OnInit {
         this.charts.getCharts().subscribe({
             next: (resp: any) => {
                 this.topTracks = resp.body.items;
-                console.log(resp.body);
             },
-            error: (resp: any) => {
-                console.log(resp);
+            error: (err: any) => {
+                console.log(err);
             }
         })
     }

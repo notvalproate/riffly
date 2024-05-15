@@ -17,8 +17,6 @@ export class LoginComponent implements OnInit {
         this.auth.authorizeWithParams()?.subscribe((resp: any) => {
             this.router.navigate(['home']);
         });
-
-        console.log('hi');
     }
 
     onSubmit(event: Event) {
