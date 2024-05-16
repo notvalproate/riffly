@@ -52,9 +52,10 @@ class SpotifyAuth {
 
         res.status(result.status);
 
-        const authInfo = await result.json();
-
-        this.setCookieTokens(authInfo, res);
+        if(result.status === 200) {
+            const authInfo = await result.json();
+            this.setCookieTokens(authInfo, res);
+        }
     }
 
     static async refreshCurrentTokens(req, res) {
@@ -70,12 +71,13 @@ class SpotifyAuth {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: params,
         });
-
+    
         res.status(result.status);
 
-        const newAuthInfo = await result.json();
-
-        this.setCookieTokens(newAuthInfo, res);
+        if(result.status === 200) {
+            const newAuthInfo = await result.json();
+            this.setCookieTokens(newAuthInfo, res);
+        }
     }
 
     static async deleteCookieTokens(res) {
