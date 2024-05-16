@@ -8,30 +8,25 @@ export const authGuard: CanActivateFn = (route, state): Observable<boolean | Url
     const auth: AuthService = inject(AuthService);
     const router: Router = inject(Router);
 
-    if(path === '/auth') {
-        console.log('hi');
-        return of(true);
-    } else {
-        return auth.hasAuthToken().pipe(
-            map((resp: any) => {
-                let allow = true;
-                let url = '/login';
+    return auth.hasAuthToken().pipe(
+        map((resp: any) => {
+            let allow = true;
+            let url = '/login';
 
-                if(!resp.body.hasToken) {
-                    allow = false;
-                }
+            if(!resp.body.hasToken) {
+                allow = false;
+            }
 
-                if(path === undefined || path === 'login') {
-                    allow = !allow;
-                    url = '/home';
-                }
+            if(path === undefined || path === 'login') {
+                allow = !allow;
+                url = '/home';
+            }
 
-                if(allow) {
-                    return true;
-                }
+            if(allow) {
+                return true;
+            }
 
-                return router.parseUrl(url);
-            })
-        );
-    }
+            return router.parseUrl(url);
+        })
+    );
 };
