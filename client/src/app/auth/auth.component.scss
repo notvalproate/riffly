@@ -1,0 +1,60 @@
+@mixin keyframes($animation-name) {
+    @-webkit-keyframes #{$animation-name} {
+      @content;
+    }
+    @-moz-keyframes #{$animation-name} {
+      @content;
+    }
+    @-ms-keyframes #{$animation-name} {
+      @content;
+    }
+    @-o-keyframes #{$animation-name} {
+      @content;
+    }
+    @keyframes #{$animation-name} {
+      @content;
+    }
+}
+
+@mixin animation($str) {
+    -webkit-animation: #{$str};
+    -moz-animation: #{$str};
+    -ms-animation: #{$str};
+    -o-animation: #{$str};
+    animation: #{$str};
+}
+
+@include keyframes(loading) {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 2vh;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 2rem;
+
+    &::before {
+        content: "" ;
+        width: 6vh;
+        height: 6vh;
+        border: 0.75vh solid rgb(122, 122, 122);
+        border-top-color: orange;
+        border-radius: 50%;
+        @include animation('loading 1s cubic-bezier(.86,.39,.2,.85) infinite');
+    }
+}
