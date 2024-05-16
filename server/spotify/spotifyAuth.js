@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const clientID = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 const clientURL = process.env.CLIENT_URL;
-const redirectURI = clientURL + '/login';
+const redirectURI = clientURL + '/auth';
 const domain = process.env.DOMAIN;
 
 class SpotifyAuth {

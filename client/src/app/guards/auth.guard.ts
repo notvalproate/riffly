@@ -9,6 +9,7 @@ export const authGuard: CanActivateFn = (route, state): Observable<boolean | Url
     const router: Router = inject(Router);
 
     if(path === '/auth') {
+        console.log('hi');
         return of(true);
     } else {
         return auth.hasAuthToken().pipe(

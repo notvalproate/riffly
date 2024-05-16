@@ -9,7 +9,7 @@ import { AuthComponent } from './auth/auth.component';
 export const routes: Routes = [
     {'path': '', component:LoginComponent, canActivate: [authGuard] },
     {'path': 'login', component:LoginComponent, canActivate: [authGuard] },
-    {'path': 'auth', component:AuthComponent, canActivate: [authGuard] },
+    {'path': 'auth', component:AuthComponent },
     {'path': 'home', component:HomeComponent, canActivate: [authGuard] },
     {'path': 'charts', component:ChartsComponent, canActivate: [authGuard] },
     {'path': '**', component:LoginComponent, canActivate: [authGuard] },
