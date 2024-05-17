@@ -1,7 +1,5 @@
 const musixMatchToken = process.env.MUSIX_MATCH_TOKEN;
 
-const DEBUG_LYRICS = false;
-
 class MusixmatchAPI {
     static musixmatchApiUrl = 'https://api.musixmatch.com/ws/1.1'
 
