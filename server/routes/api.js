@@ -21,7 +21,7 @@ router.get('/getLyrics', async (req, res) => {
     let lyrics = await GeniusAPI.getLyrics(currentTrack.artists, currentTrack.title);
 
     if(lyrics === null) {
-        lyrics = await MusixmatchAPI.getLyrics(currentTrack.artists, currentTrack.title);
+        lyrics = await MusixmatchAPI.getLyrics(req.query.isrc);
     }
 
     res.json(lyrics);
