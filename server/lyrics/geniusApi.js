@@ -9,20 +9,16 @@ class GeniusAPI {
 
     static async getLyrics(artists, title) {
         try {
-            // title = cleanTitleForSearch(title);
-
-            const hasMultipleArtists = Array.isArray(artists);
-
-            if(!hasMultipleArtists) {
-                return await this.getBestLyrics([artists], title);
-            }
-
             for(let i = 0; i < artists.length; i++) {
                 const result = await this.getBestLyrics([artists[i]], title);
 
                 if(result !== null) {
                     return result;
                 }
+            }
+
+            if(artists.length === 1) {
+                return null;
             }
 
             return await this.getBestLyrics(artists, title);

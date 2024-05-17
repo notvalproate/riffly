@@ -16,10 +16,21 @@ router.get('/getTrack', async (req, res) => {
 });
 
 router.get('/getLyrics', async (req, res) => {
-    let lyrics = await GeniusAPI.getLyrics(req.query.artists, req.query.title);
+    const params = new URLSearchParams({
+        type: 'track',
+        q: `isrc:${req.query.isrc}`,
+    })
+
+    let currentTrack = await SpotifyAPI.Get(`/search?${params.toString()}`, req, res);
+    currentTrack = currentTrack.tracks.items[0];
+
+    const artists = currentTrack.artists.map((artist) => artist.name);
+    const title = currentTrack.name;
+
+    let lyrics = await GeniusAPI.getLyrics(artists, title);
 
     if(lyrics === null) {
-        lyrics = await MusixmatchAPI.getLyrics(req.query.artists, req.query.title);
+        lyrics = await MusixmatchAPI.getLyrics(artists, title);
     }
 
     res.json(lyrics);

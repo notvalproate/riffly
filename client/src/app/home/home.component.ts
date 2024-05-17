@@ -79,6 +79,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                 this.isPlayerActive = true;
 
+                console.log(resp.body.item);
+
                 this.currentSongImgUrl = resp.body.item.album.images[0].url;
                 this.currentSongTitle = resp.body.item.name;
                 this.currentSongUrl = resp.body.item.external_urls.spotify;
@@ -95,7 +97,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                     this.loadingLyrics = true;
 
-                    this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
+                    this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name, resp.body.item.external_ids.isrc).subscribe({
                         next: (resp: any) => {
                             this.loadingLyrics = false;
 
