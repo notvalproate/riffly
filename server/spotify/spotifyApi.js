@@ -15,6 +15,24 @@ class SpotifyAPI {
         }
     }
 
+    static async getSongByISRC(isrc, req, res) {
+        const params = new URLSearchParams({
+            type: 'track',
+            q: `isrc:${isrc}`,
+        });
+    
+        let currentTrack = await SpotifyAPI.Get(`/search?${params.toString()}`, req, res);
+        currentTrack = currentTrack.tracks.items[0];
+
+        const artists = currentTrack.artists.map((artist) => artist.name);
+        const title = currentTrack.name;
+
+        return {
+            artists: artists,
+            title: title
+        }
+    } 
+
     static async handleResponseStatus(result, res) {
         res.status(result.status);
 

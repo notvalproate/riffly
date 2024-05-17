@@ -13,10 +13,10 @@ export class UserInfoService extends ApiService {
         return this.http.get(this.apiUrl + '/getTrack', this.requestOptions);
     }
 
-    getLyrics(artists: string[], title: string, isrc: string) {
-        const params = new URLSearchParams(artists.map(artist => ['artists', artist]));
-        params.append('title', title);
-        params.append('isrc', isrc);
+    getLyrics(isrc: string) {
+        const params = new URLSearchParams({
+            isrc: isrc,
+        });
 
         return this.http.get(this.apiUrl + '/getLyrics?' + params.toString(), this.requestOptions);
     }
