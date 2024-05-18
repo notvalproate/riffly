@@ -5,9 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'client/**'
       - 'server/**'
-      - '.github/**'
+      - '.github/workflows/github-actions-ec2.yml'
 
 jobs:
   deploy:
@@ -22,22 +21,16 @@ jobs:
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SOURCE: "server/"
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
-
-      - name: Executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
+          SCRIPT_AFTER: |
             sudo apt -y update
             sudo apt install -y nodejs 
             sudo apt install -y npm
             sudo npm install -g pm2 
-            cd home/server
+            cd dist
             sudo npm i
             touch .env
             echo "${{ secrets.API_ENV }}" > .env

@@ -1,5 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -9,15 +8,8 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit {
-    private router: Router = inject(Router);
+export class LoginComponent {
     private auth: AuthService = inject(AuthService);
-
-    ngOnInit(): void {
-        this.auth.authorizeWithParams()?.subscribe((resp: any) => {
-            this.router.navigate(['home']);
-        });
-    }
 
     onSubmit(event: Event) {
         event.preventDefault();

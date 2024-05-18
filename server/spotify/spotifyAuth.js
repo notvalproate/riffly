@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const clientID = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 const clientURL = process.env.CLIENT_URL;
-const redirectURI = clientURL + '/login';
+const redirectURI = clientURL + '/auth';
 const domain = process.env.DOMAIN;
 
 class SpotifyAuth {
@@ -52,9 +52,10 @@ class SpotifyAuth {
 
         res.status(result.status);
 
-        const authInfo = await result.json();
-
-        this.setCookieTokens(authInfo, res);
+        if(result.status === 200) {
+            const authInfo = await result.json();
+            this.setCookieTokens(authInfo, res);
+        }
     }
 
     static async refreshCurrentTokens(req, res) {
@@ -70,12 +71,13 @@ class SpotifyAuth {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: params,
         });
-
+    
         res.status(result.status);
 
-        const newAuthInfo = await result.json();
-
-        this.setCookieTokens(newAuthInfo, res);
+        if(result.status === 200) {
+            const newAuthInfo = await result.json();
+            this.setCookieTokens(newAuthInfo, res);
+        }
     }
 
     static async deleteCookieTokens(res) {

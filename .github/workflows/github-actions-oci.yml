@@ -6,8 +6,7 @@ on:
       - main
     paths:
       - 'client/**'
-      - 'server/**'
-      - '.github/**'
+      - '.github/workflows/github-actions-oci.yml'
 
 jobs:
   deploy:
@@ -15,8 +14,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the files
-        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Run CodeBuild
+        uses: aws-actions/aws-codebuild-run-build@v1
+        with:
+          project-name: riffly-build
+
+      - name: Copy S3 files
+        run: aws s3 sync s3://riffly-dist .
 
       - name: Deploy to Oracle
         uses: easingthemes/ssh-deploy@main
@@ -36,7 +47,7 @@ jobs:
             sudo apt -y update
             sudo npm install -g pm2 
             sudo npm install -g serve
-            cd home/client
+            cd dist
             sudo pm2 stop client
             sudo pm2 delete client
-            sudo pm2 start --name="client" sudo -- serve -s dist/client/browser -c ../../../serve.json -l 80
+            sudo pm2 start --name="client" sudo -- serve -s client/browser -c ../../serve.json -l 80

@@ -1,0 +1,19 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20.x
+    commands:
+      - cd client
+      - echo install process started
+      - npm install && npm install -g @angular/cli
+  build:
+    commands:
+      - echo build process started now
+      - ng build --configuration=production
+      - mv serve.json ./dist/serve.json
+  post_build:
+    commands:
+      - echo build process finished, we should uplload to S3 now
+      - ls -la
+      - aws s3 sync ./dist s3://riffly-dist --delete
