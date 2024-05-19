@@ -13,8 +13,10 @@ router.get('/getUserInfo', async (req, res) => {
     res.json(userInfo);
 });
 
-router.get('/getTrack', async (req, res) => {
-    const playerInfo = await SpotifyAPI.Get('/me/player', req, res);
+router.get('/getPlayer', async (req, res) => {
+    let playerInfo = await SpotifyAPI.Get('/me/player', req, res);
+
+    playerInfo = SpotifyParser.parsePlayerInfo(playerInfo);
 
     res.json(playerInfo);
 });

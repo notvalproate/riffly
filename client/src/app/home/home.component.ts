@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     currentSongImgUrl: string = '';
     currentSongTitle: string = '';
     currentSongUrl: string = '';
-    currentSongID: string = '';
+    currentISRC: string = '';
     currentSongLength: number = 0;
     currentSongProgress: number = 0;
     currentProgressPercent: string = '0%';
@@ -69,35 +69,37 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     async getCurrentTrack() {
-        this.userInfoService.getTrackInfo().subscribe({
+        this.userInfoService.getPlayerInfo().subscribe({
             next: (resp: any) => {
-
                 if(resp.status === 204) {
                     this.isPlayerActive = false;
                     return;
                 }
 
-                let currentID = this.currentSongID;
+                const info = resp.body;
+
+                let previousISRC = this.currentISRC;
 
                 this.isPlayerActive = true;
 
-                this.currentSongImgUrl = resp.body.item.album.images[0].url;
-                this.currentSongTitle = resp.body.item.name;
-                this.currentSongUrl = resp.body.item.external_urls.spotify;
-                this.currentSongID = resp.body.item.id;
-                this.currentSongLength = resp.body.item.duration_ms;
-                this.currentSongProgress = resp.body.progress_ms;
+                this.currentSongImgUrl = info.item.images.default;
+                this.currentSongTitle = info.item.title;
+                this.currentSongUrl = info.item.url;
+                this.currentISRC = info.item.isrc;
+
+                this.currentSongLength = info.player.duration;
+                this.currentSongProgress = info.player.progress;
                 this.currentProgressPercent = ((this.currentSongProgress * 100) / this.currentSongLength) + '%';
 
-                this.currentArtists = resp.body.item.artists.map((artist: any) => artist.name);
-                this.currentArtistsUrls = resp.body.item.artists.map((artist: any) => artist.external_urls.spotify);
+                this.currentArtists = info.item.artists.map((artist: any) => artist.name);
+                this.currentArtistsUrls = info.item.artists.map((artist: any) => artist.url);
 
-                if(currentID !== resp.body.item.id) {
+                if(previousISRC !== this.currentISRC) {
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
 
                     this.loadingLyrics = true;
 
-                    this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
+                    this.userInfoService.getLyrics(this.currentArtists, this.currentSongTitle).subscribe({
                         next: (resp: any) => {
                             this.loadingLyrics = false;
 
@@ -107,15 +109,17 @@ export class HomeComponent implements OnInit, OnDestroy {
                                 return;
                             }
 
-                            this.lyricsUrl = resp.body.url;
-                            this.lyricsProvider = resp.body.provider;
+                            const lyrics = resp.body;
 
-                            if(resp.body.lyrics === null) {
+                            this.lyricsUrl = lyrics.url;
+                            this.lyricsProvider = lyrics.provider;
+
+                            if(lyrics.lyricsBody === null) {
                                 this.currentLyrics = [];
                                 return;
                             }
 
-                            this.currentLyrics = resp.body.lyrics.split('\n');
+                            this.currentLyrics = lyrics.lyricsBody.split('\n');
                         },
                         error: (resp: any) => {
                             this.loadingLyrics = false;
@@ -130,7 +134,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             error: (resp: any) => {
                 this.isPlayerActive = false;
                 this.currentLyrics = [];
-                this.currentSongID = '';
+                this.currentISRC = '';
                 this.progressPoller.stopPolling();
                 console.log(resp.error);
             }

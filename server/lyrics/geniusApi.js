@@ -56,7 +56,7 @@ class GeniusAPI {
                 return {
                     provider: 'genius',
                     url: result.url,
-                    lyrics: await this.convertResultToLyrics(result)
+                    lyricsBody: await this.convertResultToLyrics(result)
                 };
             }
         }

@@ -26,7 +26,7 @@ class MusixmatchAPI {
             return {
                 provider: 'musixmatch',
                 url: bestSearch.track_share_url,
-                lyrics: lyrics.lyrics_body,
+                lyricsBody: lyrics.lyrics_body,
             };
         } catch (err) {
             console.log(err);
