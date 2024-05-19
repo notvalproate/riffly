@@ -57,8 +57,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     async getUserInfo() {
         this.userInfoService.getUserInfo().subscribe({
             next: (resp: any) => {
-                this.profileName = resp.body.display_name;
-                this.profileUrl = resp.body.external_urls.spotify;
+                const info = resp.body;
+
+                this.profileName = info.user.displayName;
+                this.profileUrl = info.user.url;
             },
             error: (resp: any) => {
                 console.log(resp.error);
