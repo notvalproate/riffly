@@ -3,11 +3,13 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
 import { PollingService } from '../services/polling.service';
+import { SongCardComponent } from '../general-components/song-card/song-card.component';
+import { SongCardData } from '../interfaces/SongCardData';
 
 @Component({
   selector: 'home',
   standalone: true,
-  imports: [],
+  imports: [ SongCardComponent ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -17,6 +19,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private userInfoService: UserInfoService = inject(UserInfoService);
     private playerPoller: PollingService = new PollingService();
     private progressPoller: PollingService = new PollingService();
+
+    songCardData : SongCardData;
 
     profileName: string = '';
     profileUrl: string = '';
@@ -40,6 +44,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     lyricsUrl: string = '';
 
     trackPolling: any = undefined;
+
+    constructor() {
+        this.songCardData = {
+            currentSongImgUrl: '',
+            currentSongTitle: '',
+            currentSongUrl: '',
+            currentSongID: '',
+            currentArtists: [],
+            currentArtistsUrls: []
+        };
+    }
 
     ngOnInit(): void {
         this.getUserInfo();
@@ -89,6 +104,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                 this.currentArtists = resp.body.item.artists.map((artist: any) => artist.name);
                 this.currentArtistsUrls = resp.body.item.artists.map((artist: any) => artist.external_urls.spotify);
+                
+                this.songCardData = {
+                    currentSongImgUrl : this.currentSongImgUrl,
+                    currentSongTitle : this.currentSongTitle,
+                    currentSongUrl : this.currentSongUrl,
+                    currentSongID : this.currentSongID,
+                    currentArtists : this.currentArtists,
+                    currentArtistsUrls : this.currentArtistsUrls,
+                }
 
                 if(currentID !== resp.body.item.id) {
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
