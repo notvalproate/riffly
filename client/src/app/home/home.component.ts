@@ -95,7 +95,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                     this.loadingLyrics = true;
 
-                    this.userInfoService.getLyrics(resp.body.item.artists.map((artist: any) => artist.name), resp.body.item.name).subscribe({
+                    this.userInfoService.getLyrics(resp.body.item.external_ids.isrc).subscribe({
                         next: (resp: any) => {
                             this.loadingLyrics = false;
 
