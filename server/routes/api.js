@@ -25,16 +25,26 @@ router.get('/getPlayer', async (req, res) => {
     res.json(playerInfo);
 });
 
+const redisClient = require('../database/cacher.js');
+
 router.get('/getLyrics', async (req, res) => {
-    const currentTrack = await SpotifyAPI.getSongByISRC(req.query.isrc, req, res);
+    const cachedLyric = await redisClient.get(req.query.isrc);
 
-    let lyrics = await GeniusAPI.getLyrics(currentTrack.artists, currentTrack.title);
+    if(cachedLyric !== null) {
+        res.json(JSON.parse(cachedLyric));
+    } else {
+        const currentTrack = await SpotifyAPI.getSongByISRC(req.query.isrc, req, res);
+    
+        let lyrics = await GeniusAPI.getLyrics(currentTrack.artists, currentTrack.title);
+    
+        if(lyrics === null) {
+            lyrics = await MusixmatchAPI.getLyrics(req.query.isrc);
+        }
 
-    if(lyrics === null) {
-        lyrics = await MusixmatchAPI.getLyrics(req.query.isrc);
+        await redisClient.set(req.query.isrc, JSON.stringify(lyrics));
+
+        res.json(lyrics);
     }
-
-    res.json(lyrics);
 });
 
 router.get('/getUserCharts', async (req, res) => {
