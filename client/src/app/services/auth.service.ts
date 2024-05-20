@@ -35,7 +35,7 @@ export class AuthService extends ApiService {
                 state: state
             });
 
-            return this.http.get(this.apiAuthUrl + '/getAuthInfo?' + authParams.toString(), this.requestOptions);
+            return this.http.get(this.apiAuthUrl + '/info?' + authParams.toString(), this.requestOptions);
         }
 
         return undefined;

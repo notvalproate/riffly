@@ -9,8 +9,8 @@ export class UserInfoService extends ApiService {
         return this.http.get(this.apiUrl + '/getUserInfo', this.requestOptions);
     }
 
-    getTrackInfo() {
-        return this.http.get(this.apiUrl + '/getTrack', this.requestOptions);
+    getPlayerInfo() {
+        return this.http.get(this.apiUrl + '/getPlayer', this.requestOptions);
     }
 
     getLyrics(isrc: string) {
