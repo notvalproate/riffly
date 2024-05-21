@@ -20,9 +20,11 @@ app.use(
 app.use(cookieParser());
 
 const authRouter = require('./routes/auth.js');
+const meRouter = require('./routes/me.js');
 const apiRouter = require('./routes/api.js');
 
 app.use('/auth', authRouter);
+app.use('/me', meRouter);
 app.use('/api', apiRouter);
 
 app.listen(PORT, () => {
