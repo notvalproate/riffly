@@ -4,13 +4,13 @@ import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
 import { PollingService } from '../services/polling.service';
 import { SongCardComponent } from '../general-components/song-card/song-card.component';
-import { ProgressTrackerComponent } from './home-components/progress-tracker/progress-tracker.component';
+//import { ProgressTrackerComponent } from './home-components/progress-tracker/progress-tracker.component';
 import { SongCardData } from '../interfaces/SongCardData';
 
 @Component({
   selector: 'home',
   standalone: true,
-  imports: [ SongCardComponent, ProgressTrackerComponent ],
+  imports: [ SongCardComponent, ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -107,8 +107,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.currentSongProgress = info.player.progress;
                 this.currentProgressPercent = ((this.currentSongProgress * 100) / this.currentSongLength) + '%';
 
-                this.currentArtists = resp.body.item.artists.map((artist: any) => artist.name);
-                this.currentArtistsUrls = resp.body.item.artists.map((artist: any) => artist.external_urls.spotify);
+                this.currentArtists = info.item.artists.map((artist: any) => artist.name);
+                this.currentArtistsUrls = info.item.artists.map((artist: any) => artist.url);
 
                 if(previousISRC !== this.currentISRC) {
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
