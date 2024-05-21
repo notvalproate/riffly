@@ -110,6 +110,13 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.currentArtists = info.item.artists.map((artist: any) => artist.name);
                 this.currentArtistsUrls = info.item.artists.map((artist: any) => artist.url);
 
+                this.songCardData.currentSongImgUrl = this.currentSongImgUrl;
+                this.songCardData.currentSongTitle = this.currentSongTitle;
+                this.songCardData.currentSongUrl = this.currentSongUrl;
+                this.songCardData.currentSongID = this.currentISRC;
+                this.songCardData.currentArtists = this.currentArtists;
+                this.songCardData.currentArtistsUrls = this.currentArtistsUrls;
+
                 if(previousISRC !== this.currentISRC) {
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
 

@@ -9,37 +9,14 @@ import { PollingService } from '../../services/polling.service';
   templateUrl: './song-card.component.html',
   styleUrl: './song-card.component.scss'
 })
-export class SongCardComponent implements OnInit, OnDestroy{
-  private cardPoller: PollingService = new PollingService();
+export class SongCardComponent implements OnInit { 
   @Input() songCardData?: SongCardData;
-  
-  currentSongImgUrl: string = '';
-  currentSongTitle: string = '';
-  currentSongUrl: string = '';
-  currentSongID: string = '';
-  currentArtists: string[] = [];
-  currentArtistsUrls: string[] = [];
 
   ngOnInit(): void {
-    this.cardPoller.config({
-      intervalTime: 1000,
-  });
-    this.cardPoller.startPolling(this.cardUpdate.bind(this));
+    this.print();
   }
 
-  ngOnDestroy(): void {
-    this.cardPoller.stopPolling();
+  print(): void {
+    console.log(this.songCardData);
   }
-
-  cardUpdate(){
-    if (this.songCardData)
-      this.currentSongImgUrl = this.songCardData?.currentSongImgUrl?? '';
-      this.currentSongTitle = this.songCardData?.currentSongTitle?? '';
-      this.currentSongUrl = this.songCardData?.currentSongUrl?? '';
-      this.currentSongID = this.songCardData?.currentSongID?? '';
-      this.currentArtists = this.songCardData?.currentArtists?? [];
-      this.currentArtistsUrls = this.songCardData?.currentArtistsUrls?? [];
-      //console.log(this.songCardData);
-  }
-    
 }

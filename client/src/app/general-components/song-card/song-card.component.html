@@ -1,14 +1,16 @@
-<div class="song">
-    <a href="{{currentSongUrl}}" target="_blank" class="song-cover-wrapper">
-        <img class="song-cover" src="{{currentSongImgUrl}}" alt="trackImage">
-    </a>
-    <div class="song-content">
-        <h1 class="overflow-elipses"><a class="redirect-link" href="{{currentSongUrl}}" target="_blank">{{currentSongTitle}}</a></h1>
-        <h3 class="overflow-elipses">
-            @for (artist of currentArtists; track $index) {
-                <a class="redirect-link" href="{{currentArtistsUrls[$index]}}" target="_blank">{{artist}}</a>
-                @if ($index !== currentArtists.length - 1) {,&nbsp;}
-            }
-        </h3>
-    </div> 
-</div>
+@if (songCardData) {
+    <div class="song">
+        <a href="{{songCardData.currentSongUrl}}" target="_blank" class="song-cover-wrapper">
+            <img class="song-cover" src="{{songCardData.currentSongImgUrl}}" alt="trackImage">
+        </a>
+        <div class="song-content">
+            <h1 class="overflow-elipses"><a class="redirect-link" href="{{songCardData.currentSongUrl}}" target="_blank">{{songCardData.currentSongTitle}}</a></h1>
+            <h3 class="overflow-elipses">
+                @for (artist of songCardData.currentArtists; track $index) {
+                    <a class="redirect-link" href="{{songCardData.currentArtistsUrls[$index]}}" target="_blank">{{artist}}</a>
+                    @if ($index === songCardData.currentArtists.length - 1) {}
+                }
+            </h3>
+        </div> 
+    </div>
+}
