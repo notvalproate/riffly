@@ -17,14 +17,14 @@ router.get('/logout', (req, res) => {
     res.send({ loggedOut: true });
 });
 
-router.get('/hasAuthToken', (req, res) => {
-    res.json({ hasToken: SpotifyAuth.hasAuthToken(req) });
-});
-
-router.get('/getAuthInfo', async (req, res) => {
+router.get('/info', async (req, res) => {
     await SpotifyAuth.getAuthInfo(req, res);
 
     res.json({ authSuccessful: true });
+});
+
+router.get('/hasAuthToken', (req, res) => {
+    res.json({ hasToken: SpotifyAuth.hasAuthToken(req) });
 });
 
 module.exports = router;

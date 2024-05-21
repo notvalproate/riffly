@@ -8,7 +8,7 @@
 ## Setup
 1. **Clone the repository**: `git clone https://github.com/notvalproate/riffly.git`
 2. **Navigate to the client folder**: `cd client`
-3. **Install the packages needed**: `npm i`
+3. **Install the packages needed**: `npm i && npm i -g @angular/cli`
 4. **Serve the angular files**: `ng s`
 5. **Navigate to the server folder**: `cd ../server`
 6. **Install the packages needed**: `npm i`

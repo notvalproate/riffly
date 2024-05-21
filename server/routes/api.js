@@ -3,23 +3,35 @@ const { SpotifyAPI } = require('../spotify/spotifyApi.js');
 const { GeniusAPI } = require('../lyrics/geniusApi.js');
 const { MusixmatchAPI } = require('../lyrics/musixmatchApi.js');
 
-router.get('/getUserInfo', async (req, res) => {
-    const userInfo = await SpotifyAPI.Get('/me', req, res);
+const { SpotifyParser } = require('../spotify/spotifyParser.js');
 
+router.get('/getUserInfo', async (req, res) => {
+    let userInfo = await SpotifyAPI.Get('/me', req, res);
+
+    if(res.statusCode === 200) {
+        userInfo = SpotifyParser.parseUserInfo(userInfo);
+    }
+    
     res.json(userInfo);
 });
 
-router.get('/getTrack', async (req, res) => {
-    const playerInfo = await SpotifyAPI.Get('/me/player', req, res);
+router.get('/getPlayer', async (req, res) => {
+    let playerInfo = await SpotifyAPI.Get('/me/player', req, res);
+
+    if(res.statusCode === 200) {
+        playerInfo = SpotifyParser.parsePlayerInfo(playerInfo);
+    }
 
     res.json(playerInfo);
 });
 
 router.get('/getLyrics', async (req, res) => {
-    let lyrics = await GeniusAPI.getLyrics(req.query.artists, req.query.title);
+    const currentTrack = await SpotifyAPI.getSongByISRC(req.query.isrc, req, res);
+
+    let lyrics = await GeniusAPI.getLyrics(currentTrack.artists, currentTrack.title);
 
     if(lyrics === null) {
-        lyrics = await MusixmatchAPI.getLyrics(req.query.artists, req.query.title);
+        lyrics = await MusixmatchAPI.getLyrics(req.query.isrc);
     }
 
     res.json(lyrics);

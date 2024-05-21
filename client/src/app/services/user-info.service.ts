@@ -9,13 +9,14 @@ export class UserInfoService extends ApiService {
         return this.http.get(this.apiUrl + '/getUserInfo', this.requestOptions);
     }
 
-    getTrackInfo() {
-        return this.http.get(this.apiUrl + '/getTrack', this.requestOptions);
+    getPlayerInfo() {
+        return this.http.get(this.apiUrl + '/getPlayer', this.requestOptions);
     }
 
-    getLyrics(artists: string[], title : string) {
-        const params = new URLSearchParams(artists.map(artist => ['artists', artist]));
-        params.append('title', title);
+    getLyrics(isrc: string) {
+        const params = new URLSearchParams({
+            isrc: isrc,
+        });
 
         return this.http.get(this.apiUrl + '/getLyrics?' + params.toString(), this.requestOptions);
     }
