@@ -7,7 +7,7 @@
             <h1 class="overflow-elipses"><a class="redirect-link" href="{{songCardData.currentSongUrl}}" target="_blank">{{songCardData.currentSongTitle}}</a></h1>
             <h3 class="overflow-elipses">
                 @for (artist of songCardData.currentArtists; track $index) {
-                    <a class="redirect-link" href="{{songCardData.currentArtistsUrls[$index]}}" target="_blank">{{artist}}</a>
+                    <a class="redirect-link" href="{{songCardData.currentArtistsUrls[$index]}}" target="_blank">{{artist}} ,</a>
                     @if ($index === songCardData.currentArtists.length - 1) {}
                 }
             </h3>
