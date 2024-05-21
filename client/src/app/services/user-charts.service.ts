@@ -6,6 +6,6 @@ import { ApiService } from './api.service';
 })
 export class UserChartsService extends ApiService {
     getCharts() {
-        return this.http.get(this.apiUrl + '/getUserCharts', this.requestOptions);
+        return this.http.get(this.apiUrl + '/me/top/tracks', this.requestOptions);
     }
 }

@@ -10,7 +10,7 @@ export class UserInfoService extends ApiService {
     }
 
     getPlayerInfo() {
-        return this.http.get(this.apiUrl + '/api/getPlayer', this.requestOptions);
+        return this.http.get(this.apiUrl + '/me/player', this.requestOptions);
     }
 
     getLyrics(isrc: string) {
@@ -18,6 +18,6 @@ export class UserInfoService extends ApiService {
             isrc: isrc,
         });
 
-        return this.http.get(this.apiUrl + '/api/getLyrics?' + params.toString(), this.requestOptions);
+        return this.http.get(this.apiUrl + '/track/lyrics?' + params.toString(), this.requestOptions);
     }
 }
