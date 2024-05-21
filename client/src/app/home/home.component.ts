@@ -4,13 +4,14 @@ import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
 import { PollingService } from '../services/polling.service';
 import { SongCardComponent } from '../general-components/song-card/song-card.component';
-//import { ProgressTrackerComponent } from './home-components/progress-tracker/progress-tracker.component';
+import { ProgressTrackerComponent } from './home-components/progress-tracker/progress-tracker.component';
 import { SongCardData } from '../interfaces/SongCardData';
+import { ProgressData } from '../interfaces/ProgressData';
 
 @Component({
   selector: 'home',
   standalone: true,
-  imports: [ SongCardComponent, ],
+  imports: [ SongCardComponent, ProgressTrackerComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -22,6 +23,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private progressPoller: PollingService = new PollingService();
 
     songCardData : SongCardData;
+    progressData : ProgressData;
 
     profileName: string = '';
     profileUrl: string = '';
@@ -55,6 +57,12 @@ export class HomeComponent implements OnInit, OnDestroy {
             currentArtists: [],
             currentArtistsUrls: []
         };
+        this.progressData = {
+            currentSongID: '',
+            currentSongLength: 0,
+            currentSongProgress: 0,
+            currentProgressPercent: '',
+        }
     }
 
     ngOnInit(): void {
@@ -116,6 +124,11 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.songCardData.currentSongID = this.currentISRC;
                 this.songCardData.currentArtists = this.currentArtists;
                 this.songCardData.currentArtistsUrls = this.currentArtistsUrls;
+
+                this.progressData.currentSongID = this.currentISRC;
+                this.progressData.currentSongLength = this.currentSongLength;
+                this.progressData.currentSongProgress = this.currentSongProgress;
+                this.progressData.currentProgressPercent = this.currentProgressPercent;
 
                 if(previousISRC !== this.currentISRC) {
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));

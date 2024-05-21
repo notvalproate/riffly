@@ -1,13 +1,13 @@
-<!-- <div class="progress-wrapper">
+<div class="progress-wrapper">
     <div class="progress-bar-wrapper">
-        <div class="progress-bar" [style.width]="currentProgressPercent"></div>
+        <div class="progress-bar" [style.width]="progressData?.currentProgressPercent"></div>
     </div>
     <div class="progress-times">
         <span class="progress-time">
-            {{msToMinutesString(currentSongProgress)}}
+            {{msToMinutesString(progressData?.currentSongProgress ?? 0)}}
         </span>
         <span class="progress-time">
-            {{msToMinutesString(currentSongLength)}}
+            {{msToMinutesString(progressData?.currentSongLength ?? 0)}}
         </span>
     </div>
-</div> -->
+</div>
