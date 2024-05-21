@@ -4,12 +4,13 @@ import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
 import { PollingService } from '../services/polling.service';
 import { SongCardComponent } from '../general-components/song-card/song-card.component';
+import { ProgressTrackerComponent } from './home-components/progress-tracker/progress-tracker.component';
 import { SongCardData } from '../interfaces/SongCardData';
 
 @Component({
   selector: 'home',
   standalone: true,
-  imports: [ SongCardComponent ],
+  imports: [ SongCardComponent, ProgressTrackerComponent ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

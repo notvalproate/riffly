@@ -1,1 +1,13 @@
-<p>progress-tracker works!</p>
+<div class="progress-wrapper">
+    <div class="progress-bar-wrapper">
+        <div class="progress-bar" [style.width]="currentProgressPercent"></div>
+    </div>
+    <div class="progress-times">
+        <span class="progress-time">
+            {{msToMinutesString(currentSongProgress)}}
+        </span>
+        <span class="progress-time">
+            {{msToMinutesString(currentSongLength)}}
+        </span>
+    </div>
+</div>

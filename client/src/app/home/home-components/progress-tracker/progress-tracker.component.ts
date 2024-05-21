@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component , OnInit, OnDestroy, input} from '@angular/core';
+import { PollingService } from '../../../services/polling.service';
+import { ProgressData } from '../../../interfaces/ProgressData';
+
 
 @Component({
   selector: 'app-progress-tracker',
@@ -7,6 +10,14 @@ import { Component } from '@angular/core';
   templateUrl: './progress-tracker.component.html',
   styleUrl: './progress-tracker.component.scss'
 })
-export class ProgressTrackerComponent {
+export class ProgressTrackerComponent implements OnInit, OnDestroy{
+  @input progressData?: ProgressData;
+  
+  ngOnInit(): void {
+      
+  }
 
+  ngOnDestroy(): void {
+      
+  }
 }
