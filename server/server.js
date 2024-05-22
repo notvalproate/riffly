@@ -27,6 +27,6 @@ app.use('/auth', authRouter);
 app.use('/me', meRouter);
 app.use('/track', trackRouter);
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log('Server running on http://localhost:' + PORT + '/');
 });
