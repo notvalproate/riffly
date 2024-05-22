@@ -8,7 +8,6 @@ import { environment } from '../../environments/environment';
 export class ApiService {
     protected http: HttpClient = inject(HttpClient);
 
-    protected apiUrl: string = environment.apiUrl + '/api';
-    protected apiAuthUrl: string = environment.apiUrl + '/auth';
+    protected apiUrl: string = environment.apiUrl;
     protected requestOptions : any = { observe: 'response', withCredentials: true };
 }

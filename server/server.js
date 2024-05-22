@@ -20,10 +20,12 @@ app.use(
 app.use(cookieParser());
 
 const authRouter = require('./routes/auth.js');
-const apiRouter = require('./routes/api.js');
+const meRouter = require('./routes/me.js');
+const trackRouter = require('./routes/track.js');
 
 app.use('/auth', authRouter);
-app.use('/api', apiRouter);
+app.use('/me', meRouter);
+app.use('/track', trackRouter);
 
 app.listen(PORT, async () => {
     console.log('Server running on http://localhost:' + PORT + '/');

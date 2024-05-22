@@ -6,11 +6,11 @@ import { ApiService } from './api.service';
 })
 export class UserInfoService extends ApiService {
     getUserInfo() {
-        return this.http.get(this.apiUrl + '/getUserInfo', this.requestOptions);
+        return this.http.get(this.apiUrl + '/me/info', this.requestOptions);
     }
 
     getPlayerInfo() {
-        return this.http.get(this.apiUrl + '/getPlayer', this.requestOptions);
+        return this.http.get(this.apiUrl + '/me/player', this.requestOptions);
     }
 
     getLyrics(isrc: string) {
@@ -18,6 +18,6 @@ export class UserInfoService extends ApiService {
             isrc: isrc,
         });
 
-        return this.http.get(this.apiUrl + '/getLyrics?' + params.toString(), this.requestOptions);
+        return this.http.get(this.apiUrl + '/track/lyrics?' + params.toString(), this.requestOptions);
     }
 }

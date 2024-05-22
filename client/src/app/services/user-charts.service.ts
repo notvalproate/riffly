@@ -6,6 +6,10 @@ import { ApiService } from './api.service';
 })
 export class UserChartsService extends ApiService {
     getCharts() {
-        return this.http.get(this.apiUrl + '/getUserCharts', this.requestOptions);
+        const params = new URLSearchParams({
+            term: 'MEDIUM',
+        });
+
+        return this.http.get(this.apiUrl + '/me/top/tracks?' + params.toString(), this.requestOptions);
     }
 }

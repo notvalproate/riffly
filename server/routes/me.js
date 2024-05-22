@@ -1,10 +1,8 @@
 const router = require('express').Router();
 const { SpotifyAPI } = require('../spotify/spotifyApi.js');
-const { LyricsAPI } = require('../lyrics/lyricsApi.js');
-
 const { SpotifyParser } = require('../spotify/spotifyParser.js');
 
-router.get('/getUserInfo', async (req, res) => {
+router.get('/info', async (req, res) => {
     let userInfo = await SpotifyAPI.Get('/me', req, res);
 
     if(res.statusCode === 200) {
@@ -14,7 +12,7 @@ router.get('/getUserInfo', async (req, res) => {
     res.json(userInfo);
 });
 
-router.get('/getPlayer', async (req, res) => {
+router.get('/player', async (req, res) => {
     let playerInfo = await SpotifyAPI.Get('/me/player', req, res);
 
     if(res.statusCode === 200) {
@@ -24,16 +22,7 @@ router.get('/getPlayer', async (req, res) => {
     res.json(playerInfo);
 });
 
-router.get('/getLyrics', async (req, res) => {
-    const lyrics = await LyricsAPI.getLyrics(req, res);
-
-    res.json(lyrics);
-});
-
-router.get('/getUserCharts', async (req, res) => {
-    const userCharts = await SpotifyAPI.Get('/me/top/tracks', req, res);
-
-    res.json(userCharts);
-});
+const topRouter = require('./top.js');
+router.use('/top', topRouter);
 
 module.exports = router;
