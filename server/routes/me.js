@@ -13,7 +13,7 @@ router.get('/info', async (req, res) => {
 });
 
 router.get('/player', async (req, res) => {
-    let playerInfo = await SpotifyAPI.Get('/me/player', req, res);
+    let playerInfo = await SpotifyAPI.Get('/me/player?additional_types=episode', req, res);
 
     if(res.statusCode === 200) {
         playerInfo = SpotifyParser.parsePlayerInfo(playerInfo);

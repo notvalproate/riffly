@@ -23,6 +23,14 @@ class SpotifyParser {
     }
 
     static parsePlayerInfo(playerInfo) {
+        if(playerInfo.currently_playing_type === 'track') {
+            return this.parseTrackInfo(playerInfo);
+        } else {
+            return this.parseEpisodeInfo(playerInfo);
+        }
+    }
+
+    static parseTrackInfo(playerInfo) {
         let parsed = {
             player: {
                 playing: playerInfo.is_playing,
@@ -44,7 +52,36 @@ class SpotifyParser {
                 url: playerInfo.item.external_urls.spotify,
                 isrc: playerInfo.item.external_ids.isrc,
                 popularity: playerInfo.item.popularity,
-            }
+            },
+        };
+
+        return parsed;
+    }
+
+    static parseEpisodeInfo(playerInfo) {
+        let parsed = {
+            player: {
+                playing: playerInfo.is_playing,
+                progress: playerInfo.progress_ms,
+                duration: playerInfo.item.duration_ms,
+                device: playerInfo.device.name,
+            },
+            itemType: playerInfo.currently_playing_type,
+            item: {
+                title: playerInfo.item.name,
+                description: playerInfo.item.description,
+                language: playerInfo.item.language,
+                show: {
+                    name: playerInfo.item.show.name,
+                    url: playerInfo.item.show.external_urls.spotify,
+                },
+                images: {
+                    default: playerInfo.item.images[1].url,
+                    large: playerInfo.item.images[0].url,
+                },
+                url: playerInfo.item.external_urls.spotify,
+                id: playerInfo.item.id,
+            },
         };
 
         return parsed;
