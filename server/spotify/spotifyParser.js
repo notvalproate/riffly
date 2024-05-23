@@ -25,8 +25,6 @@ class SpotifyParser {
     }
 
     static parseTrackInfo(playerInfo) {
-        console.log(playerInfo.item);
-
         let parsed = {
             player: {
                 playing: playerInfo.is_playing,
@@ -55,8 +53,6 @@ class SpotifyParser {
     }
 
     static parseEpisodeInfo(playerInfo) {
-        console.log(playerInfo.item);
-
         let parsed = {
             player: {
                 playing: playerInfo.is_playing,
@@ -67,6 +63,8 @@ class SpotifyParser {
             itemType: playerInfo.currently_playing_type,
             item: {
                 title: playerInfo.item.name,
+                description: playerInfo.item.description,
+                language: playerInfo.item.language,
                 show: {
                     name: playerInfo.item.show.name,
                     url: playerInfo.item.show.external_urls.spotify,
