@@ -1,7 +1,7 @@
 
 class SpotifyParser {
     static parseUserInfo(userinfo) {
-        const images = null;
+        let images = null;
 
         if(userinfo.images.length) {
             images = {
