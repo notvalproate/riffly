@@ -1,16 +1,22 @@
 
 class SpotifyParser {
     static parseUserInfo(userinfo) {
+        let images = null;
+
+        if(userinfo.images.length) {
+            images = {
+                default: userinfo.images[0].url,
+                large: userinfo.images[1].url,
+            };
+        }
+
         return {
             user: {
                 id: userinfo.id,
                 displayName: userinfo.display_name,
                 url: userinfo.external_urls.spotify,
             },
-            images: {
-                default: userinfo.images[0].url,
-                large: userinfo.images[1].url,
-            },
+            images: images,
             country: userinfo.country,
             hasPremium: userinfo.product === 'premium',
         };
