@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const asynchandler = require('express-async-handler');
+const asyncHandler = require('express-async-handler');
 const { ApiError } = require('../../utils/api.error.js');
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
@@ -9,7 +9,7 @@ const redirectURI = clientURL + '/auth';
 const domain = process.env.DOMAIN;
 
 class SpotifyAuth {
-    static hasAuthToken = asynchandler((req, res) => {
+    static hasAuthToken = asyncHandler((req, res) => {
         if (req.cookies.authToken) {
             res.status(200).json({ hasToken: true });
         }
@@ -18,7 +18,7 @@ class SpotifyAuth {
         }
     });
 
-    static async generateSpotifyAuthLink() {
+    static getSpotifyAuthLink = asyncHandler(async (req, res) => {
         const state = generateRandomCode(128);
         const hashed = await generateCodeChallenge(state);
         const codeChallenge = base64Encode(hashed);
@@ -36,10 +36,12 @@ class SpotifyAuth {
             redirect_uri: redirectURI,
         });
 
-        return 'https://accounts.spotify.com/authorize?' + params.toString();
-    }
+        const url = 'https://accounts.spotify.com/authorize?' + params.toString();
 
-    static async getAuthInfo(req, res) {
+        res.status(200).json({ url: url });
+    });
+
+    static getAuthInfo = asyncHandler(async (req, res) => {
         const params = new URLSearchParams({
             grant_type: 'authorization_code',
             code: req.query.code,
@@ -54,15 +56,17 @@ class SpotifyAuth {
             body: params,
         });
 
-        res.status(result.status);
-
-        if(result.status === 200) {
-            const authInfo = await result.json();
-            this.setCookieTokens(authInfo, res);
+        if(!result.ok) {
+            throw new ApiError(result.status, result.statusText);
         }
-    }
 
-    static async refreshCurrentTokens(req, res) {
+        const authInfo = await result.json();
+        setCookieTokens(authInfo, res);
+
+        res.status(204).send();
+    });
+
+    static refreshCurrentTokens = asyncHandler(async (req, res) => {
         const params = new URLSearchParams({
             grant_type: 'refresh_token',
             refresh_token: req.cookies.refreshToken,
@@ -76,36 +80,44 @@ class SpotifyAuth {
             body: params,
         });
     
-        res.status(result.status);
-
-        if(result.status === 200) {
-            const newAuthInfo = await result.json();
-            this.setCookieTokens(newAuthInfo, res);
+        if(!result.ok) {
+            throw new ApiError(result.status, result.statusText);
         }
-    }
 
-    static async deleteCookieTokens(res) {
-        const cookieOptions = {
-            httpOnly: true,
-            domain: domain,
-            path: '/',
-        };
+        const newAuthInfo = await result.json();
+        setCookieTokens(newAuthInfo, res);
 
-        res.clearCookie('authToken', cookieOptions);
-        res.clearCookie('refreshToken', cookieOptions);
-    }
+        res.status(204).send();
+    });
 
-    static setCookieTokens(authInfo, res) {
-        const cookieOptions = {
-            httpOnly: true,
-            domain: domain,
-            path: '/',
-            maxAge: 1000 * 60 * 60 * 24 * 7,
-        };
+    static deleteTokens = asyncHandler((req, res) => {
+        deleteCookieTokens(res);
 
-        res.cookie('authToken', authInfo.access_token, cookieOptions);
-        res.cookie('refreshToken', authInfo.refresh_token, cookieOptions);
-    }
+        res.status(204).send();
+    });
+}
+
+function deleteCookieTokens(res) {
+    const cookieOptions = {
+        httpOnly: true,
+        domain: domain,
+        path: '/',
+    };
+
+    res.clearCookie('authToken', cookieOptions);
+    res.clearCookie('refreshToken', cookieOptions);
+}
+
+function setCookieTokens(authInfo, res) {
+    const cookieOptions = {
+        httpOnly: true,
+        domain: domain,
+        path: '/',
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    };
+
+    res.cookie('authToken', authInfo.access_token, cookieOptions);
+    res.cookie('refreshToken', authInfo.refresh_token, cookieOptions);
 }
 
 function generateRandomCode(length) {
@@ -140,50 +152,7 @@ function base64Encode(input) {
         .replace(/\//g, '_');
 }
 
-// async function authenticate(req, res, next) {
-//     const refreshToken = req.cookies.refreshToken;
-//     const accessToken = req.cookies.accessToken;
-//     let tokenExpiration = req.cookies.tokenExpiration;
-
-//     const { accessToken: newAccessToken, refreshToken: newRefreshToken, tokenExpiration: newTokenExpiration } = await refreshOrGetAccessToken(refreshToken, accessToken, tokenExpiration);
-
-//     if (newAccessToken !== accessToken || newRefreshToken !== refreshToken || newTokenExpiration !== tokenExpiration) {
-//         res.cookie('accessToken', newAccessToken, { maxAge: newTokenExpiration - Date.now() / 1000 });
-//         res.cookie('refreshToken', newRefreshToken);
-//         res.cookie('tokenExpiration', newTokenExpiration);
-//     }
-
-//     req.accessToken = newAccessToken;
-//     req.refreshToken = newRefreshToken;
-//     req.tokenExpiration = newTokenExpiration;
-
-//     next();
-// }
-
-// function isTokenExpired(tokenExpiration) {
-//     return tokenExpiration < Date.now() / 1000;
-// }
-
-// async function refreshOrGetAccessToken(refreshToken, accessToken, tokenExpiration) {
-//     if (!accessToken || isTokenExpired(tokenExpiration)) {
-//         const { access_token, expires_in, refresh_token } = await SpotifyAuth.refreshCurrentTokens(refreshToken);
-//         const newTokenExpiration = Date.now() / 1000 + expires_in;
-//         return { accessToken: access_token, refreshToken: refresh_token, tokenExpiration: newTokenExpiration };
-//     } else {
-//         return { accessToken, refreshToken, tokenExpiration };
-//     }
-// }
-
-// async function getUserData(req, res) {
-//     try {
-//         const { accessToken, refreshToken, tokenExpiration } = req;
-
-//         res.status(200).json({ message: "API call successful" });
-//     } catch (error) {
-//         console.error("Error making API call:", error);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-// }
+Object.freeze(SpotifyAuth);
 
 module.exports = {
     SpotifyAuth,
