@@ -23,8 +23,6 @@ router.get('/info', async (req, res) => {
     res.json({ authSuccessful: true });
 });
 
-router.get('/hasAuthToken', (req, res) => {
-    res.json({ hasToken: SpotifyAuth.hasAuthToken(req) });
-});
+router.get('/hasAuthToken', SpotifyAuth.hasAuthToken);
 
 module.exports = router;

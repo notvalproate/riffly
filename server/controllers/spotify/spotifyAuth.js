@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const asynchandler = require('express-async-handler');
+const { ApiError } = require('../../utils/api.error.js');
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -7,12 +9,14 @@ const redirectURI = clientURL + '/auth';
 const domain = process.env.DOMAIN;
 
 class SpotifyAuth {
-    static hasAuthToken(req) {
+    static hasAuthToken = asynchandler((req, res) => {
         if (req.cookies.authToken) {
-            return true;
+            res.status(200).json({ hasToken: true });
         }
-        return false;
-    }
+        else {
+            throw new ApiError(401, 'No auth token found, Please login again.');
+        }
+    });
 
     static async generateSpotifyAuthLink() {
         const state = generateRandomCode(128);
