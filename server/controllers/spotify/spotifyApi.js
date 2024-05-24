@@ -21,7 +21,7 @@ class SpotifyAPI {
         res.status(200).json(playerInfo);
     })
 
-    static async getSongByISRC(isrc, req, res) {
+    static async getSongByISRC(isrc, req) {
         const params = new URLSearchParams({
             type: 'track',
             q: `isrc:${isrc}`,
