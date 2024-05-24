@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { SpotifyAuth } = require('../spotify/spotifyAuth.js');
+const { SpotifyAuth } = require('../controllers/spotify/spotifyAuth.js');
 
 router.get('/login', async (req, res) => {
     res.send({ url: await SpotifyAuth.generateSpotifyAuthLink() });

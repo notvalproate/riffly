@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { SpotifyAPI } = require('../spotify/spotifyApi.js');
+const { SpotifyAPI } = require('../controllers/spotify/spotifyApi.js');
 
 function getSearchParams(req) {
     const termMap = {

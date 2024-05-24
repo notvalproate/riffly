@@ -1,7 +1,7 @@
 const redisClient = require('../database/cacher.js');
 const { GeniusAPI } = require('../lyrics/geniusApi.js');
 const { MusixmatchAPI } = require('../lyrics/musixmatchApi.js');
-const { SpotifyAPI } = require('../spotify/spotifyApi.js');
+const { SpotifyAPI } = require('../controllers/spotify/spotifyApi.js');
 
 class LyricsAPI {
     static async getLyrics(req, res) {
