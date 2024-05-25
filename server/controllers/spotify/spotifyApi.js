@@ -15,6 +15,10 @@ class SpotifyAPI {
 
     static getPlayerInfo = asyncHandler(async (req, res) => {
         let playerInfo = await spotifyFetch('GET', '/me/player?additional_types=episode', req);
+
+        if(playerInfo.no_content) {
+            return res.status(204).send();
+        }
         
         playerInfo = SpotifyParser.parsePlayerInfo(playerInfo);
 
@@ -27,9 +31,13 @@ class SpotifyAPI {
             q: `isrc:${isrc}`,
         });
     
-        let currentTrack = await spotifyFetch('GET', `/search?${params.toString()}`, req);
-        currentTrack = currentTrack.tracks.items[0];
+        let searches = await spotifyFetch('GET', `/search?${params.toString()}`, req);
 
+        if(searches.tracks.items.length === 0) {
+            throw new ApiError(404, 'Invalid ISRC or Track not found');
+        }
+
+        const currentTrack = searches.tracks.items[0];
         const artists = currentTrack.artists.map((artist) => artist.name);
         const title = currentTrack.name;
 
@@ -46,6 +54,10 @@ async function spotifyFetch(method, path, req) {
         headers: { Authorization: `Bearer ${req.cookies.authToken}` },
     });
     
+    if(result.status === 204) {
+        return { no_content: true };
+    }
+
     const json = await result.json();
 
     if(!result.ok) {

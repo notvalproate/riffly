@@ -53,26 +53,30 @@ class MusixmatchAPI {
     }
 
     static async getTrack(isrc) {
-        try {
-            const params = new URLSearchParams({
-                apikey: musixMatchToken,
-                track_isrc: isrc,
-            });
+        const params = new URLSearchParams({
+            apikey: musixMatchToken,
+            track_isrc: isrc,
+        });
 
-            const result = await fetch(this.musixmatchApiUrl + '/track.get?' + params.toString(), {
-                method: 'GET',
-            });
+        const json = await musixMatchFetch('GET', `/track.get?${params.toString()}`);
 
-            const json = await result.json();
+        return json.message.body.track;
+    }
+};
 
-            return json.message.body.track;
-        } catch (err) {
-            console.log(err);
-            return null;
-        }
+async function musixMatchFetch(method, path) {
+    const result = await fetch(MusixmatchAPI.musixmatchApiUrl + path + '121jk', {
+        method: method,
+    });
+
+    const json = await result.json();
+
+    if(!result.ok) {
+        throw new ApiError(json.error.status, json.error.message);
     }
 
-};
+    return json;
+}
 
 module.exports = {
     MusixmatchAPI,
