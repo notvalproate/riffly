@@ -11,7 +11,7 @@ class SpotifyAPI {
         userInfo = SpotifyParser.parseUserInfo(userInfo);
 
         res.status(200).json(userInfo);
-    })
+    });
 
     static getPlayerInfo = asyncHandler(async (req, res) => {
         let playerInfo = await spotifyFetch('GET', '/me/player?additional_types=episode', req);
@@ -23,7 +23,21 @@ class SpotifyAPI {
         playerInfo = SpotifyParser.parsePlayerInfo(playerInfo);
 
         res.status(200).json(playerInfo);
-    })
+    });
+
+    static getTopTracks = asyncHandler(async (req, res) => {
+        const query = getTopItemsQuery(req);
+        const topTracks = await spotifyFetch('GET', `/me/top/tracks?${query.toString()}`, req);
+
+        res.status(200).json(topTracks);
+    });
+
+    static getTopArtists = asyncHandler(async (req, res) => {
+        const query = getTopItemsQuery(req);
+        const topArtists = await spotifyFetch('GET', `/me/top/artists?${query.toString()}`, req);
+
+        res.status(200).json(topArtists);
+    });
 
     static async getSongByISRC(isrc, req) {
         const params = new URLSearchParams({
@@ -65,6 +79,23 @@ async function spotifyFetch(method, path, req) {
     }
 
     return json;
+}
+
+function getTopItemsQuery(req) {
+    const termMap = {
+        LONG: 'long_term',
+        MEDIUM: 'medium_term',
+        SHORT: 'short_term',
+    };
+
+    const term = req.query.term || 'MEDIUM';
+    const offset = req.query.offset || 0;
+
+    return new URLSearchParams({
+        time_range: termMap[term] || termMap.MEDIUM,
+        limit: 50,
+        offset: offset,
+    });
 }
 
 Object.freeze(SpotifyAPI);
