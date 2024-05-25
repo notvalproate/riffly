@@ -34,16 +34,16 @@ class SpotifyAPI {
         let searches = await spotifyFetch('GET', `/search?${params.toString()}`, req);
 
         if(searches.tracks.items.length === 0) {
-            throw new ApiError(404, 'Invalid ISRC or Track not found');
+            return null;
         }
 
         const currentTrack = searches.tracks.items[0];
-        const artists = currentTrack.artists.map((artist) => artist.name);
         const title = currentTrack.name;
+        const artists = currentTrack.artists.map((artist) => artist.name);
 
         return {
+            title: title,
             artists: artists,
-            title: title
         }
     }
 }
