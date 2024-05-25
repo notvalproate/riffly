@@ -8,24 +8,19 @@ class GeniusAPI {
     static geniusClient = new genius.Client(geniusToken);
 
     static async getLyrics(artists, title) {
-        try {
-            for(let i = 0; i < artists.length; i++) {
-                const result = await this.getBestLyrics([artists[i]], title);
+        for(let i = 0; i < artists.length; i++) {
+            const result = await this.getBestLyrics([artists[i]], title);
 
-                if(result !== null) {
-                    return result;
-                }
+            if(result !== null) {
+                return result;
             }
+        }
 
-            if(artists.length === 1) {
-                return null;
-            }
-
-            return await this.getBestLyrics(artists, title);
-        } catch (err) {
-            console.log(err);
+        if(artists.length === 1) {
             return null;
         }
+
+        return await this.getBestLyrics(artists, title);
     }
 
     static async convertResultToLyrics(result) {

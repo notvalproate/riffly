@@ -14,19 +14,20 @@ class LyricsAPI {
             throw new ApiError(400, 'Missing ISRC Code');
         }
 
+        await redisClient.flushAll();
         const cachedLyrics = await redisClient.get(isrc);
 
         if(cachedLyrics !== null) {
             return res.status(200).json(JSON.parse(cachedLyrics));
         }
 
-        // const currentTrack = await SpotifyAPI.getSongByISRC(isrc, req);
+        const currentTrack = await SpotifyAPI.getSongByISRC(isrc, req);
     
-        // let lyrics = await GeniusAPI.getLyrics(currentTrack.artists, currentTrack.title);
+        let lyrics = await GeniusAPI.getLyrics(currentTrack.artists, currentTrack.title);
     
-        // if(lyrics === null) {
+        if(lyrics === null) {
             let lyrics = await MusixmatchAPI.getLyrics(isrc);
-        // }
+        }
 
         res.status(200).json(lyrics);
 

@@ -22,7 +22,7 @@ class MusixmatchAPI {
         return {
             provider: 'musixmatch',
             url: song.track_share_url,
-            lyricsBody: lyrics.lyrics_body,
+            lyricsBody: lyrics,
         };
     };
 };
