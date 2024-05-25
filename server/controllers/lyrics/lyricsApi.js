@@ -20,13 +20,13 @@ class LyricsAPI {
             return res.status(200).json(JSON.parse(cachedLyrics));
         }
 
-        const currentTrack = await SpotifyAPI.getSongByISRC(isrc, req);
+        // const currentTrack = await SpotifyAPI.getSongByISRC(isrc, req);
     
-        let lyrics = await GeniusAPI.getLyrics(currentTrack.artists, currentTrack.title);
+        // let lyrics = await GeniusAPI.getLyrics(currentTrack.artists, currentTrack.title);
     
-        if(lyrics === null) {
-            lyrics = await MusixmatchAPI.getLyrics(isrc);
-        }
+        // if(lyrics === null) {
+            let lyrics = await MusixmatchAPI.getLyrics(isrc);
+        // }
 
         res.status(200).json(lyrics);
 
