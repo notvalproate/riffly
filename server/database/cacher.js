@@ -1,6 +1,7 @@
 const { createClient } = require('redis');
 require('dotenv').config();
 
+// NOT GOOD TO EXPORT VARIABLE DECLARED WITH LET
 let client = null;
 
 if(process.env.MODE === 'development') {
