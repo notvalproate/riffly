@@ -1,13 +1,15 @@
-<div class="progress-wrapper">
-    <div class="progress-bar-wrapper">
-        <div class="progress-bar" [style.width]="progressData?.currentProgressPercent"></div>
+@if(progressData){
+    <div class="progress-wrapper">
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar" [style.width]="progressData.currentProgressPercent"></div>
+        </div>
+        <div class="progress-times">
+            <span class="progress-time">
+                {{msToMinutesString(progressData.currentSongProgress)}}
+            </span>
+            <span class="progress-time">
+                {{msToMinutesString(progressData.currentSongLength)}}
+            </span>
+        </div>
     </div>
-    <div class="progress-times">
-        <span class="progress-time">
-            {{msToMinutesString(progressData?.currentSongProgress ?? 0)}}
-        </span>
-        <span class="progress-time">
-            {{msToMinutesString(progressData?.currentSongLength ?? 0)}}
-        </span>
-    </div>
-</div>
+}

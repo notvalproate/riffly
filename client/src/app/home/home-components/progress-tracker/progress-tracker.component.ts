@@ -1,4 +1,4 @@
-import { Component , OnInit, OnDestroy, Input} from '@angular/core';
+import { Component , Input} from '@angular/core';
 import { ProgressData } from '../../../interfaces/ProgressData';
 
 
@@ -9,21 +9,13 @@ import { ProgressData } from '../../../interfaces/ProgressData';
   templateUrl: './progress-tracker.component.html',
   styleUrl: './progress-tracker.component.scss'
 })
-export class ProgressTrackerComponent implements OnInit, OnDestroy{
+export class ProgressTrackerComponent{
   @Input() progressData?: ProgressData;
-  
-  ngOnInit(): void {
-      
-  }
-
-  ngOnDestroy(): void {
-      
-  }
 
   msToMinutesString(ms: number) {
     const minutes = Math.floor(ms / (1000 * 60));
     const seconds = Math.floor(ms % (1000 * 60) / 1000);
 
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-}
+  }
 }

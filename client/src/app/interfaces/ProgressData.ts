@@ -1,5 +1,5 @@
 export interface ProgressData{
-    currentSongID: string,
+    currentISRC: string,
     currentSongLength: number,
     currentSongProgress: number,
     currentProgressPercent: string,

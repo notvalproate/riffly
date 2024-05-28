@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SongCardData } from '../../interfaces/SongCardData'; 
-import { PollingService } from '../../services/polling.service';
 
 @Component({
   selector: 'app-song-card',
@@ -9,14 +8,6 @@ import { PollingService } from '../../services/polling.service';
   templateUrl: './song-card.component.html',
   styleUrl: './song-card.component.scss'
 })
-export class SongCardComponent implements OnInit { 
+export class SongCardComponent{ 
   @Input() songCardData?: SongCardData;
-
-  ngOnInit(): void {
-    this.print();
-  }
-
-  print(): void {
-    console.log(this.songCardData);
-  }
 }
