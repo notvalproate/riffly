@@ -1,14 +1,12 @@
-.content-wrapper {
-    width: 600px;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-.player {
-    width: 100%;
+.lyrics {
     background-color: rgb(35, 35, 35);
-    box-sizing: border-box;
-    padding: 20px;
     border-radius: 20px;
+    padding: 20px;
+    margin-top: 20px;
+
+    .lyrics-title {
+        margin-bottom: 10px;
+    }
 }
 
 .redirect-link {
@@ -20,5 +18,3 @@
 .redirect-link:hover {
     color: rgb(181, 181, 181);
 }
-
-

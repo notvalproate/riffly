@@ -3,11 +3,17 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
 import { PollingService } from '../services/polling.service';
+import { SongCardComponent } from '../general-components/song-card/song-card.component';
+import { ProgressTrackerComponent } from './home-components/progress-tracker/progress-tracker.component';
+import { LyricsDisplayComponent } from './home-components/lyrics-display/lyrics-display.component';
+import { SongCardData } from '../interfaces/SongCardData';
+import { ProgressData } from '../interfaces/ProgressData';
+import { LyricsData } from '../interfaces/LyricsData';
 
 @Component({
   selector: 'home',
   standalone: true,
-  imports: [],
+  imports: [ SongCardComponent, ProgressTrackerComponent, LyricsDisplayComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -18,28 +24,39 @@ export class HomeComponent implements OnInit, OnDestroy {
     private playerPoller: PollingService = new PollingService();
     private progressPoller: PollingService = new PollingService();
 
+    songCardData : SongCardData;
+    progressData : ProgressData;
+    lyricsData : LyricsData;
+
     profileName: string = '';
     profileUrl: string = '';
 
     isPlayerActive: boolean = false;
 
-    currentSongImgUrl: string = '';
-    currentSongTitle: string = '';
-    currentSongUrl: string = '';
-    currentISRC: string = '';
-    currentSongLength: number = 0;
-    currentSongProgress: number = 0;
-    currentProgressPercent: string = '0%';
-
-    currentArtists: string[] = [];
-    currentArtistsUrls: string[] = [];
-
-    loadingLyrics: boolean = false;
-    currentLyrics: string[] = [];
-    lyricsProvider: string = '';
-    lyricsUrl: string = '';
-
     trackPolling: any = undefined;
+
+    constructor() {
+        this.songCardData = {
+            currentSongImgUrl: '',
+            currentSongTitle: '',
+            currentSongUrl: '',
+            currentISRC: '',
+            currentArtists: [],
+            currentArtistsUrls: []
+        };
+        this.progressData = {
+            currentISRC: '',
+            currentSongLength: 0,
+            currentSongProgress: 0,
+            currentProgressPercent: '',
+        }
+        this.lyricsData = {
+            loadingLyrics: false,
+            currentLyrics: [],
+            lyricsProvider: '',
+            lyricsUrl: '',
+        }
+    }
 
     ngOnInit(): void {
         this.getUserInfo();
@@ -78,54 +95,56 @@ export class HomeComponent implements OnInit, OnDestroy {
 
                 const info = resp.body;
 
-                let previousISRC = this.currentISRC;
+                let previousISRC = this.songCardData.currentISRC;
 
                 this.isPlayerActive = true;
 
-                this.currentSongImgUrl = info.item.images.default;
-                this.currentSongTitle = info.item.title;
-                this.currentSongUrl = info.item.url;
-                this.currentISRC = info.item.isrc;
+                this.songCardData.currentSongImgUrl = info.item.images.default;
+                this.songCardData.currentSongTitle = info.item.title;
+                this.songCardData.currentSongUrl = info.item.url;
+                this.songCardData.currentISRC = info.item.isrc;
 
-                this.currentSongLength = info.player.duration;
-                this.currentSongProgress = info.player.progress;
-                this.currentProgressPercent = ((this.currentSongProgress * 100) / this.currentSongLength) + '%';
+                this.progressData.currentSongLength = info.player.duration;
+                this.progressData.currentSongProgress = info.player.progress;
+                this.progressData.currentProgressPercent = ((this.progressData.currentSongProgress * 100) / this.progressData.currentSongLength) + '%';
 
-                this.currentArtists = info.item.artists.map((artist: any) => artist.name);
-                this.currentArtistsUrls = info.item.artists.map((artist: any) => artist.url);
+                this.songCardData.currentArtists = info.item.artists.map((artist: any) => artist.name);
+                this.songCardData.currentArtistsUrls = info.item.artists.map((artist: any) => artist.url);
 
-                if(previousISRC !== this.currentISRC) {
+                this.progressData.currentISRC = this.songCardData.currentISRC;
+
+                if(previousISRC !== this.songCardData.currentISRC) {
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
 
-                    this.loadingLyrics = true;
+                    this.lyricsData.loadingLyrics = true;
 
-                    this.userInfoService.getLyrics(this.currentISRC).subscribe({
+                    this.userInfoService.getLyrics(this.songCardData.currentISRC).subscribe({
                         next: (resp: any) => {
-                            this.loadingLyrics = false;
+                            this.lyricsData.loadingLyrics = false;
 
                             if(resp.body === null) {
-                                this.currentLyrics = [];
-                                this.lyricsUrl = '';
+                                this.lyricsData.currentLyrics = [];
+                                this.lyricsData.lyricsUrl = '';
                                 return;
                             }
 
                             const lyrics = resp.body;
 
-                            this.lyricsUrl = lyrics.url;
-                            this.lyricsProvider = lyrics.provider;
+                            this.lyricsData.lyricsUrl = lyrics.url;
+                            this.lyricsData.lyricsProvider = lyrics.provider;
 
                             if(lyrics.lyricsBody === null) {
-                                this.currentLyrics = [];
+                                this.lyricsData.currentLyrics = [];
                                 return;
                             }
 
-                            this.currentLyrics = lyrics.lyricsBody.split('\n');
+                            this.lyricsData.currentLyrics = lyrics.lyricsBody.split('\n');
                         },
                         error: (resp: any) => {
-                            this.loadingLyrics = false;
-                            this.currentLyrics = [];
-                            this.lyricsUrl = '';
-                            this.lyricsProvider = '';
+                            this.lyricsData.loadingLyrics = false;
+                            this.lyricsData.currentLyrics = [];
+                            this.lyricsData.lyricsUrl = '';
+                            this.lyricsData.lyricsProvider = '';
                             console.log(resp.error);
                         }
                     });
@@ -133,8 +152,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             },
             error: (resp: any) => {
                 this.isPlayerActive = false;
-                this.currentLyrics = [];
-                this.currentISRC = '';
+                this.lyricsData.currentLyrics = [];
+                this.songCardData.currentISRC = '';
+                this.progressData.currentISRC = '';
                 this.progressPoller.stopPolling();
                 console.log(resp.error);
             }
@@ -142,21 +162,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     increaseProgressByOneSecond() {
-        this.currentSongProgress += 1000;
+        this.progressData.currentSongProgress += 1000;
 
-        if(this.currentSongProgress >= this.currentSongLength){
-            this.currentSongProgress = this.currentSongLength;
+        if(this.progressData.currentSongProgress >= this.progressData.currentSongLength){
+            this.progressData.currentSongProgress = this.progressData.currentSongLength;
         }
 
-        this.currentProgressPercent = ((this.currentSongProgress * 100) / this.currentSongLength) + '%';
+        this.progressData.currentProgressPercent = ((this.progressData.currentSongProgress * 100) / this.progressData.currentSongLength) + '%';
     }
 
-    msToMinutesString(ms: number) {
-        const minutes = Math.floor(ms / (1000 * 60));
-        const seconds = Math.floor(ms % (1000 * 60) / 1000);
-
-        return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-    }
 
     @HostListener('document:visibilitychange', ['$event'])
     handleVisibilityChange() {
