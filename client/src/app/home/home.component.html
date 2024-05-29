@@ -5,18 +5,52 @@
 @if (isPlayerActive) {
     <div class="content-wrapper">
         <div class="player">
+            <div class="song">
+                <a href="{{currentSongUrl}}" target="_blank" class="song-cover-wrapper">
+                    <img class="song-cover" src="{{currentSongImgUrl}}" alt="trackImage">
+                </a>
+                <div class="song-content">
+                    <h1 class="overflow-elipses"><a class="redirect-link" href="{{currentSongUrl}}" target="_blank">{{currentSongTitle}}</a></h1>
+                    <h3 class="overflow-elipses">
+                        @for (artist of currentArtists; track $index) {
+                            <a class="redirect-link" href="{{currentArtistsUrls[$index]}}" target="_blank">{{artist}}</a>
+                            @if ($index !== currentArtists.length - 1) {,&nbsp;}
+                        }
+                    </h3>
+                </div>
+            </div>
 
-            <app-song-card [songCardData]="songCardData" ></app-song-card>
-            <app-progress-tracker [progressData]="progressData" ></app-progress-tracker>
-            
-            
+            <div class="progress-wrapper">
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar" [style.width]="currentProgressPercent"></div>
+                </div>
+                <div class="progress-times">
+                    <span class="progress-time">
+                        {{msToMinutesString(currentSongProgress)}}
+                    </span>
+                    <span class="progress-time">
+                        {{msToMinutesString(currentSongLength)}}
+                    </span>
+                </div>
+            </div>
         </div>
-        <app-lyrics-display [lyricsData]="lyricsData"></app-lyrics-display>
 
-        
+        <div class="lyrics">
+            @if (loadingLyrics) {
+                <span>Loading Lyrics...</span>
+            } @else {
+                @if (currentLyrics.length > 0) {
+                    <h3 class="lyrics-title"><a class="redirect-link" href="{{lyricsUrl}}" target="_blank">LYRICS BY {{lyricsProvider.toUpperCase()}}</a></h3>
+                }
+                @for (item of currentLyrics; track $index) {
+                    <span>{{item}}</span><br>
+                } @empty {
+                    <span>No Lyrics Available</span>
+                }
+            }
+        </div>
     </div>
 } @else {
     <h3>Not listening to anything</h3>
     <span>No Lyrics Available</span>
 }
-
