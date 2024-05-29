@@ -8,7 +8,7 @@ const authRoutes = require('./routes/auth.js');
 const meRoutes = require('./routes/me.js');
 const trackRoutes = require('./routes/track.js');
 
-const { errorHandler } = require('./utils/error.handler.js');
+const { errorHandler } = require('./middleware/error.handler.js');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
