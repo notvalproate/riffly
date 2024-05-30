@@ -1,12 +1,12 @@
-const redisClient = require('../../database/cacher.js');
-const asyncHandler = require('express-async-handler');
-const ApiError = require('../../utils/api.error.js');
+import redisClient from '../../database/cacher.js';
+import asyncHandler from 'express-async-handler';
+import ApiError from '../../utils/api.error.js';
 
-const GeniusAPI = require('../lyrics/geniusApi.js');
-const MusixmatchAPI = require('../lyrics/musixmatchApi.js');
-const SpotifyAPI = require('../spotify/spotifyApi.js');
+import GeniusAPI from '../lyrics/geniusApi.js';
+import MusixmatchAPI from '../lyrics/musixmatchApi.js';
+import SpotifyAPI from '../spotify/spotifyApi.js';
 
-class LyricsAPI {
+export default class LyricsAPI {
     static getLyrics = asyncHandler(async (req, res) => {
         const isrc = req.query.isrc;
 
@@ -86,5 +86,3 @@ async function getFromMusixmatch(isrc, res) {
 }
 
 Object.freeze(LyricsAPI);
-
-module.exports = LyricsAPI;

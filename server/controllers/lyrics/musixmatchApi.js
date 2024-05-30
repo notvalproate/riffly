@@ -1,8 +1,9 @@
-const ApiError = require('../../utils/api.error.js');
+import ApiError from '../../utils/api.error.js';
+import env from '../../utils/environment.js';
 
-const musixMatchToken = process.env.MUSIX_MATCH_TOKEN;
+const musixMatchToken = env.lyrics.musixMatchToken;
 
-class MusixmatchAPI {
+export default class MusixmatchAPI {
     static musixmatchApiUrl = 'https://api.musixmatch.com/ws/1.1'
 
     static async getTrackByISRC(isrc) {
@@ -59,5 +60,3 @@ async function musixMatchFetch(method, path) {
 }
 
 Object.freeze(MusixmatchAPI);
-
-module.exports = MusixmatchAPI;

@@ -1,25 +1,24 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const compression = require("compression");
-require('dotenv').config();
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import compression from "compression";
 
-const authRoutes = require('./routes/auth.js');
-const meRoutes = require('./routes/me.js');
-const trackRoutes = require('./routes/track.js');
+import env from './utils/environment.js';
 
-const errorHandler = require('./middleware/error.handler.js');
+import authRoutes from './routes/auth.js';
+import meRoutes from './routes/me.js';
+import trackRoutes from './routes/track.js';
+
+import errorHandler from './middleware/error.handler.js';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
-const clientURL = process.env.CLIENT_URL;
 
 app.use(compression({
     threshold: 0
 }));
 app.use(
     cors({
-        origin: clientURL,
+        origin: env.app.client,
         credentials: true,
     })
 );
@@ -31,6 +30,6 @@ app.use('/track', trackRoutes);
 
 app.use(errorHandler);
 
-app.listen(PORT, async () => {
-    console.log('Server running on http://localhost:' + PORT + '/');
+app.listen(env.app.port, async () => {
+    console.log('Server running on http://localhost:' + env.app.port + '/');
 });

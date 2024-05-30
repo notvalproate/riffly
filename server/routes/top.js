@@ -1,8 +1,10 @@
-const router = require('express').Router();
-const SpotifyAPI = require('../controllers/spotify/spotifyApi.js');
+import express from 'express';
+import SpotifyAPI from '../controllers/spotify/spotifyApi.js';
+
+const router = express.Router();
 
 router.get('/tracks', SpotifyAPI.getTopTracks);
 router.get('/artists', SpotifyAPI.getTopArtists);
 // router.get('/genres', SpotifyAPI.getTopGenres);
 
-module.exports = router;
+export default router;

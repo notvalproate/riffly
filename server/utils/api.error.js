@@ -1,4 +1,4 @@
-class ApiError extends Error {
+export default class ApiError extends Error {
     constructor(
         statusCode,
         message = 'Unexpected Error Occurred, please try again.',
@@ -9,5 +9,3 @@ class ApiError extends Error {
         this.message = message;
     }
 }
-
-module.exports = ApiError;

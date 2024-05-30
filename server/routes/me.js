@@ -1,10 +1,12 @@
-const router = require('express').Router();
-const SpotifyAPI = require('../controllers/spotify/spotifyApi.js');
-const topRouter = require('./top.js');
+import express from 'express';
+import SpotifyAPI from '../controllers/spotify/spotifyApi.js';
+import topRouter from './top.js';
+
+const router = express.Router();
 
 router.use('/top', topRouter);
 
 router.get('/info', SpotifyAPI.getUserInfo);
 router.get('/player', SpotifyAPI.getPlayerInfo);
 
-module.exports = router;
+export default router;

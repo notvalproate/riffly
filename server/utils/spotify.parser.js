@@ -1,5 +1,4 @@
-
-class SpotifyParser {
+export default class SpotifyParser {
     static parseUserInfo(userinfo) {
         let images = null;
 
@@ -89,5 +88,3 @@ class SpotifyParser {
 };
 
 Object.freeze(SpotifyParser);
-
-module.exports = SpotifyParser;

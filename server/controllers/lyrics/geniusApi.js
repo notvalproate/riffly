@@ -1,11 +1,12 @@
-const genius = require("genius-lyrics");
+import genius from 'genius-lyrics';
+import env from '../../utils/environment.js';
 
-const geniusToken = process.env.GENIUS_CLIENT_TOKEN;
+const geniusToken = env.lyrics.geniusToken;
 const geniusClient = new genius.Client(geniusToken);
 
 const DEBUG_LYRICS = false;
 
-class GeniusAPI {
+export default class GeniusAPI {
     static async getTrack(artists, title) {
         for(let i = 0; i < artists.length; i++) {
             const result = await getBestTrack([artists[i]], title);
@@ -277,5 +278,3 @@ function debugLyrics(text) {
 }
 
 Object.freeze(GeniusAPI);
-
-module.exports = GeniusAPI;
