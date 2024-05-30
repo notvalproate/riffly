@@ -2,7 +2,7 @@ import { createClient } from 'redis';
 import env from '../utils/environment.js';
 
 function createRedisClient() {
-    if(env.app.mode === 'development') {
+    if (env.app.mode === 'development') {
         return createClient({
             socket: {
                 host: env.redis.host,
@@ -17,10 +17,13 @@ function createRedisClient() {
 
 const client = createRedisClient();
 
-client.connect().then(() => {
-    console.log("Successfully connected to redis");
-}).catch((e) => {
-    console.log(e);
-});
+client
+    .connect()
+    .then(() => {
+        console.log('Successfully connected to redis');
+    })
+    .catch((e) => {
+        console.log(e);
+    });
 
 export default client;

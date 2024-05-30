@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
-dotenv.config()
+dotenv.config();
 
 const env = {
     app: {
         mode: process.env.MODE || 'development',
         port: process.env.PORT || 4000,
-        domain: process.env.DOMAIN || 'localhost', 
+        domain: process.env.DOMAIN || 'localhost',
         client: process.env.CLIENT_URL || 'http://localhost:4200',
     },
     spotify: {

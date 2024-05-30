@@ -1,7 +1,7 @@
 export default class ApiError extends Error {
     constructor(
         statusCode,
-        message = 'Unexpected Error Occurred, please try again.',
+        message = 'Unexpected Error Occurred, please try again.'
     ) {
         super(message);
         this.statusCode = statusCode;

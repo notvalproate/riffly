@@ -1,7 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import compression from "compression";
+import compression from 'compression';
 
 import env from './utils/environment.js';
 
@@ -13,9 +13,11 @@ import errorHandler from './middleware/error.handler.js';
 
 const app = express();
 
-app.use(compression({
-    threshold: 0
-}));
+app.use(
+    compression({
+        threshold: 0,
+    })
+);
 app.use(
     cors({
         origin: env.app.client,

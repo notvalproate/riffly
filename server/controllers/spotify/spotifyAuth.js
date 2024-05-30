@@ -14,8 +14,7 @@ export default class SpotifyAuth {
     static hasAuthToken = asyncHandler((req, res) => {
         if (req.cookies.authToken) {
             res.status(200).json({ hasToken: true });
-        }
-        else {
+        } else {
             throw new ApiError(401, 'No auth token found, Please login again.');
         }
     });
@@ -38,7 +37,8 @@ export default class SpotifyAuth {
             redirect_uri: redirectURI,
         });
 
-        const url = 'https://accounts.spotify.com/authorize?' + params.toString();
+        const url =
+            'https://accounts.spotify.com/authorize?' + params.toString();
 
         res.status(200).json({ url: url });
     });
@@ -58,7 +58,7 @@ export default class SpotifyAuth {
             body: params,
         });
 
-        if(!result.ok) {
+        if (!result.ok) {
             throw new ApiError(result.status, result.statusText);
         }
 
@@ -81,8 +81,8 @@ export default class SpotifyAuth {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: params,
         });
-    
-        if(!result.ok) {
+
+        if (!result.ok) {
             throw new ApiError(result.status, result.statusText);
         }
 
@@ -142,7 +142,10 @@ async function generateCodeChallenge(plain) {
     hash.update(data);
     const test = hash.digest('hex');
     const buffer = Buffer.from(test, 'hex');
-    const challenge = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+    const challenge = buffer.buffer.slice(
+        buffer.byteOffset,
+        buffer.byteOffset + buffer.byteLength
+    );
 
     return challenge;
 }
