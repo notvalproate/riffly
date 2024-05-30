@@ -1,8 +1,8 @@
-const asyncHandler = require('express-async-handler');
-const { ApiError } = require('../../utils/api.error.js');
-const { SpotifyParser } = require('../../utils/spotify.parser.js');
+import asyncHandler from 'express-async-handler';
+import ApiError from '../../utils/api.error.js';
+import SpotifyParser from '../../utils/spotify.parser.js';
 
-class SpotifyAPI {
+export default class SpotifyAPI {
     static spotifyApiUri = 'https://api.spotify.com/v1';
 
     static getUserInfo = asyncHandler(async (req, res) => {
@@ -14,12 +14,16 @@ class SpotifyAPI {
     });
 
     static getPlayerInfo = asyncHandler(async (req, res) => {
-        let playerInfo = await spotifyFetch('GET', '/me/player?additional_types=episode', req);
+        let playerInfo = await spotifyFetch(
+            'GET',
+            '/me/player?additional_types=episode',
+            req
+        );
 
-        if(playerInfo.no_content) {
+        if (playerInfo.no_content) {
             return res.status(204).send();
         }
-        
+
         playerInfo = SpotifyParser.parsePlayerInfo(playerInfo);
 
         res.status(200).json(playerInfo);
@@ -27,14 +31,22 @@ class SpotifyAPI {
 
     static getTopTracks = asyncHandler(async (req, res) => {
         const query = getTopItemsQuery(req);
-        const topTracks = await spotifyFetch('GET', `/me/top/tracks?${query.toString()}`, req);
+        const topTracks = await spotifyFetch(
+            'GET',
+            `/me/top/tracks?${query.toString()}`,
+            req
+        );
 
         res.status(200).json(topTracks);
     });
 
     static getTopArtists = asyncHandler(async (req, res) => {
         const query = getTopItemsQuery(req);
-        const topArtists = await spotifyFetch('GET', `/me/top/artists?${query.toString()}`, req);
+        const topArtists = await spotifyFetch(
+            'GET',
+            `/me/top/artists?${query.toString()}`,
+            req
+        );
 
         res.status(200).json(topArtists);
     });
@@ -44,10 +56,14 @@ class SpotifyAPI {
             type: 'track',
             q: `isrc:${isrc}`,
         });
-    
-        let searches = await spotifyFetch('GET', `/search?${params.toString()}`, req);
 
-        if(searches.tracks.items.length === 0) {
+        let searches = await spotifyFetch(
+            'GET',
+            `/search?${params.toString()}`,
+            req
+        );
+
+        if (searches.tracks.items.length === 0) {
             return null;
         }
 
@@ -58,7 +74,7 @@ class SpotifyAPI {
         return {
             title: title,
             artists: artists,
-        }
+        };
     }
 }
 
@@ -67,14 +83,14 @@ async function spotifyFetch(method, path, req) {
         method: method,
         headers: { Authorization: `Bearer ${req.cookies.authToken}` },
     });
-    
-    if(result.status === 204) {
+
+    if (result.status === 204) {
         return { no_content: true };
     }
 
     const json = await result.json();
 
-    if(!result.ok) {
+    if (!result.ok) {
         throw new ApiError(json.error.status, json.error.message);
     }
 
@@ -99,7 +115,3 @@ function getTopItemsQuery(req) {
 }
 
 Object.freeze(SpotifyAPI);
-
-module.exports = {
-    SpotifyAPI,
-};

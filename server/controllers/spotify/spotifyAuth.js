@@ -1,19 +1,20 @@
-const crypto = require('crypto');
-const asyncHandler = require('express-async-handler');
-const { ApiError } = require('../../utils/api.error.js');
+import crypto from 'crypto';
+import asyncHandler from 'express-async-handler';
+import ApiError from '../../utils/api.error.js';
+import env from '../../utils/environment.js';
 
-const clientID = process.env.SPOTIFY_CLIENT_ID;
-const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-const clientURL = process.env.CLIENT_URL;
+const clientID = env.spotify.clientID;
+const clientSecret = env.spotify.clientSecret;
+const clientURL = env.app.client;
+const domain = env.app.domain;
+
 const redirectURI = clientURL + '/auth';
-const domain = process.env.DOMAIN;
 
-class SpotifyAuth {
+export default class SpotifyAuth {
     static hasAuthToken = asyncHandler((req, res) => {
         if (req.cookies.authToken) {
             res.status(200).json({ hasToken: true });
-        }
-        else {
+        } else {
             throw new ApiError(401, 'No auth token found, Please login again.');
         }
     });
@@ -36,7 +37,8 @@ class SpotifyAuth {
             redirect_uri: redirectURI,
         });
 
-        const url = 'https://accounts.spotify.com/authorize?' + params.toString();
+        const url =
+            'https://accounts.spotify.com/authorize?' + params.toString();
 
         res.status(200).json({ url: url });
     });
@@ -56,7 +58,7 @@ class SpotifyAuth {
             body: params,
         });
 
-        if(!result.ok) {
+        if (!result.ok) {
             throw new ApiError(result.status, result.statusText);
         }
 
@@ -79,8 +81,8 @@ class SpotifyAuth {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: params,
         });
-    
-        if(!result.ok) {
+
+        if (!result.ok) {
             throw new ApiError(result.status, result.statusText);
         }
 
@@ -140,7 +142,10 @@ async function generateCodeChallenge(plain) {
     hash.update(data);
     const test = hash.digest('hex');
     const buffer = Buffer.from(test, 'hex');
-    const challenge = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+    const challenge = buffer.buffer.slice(
+        buffer.byteOffset,
+        buffer.byteOffset + buffer.byteLength
+    );
 
     return challenge;
 }
@@ -153,7 +158,3 @@ function base64Encode(input) {
 }
 
 Object.freeze(SpotifyAuth);
-
-module.exports = {
-    SpotifyAuth,
-};

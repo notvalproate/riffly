@@ -1,10 +1,12 @@
-const router = require('express').Router();
-const { SpotifyAuth } = require('../controllers/spotify/spotifyAuth.js');
+import express from 'express';
+import SpotifyAuth from '../controllers/spotify/spotifyAuth.js';
+
+const router = express.Router();
 
 router.get('/login', SpotifyAuth.getSpotifyAuthLink);
-router.get('/refresh', SpotifyAuth.refreshCurrentTokens);
-router.get('/logout', SpotifyAuth.deleteTokens);
-router.get('/info', SpotifyAuth.getAuthInfo);
-router.get('/hasAuthToken', SpotifyAuth.hasAuthToken);
+router.post('/refresh', SpotifyAuth.refreshCurrentTokens);
+router.delete('/logout', SpotifyAuth.deleteTokens);
+router.post('/info', SpotifyAuth.getAuthInfo);
+router.get('/token', SpotifyAuth.hasAuthToken);
 
-module.exports = router;
+export default router;
