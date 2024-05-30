@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
-const { ApiError } = require('../../utils/api.error.js');
-const { SpotifyParser } = require('../../utils/spotify.parser.js');
+const ApiError = require('../../utils/api.error.js');
+const SpotifyParser = require('../../utils/spotify.parser.js');
 
 class SpotifyAPI {
     static spotifyApiUri = 'https://api.spotify.com/v1';
@@ -100,6 +100,4 @@ function getTopItemsQuery(req) {
 
 Object.freeze(SpotifyAPI);
 
-module.exports = {
-    SpotifyAPI,
-};
+module.exports = SpotifyAPI;

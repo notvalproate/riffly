@@ -278,6 +278,4 @@ function debugLyrics(text) {
 
 Object.freeze(GeniusAPI);
 
-module.exports = { 
-    GeniusAPI, 
-};
+module.exports = GeniusAPI;

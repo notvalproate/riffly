@@ -90,6 +90,4 @@ class SpotifyParser {
 
 Object.freeze(SpotifyParser);
 
-module.exports = {
-    SpotifyParser,
-}
+module.exports = SpotifyParser;

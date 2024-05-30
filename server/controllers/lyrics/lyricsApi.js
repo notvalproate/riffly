@@ -1,10 +1,10 @@
 const redisClient = require('../../database/cacher.js');
 const asyncHandler = require('express-async-handler');
-const { ApiError } = require('../../utils/api.error.js');
+const ApiError = require('../../utils/api.error.js');
 
-const { GeniusAPI } = require('../lyrics/geniusApi.js');
-const { MusixmatchAPI } = require('../lyrics/musixmatchApi.js');
-const { SpotifyAPI } = require('../spotify/spotifyApi.js');
+const GeniusAPI = require('../lyrics/geniusApi.js');
+const MusixmatchAPI = require('../lyrics/musixmatchApi.js');
+const SpotifyAPI = require('../spotify/spotifyApi.js');
 
 class LyricsAPI {
     static getLyrics = asyncHandler(async (req, res) => {
@@ -87,6 +87,4 @@ async function getFromMusixmatch(isrc, res) {
 
 Object.freeze(LyricsAPI);
 
-module.exports = {
-    LyricsAPI,
-}
+module.exports = LyricsAPI;

@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const asyncHandler = require('express-async-handler');
-const { ApiError } = require('../../utils/api.error.js');
+const ApiError = require('../../utils/api.error.js');
 
 const clientID = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -154,6 +154,4 @@ function base64Encode(input) {
 
 Object.freeze(SpotifyAuth);
 
-module.exports = {
-    SpotifyAuth,
-};
+module.exports = SpotifyAuth;

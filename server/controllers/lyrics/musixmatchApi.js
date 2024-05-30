@@ -1,4 +1,4 @@
-const { ApiError } = require('../../utils/api.error.js');
+const ApiError = require('../../utils/api.error.js');
 
 const musixMatchToken = process.env.MUSIX_MATCH_TOKEN;
 
@@ -60,6 +60,4 @@ async function musixMatchFetch(method, path) {
 
 Object.freeze(MusixmatchAPI);
 
-module.exports = {
-    MusixmatchAPI,
-}
+module.exports = MusixmatchAPI;
