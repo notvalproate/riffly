@@ -1,0 +1,2 @@
+import dynamoose from 'dynamoose';
+
