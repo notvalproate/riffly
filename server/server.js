@@ -35,3 +35,22 @@ app.use(errorHandler);
 app.listen(env.app.port, async () => {
     console.log('Server running on http://localhost:' + env.app.port + '/');
 });
+
+import connectToDynamoDB from './database/dynamo.js';
+import dynamoose from 'dynamoose';
+
+async function test() {
+    try {
+        connectToDynamoDB();
+    
+        const User = dynamoose.model("User", {"id": Number, "name": String});
+        
+        const results = await User.query("name").eq("Tim").exec();
+
+        console.log(results);
+    } catch (error) {
+        console.error('Failed to connect to DynamoDB: ', error);
+    }
+}
+
+test();
