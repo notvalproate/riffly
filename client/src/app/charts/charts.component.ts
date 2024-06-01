@@ -4,7 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { UserChartsService } from '../services/user-charts.service';
 
 @Component({
-  selector: 'charts',
+  selector: 'app-charts',
   standalone: true,
   imports: [],
   templateUrl: './charts.component.html',
