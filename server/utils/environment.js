@@ -21,6 +21,11 @@ const env = {
         port: process.env.REDIS_PORT,
         password: process.env.REDIS_PASSWORD,
     },
+    aws: {
+        accessKey: process.env.AWS_ACCESS_KEY,
+        secretKey: process.env.AWS_SECRET_KEY,
+        region: process.env.AWS_REGION,
+    }
 };
 
 export default env;

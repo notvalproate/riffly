@@ -3,6 +3,8 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import compression from 'compression';
 
+import configDynamoose from './database/dynamo.js';
+
 import env from './utils/environment.js';
 
 import authRoutes from './routes/auth.js';
@@ -11,6 +13,7 @@ import trackRoutes from './routes/track.js';
 
 import errorHandler from './middleware/error.handler.js';
 
+configDynamoose();
 const app = express();
 
 app.use(
