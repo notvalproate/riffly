@@ -1,0 +1,39 @@
+
+.song {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    column-gap: 15px;
+
+    .song-cover-wrapper {
+        width: 30%;
+
+        .song-cover {
+            border-radius: 10px;
+            width: 100%;
+            box-shadow: 0px 0px 15px rgb(10, 10, 10);
+        }
+    }
+    .song-content {
+        max-width: 65%;
+        overflow: hidden;
+    }
+    .overflow-elipses {
+            overflow: hidden;
+         text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+
+.redirect-link {
+    text-decoration: none;
+    color: white;
+    transition: 150ms;
+}
+
+.redirect-link:hover {
+    color: rgb(181, 181, 181);
+}
+
+

@@ -1,0 +1,20 @@
+.lyrics {
+    background-color: rgb(35, 35, 35);
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 20px;
+
+    .lyrics-title {
+        margin-bottom: 10px;
+    }
+}
+
+.redirect-link {
+    text-decoration: none;
+    color: white;
+    transition: 150ms;
+}
+
+.redirect-link:hover {
+    color: rgb(181, 181, 181);
+}
