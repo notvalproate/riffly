@@ -51,6 +51,17 @@ export default class SpotifyAPI {
         res.status(200).json(topArtists);
     });
 
+    static getTopGenres = asyncHandler(async (req, res) => {
+        const query = getTopItemsQuery(req);
+        const topTracks = await spotifyFetch(
+            'GET',
+            `/me/top/tracks?${query.toString()}`,
+            req
+        );
+
+        res.status(200).json(topTracks);
+    });
+
     static async getSongByISRC(isrc, req) {
         const params = new URLSearchParams({
             type: 'track',
