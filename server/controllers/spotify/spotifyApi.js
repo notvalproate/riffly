@@ -52,25 +52,59 @@ export default class SpotifyAPI {
     });
 
     static getTopGenres = asyncHandler(async (req, res) => {
-        const query = getTopItemsQuery(req);
-        const topTracks = await spotifyFetch(
+        const query1 = getTopItemsQuery(req);
+        const first50 = await spotifyFetch(
             'GET',
-            `/me/top/tracks?${query.toString()}`,
+            `/me/top/tracks?${query1.toString()}`,
             req
         );
 
-        const artistIds = topTracks.items.reduce((acc, track) => {
+        req.query.offset = 50;
+
+        const query2 = getTopItemsQuery(req);
+        const next50 = await spotifyFetch(
+            'GET',
+            `/me/top/tracks?${query2.toString()}`,
+            req
+        );
+
+        const top100tracks = [...(first50.items), ...(next50.items)];
+
+        const allArtistIds = top100tracks.reduce((acc, track) => {
             track.artists.forEach(artist => acc.push(artist.id));
             return acc;
         }, []);
 
-        const artists = await spotifyFetch(
-            'GET',
-            `/me/top/tracks?${query.toString()}`,
-            req
-        );
+        const maxArtistsInBatch = 50;
 
-        res.status(200).json(topTracks);
+        const fetch100ArtistsGenres = async (artistsIds) => {
+            if(artistsIds.length > maxArtistsInBatch) {
+                throw new ApiError(500, 'Too many artists');
+            }
+
+            const artistsQuery = new URLSearchParams({
+                ids: artistsIds.join(','),
+            });
+    
+            const artists = await spotifyFetch(
+                'GET',
+                `/artists?${artistsQuery.toString()}`,
+                req
+            );
+
+            return artists;
+        }
+
+        let allGenres = [];
+
+        while(allArtistIds.length > 0) {
+            const artistsBatch = allArtistIds.splice(0, maxArtistsInBatch);
+            const batchResults = await fetch100ArtistsGenres(artistsBatch);
+            
+            batchResults.artists.forEach(artist => allGenres.push(...artist.genres));
+        }
+
+        res.status(200).json({ genres: allGenres });
     });
 
     static async getSongByISRC(isrc, req) {
