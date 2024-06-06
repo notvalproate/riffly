@@ -59,6 +59,17 @@ export default class SpotifyAPI {
             req
         );
 
+        const artistIds = topTracks.items.reduce((acc, track) => {
+            track.artists.forEach(artist => acc.push(artist.id));
+            return acc;
+        }, []);
+
+        const artists = await spotifyFetch(
+            'GET',
+            `/me/top/tracks?${query.toString()}`,
+            req
+        );
+
         res.status(200).json(topTracks);
     });
 

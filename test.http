@@ -1,0 +1,2 @@
+GET http://localhost:4000/me/top/genres
+Cookie: authToken=BQAS4iwvfFa-1iJ2wxNbPRuujl7H_KCDgFGSScOmnnP25Gof5C7CSOBp4eSR71Xhe0A_4b7WXTWf5eAzkfwUWMibdmce3YOZPcCaEhXE8f-R45g5XbVuyAdhZA24dlHm-TKEFy9rEVJhCtEFBr321m-i9fHVBgUMSfPlu0U3_A6h9g608VtphEEAz4PTNMpbMinJwPBzHb0PqAqWy3y3-wFOAHJRs8jR
