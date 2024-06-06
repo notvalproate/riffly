@@ -77,7 +77,7 @@ export default class SpotifyAPI {
 
         const maxArtistsInBatch = 50;
 
-        const fetch100ArtistsGenres = async (artistsIds) => {
+        const fetch50ArtistsGenres = async (artistsIds) => {
             if(artistsIds.length > maxArtistsInBatch) {
                 throw new ApiError(500, 'Too many artists');
             }
@@ -86,7 +86,7 @@ export default class SpotifyAPI {
                 ids: artistsIds.join(','),
             });
     
-            const artists = await spotifyFetch(
+            const artists = spotifyFetch(
                 'GET',
                 `/artists?${artistsQuery.toString()}`,
                 req
@@ -96,12 +96,17 @@ export default class SpotifyAPI {
         }
 
         let allGenres = [];
+        let batches = [];
 
         while(allArtistIds.length > 0) {
             const artistsBatch = allArtistIds.splice(0, maxArtistsInBatch);
-            const batchResults = await fetch100ArtistsGenres(artistsBatch);
-            
-            batchResults.artists.forEach(artist => allGenres.push(...artist.genres));
+            const batchResults = fetch50ArtistsGenres(artistsBatch);
+
+            batches.push(batchResults);
+        }
+
+        for(let i = 0; i < batches.length; i++) {
+            (await batches[i]).artists.forEach(artist => allGenres.push(...artist.genres));
         }
 
         res.status(200).json({ genres: allGenres });
