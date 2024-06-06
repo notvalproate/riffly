@@ -66,7 +66,7 @@ export default class SpotifyAPI {
             req
         );
 
-        const top100tracks = [...((await first50).items), ...((await next50).items), ...((await next501).items), ...((await next502).items)];
+        const top100tracks = [...((await first50).items), ...((await next50).items)];
 
         const allArtistIds = top100tracks.reduce((acc, track) => {
             track.artists.forEach(artist => acc.push(artist.id));
@@ -108,7 +108,11 @@ export default class SpotifyAPI {
             (await batches[i]).artists.forEach(artist => artist.genres.forEach(genre => genreDict[genre] = (genreDict[genre] || 0) + 1));
         }
 
-        res.status(200).json({ genres: genreDict });
+        const sortedDict = Object.fromEntries(
+            Object.entries(genreDict).sort(([,a] , [,b]) => b - a).slice(0, 25)
+        );
+
+        res.status(200).json({ genres: sortedDict });
     });
 
     static async getSongByISRC(isrc, req) {
