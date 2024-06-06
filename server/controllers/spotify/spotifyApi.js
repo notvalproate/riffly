@@ -66,12 +66,16 @@ export default class SpotifyAPI {
             req
         );
 
-        const top100tracks = [...((await first50).items), ...((await next50).items)];
+        query.set('offset', 100);
+        const next100 = spotifyFetch(
+            'GET',
+            `/me/top/tracks?${query.toString()}`,
+            req
+        );
 
-        const allArtistIds = top100tracks.reduce((acc, track) => {
-            track.artists.forEach(artist => acc.push(artist.id));
-            return acc;
-        }, []);
+        const top100tracks = [...((await first50).items), ...((await next50).items), ...((await next100).items)];
+
+        const allArtistIds = top100tracks.map((track) => track.artists[0].id);
 
         const maxArtistsInBatch = 50;
 
@@ -105,11 +109,12 @@ export default class SpotifyAPI {
         let genreDict = {};
 
         for(let i = 0; i < batches.length; i++) {
-            (await batches[i]).artists.forEach(artist => artist.genres.forEach(genre => genreDict[genre] = (genreDict[genre] || 0) + 1));
+            batches[i] = await batches[i];
+            batches[i].artists.forEach(artist => artist.genres.forEach(genre => genreDict[genre] = (genreDict[genre] || 0) + 1));
         }
 
         const sortedDict = Object.fromEntries(
-            Object.entries(genreDict).sort(([,a] , [,b]) => b - a).slice(0, 25)
+            Object.entries(genreDict).sort(([,a] , [,b]) => b - a).slice(0, 25).map(([key, value]) => [key, value / 100])
         );
 
         res.status(200).json({ genres: sortedDict });
