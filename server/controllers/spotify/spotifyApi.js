@@ -95,7 +95,6 @@ export default class SpotifyAPI {
             return artists;
         }
 
-        let allGenres = [];
         let batches = [];
 
         while(allArtistIds.length > 0) {
@@ -105,11 +104,13 @@ export default class SpotifyAPI {
             batches.push(batchResults);
         }
 
+        let genreDict = {};
+
         for(let i = 0; i < batches.length; i++) {
-            (await batches[i]).artists.forEach(artist => allGenres.push(...artist.genres));
+            (await batches[i]).artists.forEach(artist => artist.genres.forEach(genre => genreDict[genre] = (genreDict[genre] || 0) + 1));
         }
 
-        res.status(200).json({ genres: allGenres });
+        res.status(200).json({ genres: genreDict });
     });
 
     static async getSongByISRC(isrc, req) {
