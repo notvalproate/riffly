@@ -52,31 +52,27 @@ export default class SpotifyAPI {
     });
 
     static getTopGenres = asyncHandler(async (req, res) => {
+        const MAX_TRACKS_PER_REQUEST = 50;
+        const requestCount = 3;
+        const songCount = MAX_TRACKS_PER_REQUEST * requestCount;
+
         const query = getTopItemsQuery(req);
-        const first50 = spotifyFetch(
-            'GET',
-            `/me/top/tracks?${query.toString()}`,
-            req
-        );
+        const pendingTracks = [];
 
-        query.set('offset', 50);
-        const next50 = spotifyFetch(
-            'GET',
-            `/me/top/tracks?${query.toString()}`,
-            req
-        );
+        for(let i = 0; i < requestCount; i++) {
+            query.set('offset', i * MAX_TRACKS_PER_REQUEST);
 
-        query.set('offset', 100);
-        const next100 = spotifyFetch(
-            'GET',
-            `/me/top/tracks?${query.toString()}`,
-            req
-        );
+            const tracks = spotifyFetch(
+                'GET',
+                `/me/top/tracks?${query.toString()}`,
+                req
+            );
 
-        const top100tracks = [...((await first50).items), ...((await next50).items), ...((await next100).items)];
+            pendingTracks.push(tracks);
+        }
 
-        const allArtistIds = top100tracks.map((track) => track.artists[0].id);
-
+        const topTracks = (await Promise.all(pendingTracks)).flatMap((tracks) => tracks.items);
+        const allArtistIds = topTracks.map((track) => track.artists[0].id);
         const maxArtistsInBatch = 50;
 
         const fetch50ArtistsGenres = async (artistsIds) => {
@@ -114,7 +110,7 @@ export default class SpotifyAPI {
         }
 
         const sortedDict = Object.fromEntries(
-            Object.entries(genreDict).sort(([,a] , [,b]) => b - a).slice(0, 25).map(([key, value]) => [key, value / 100])
+            Object.entries(genreDict).sort(([,a] , [,b]) => b - a).slice(0, 25).map(([key, value]) => [key, value / songCount])
         );
 
         res.status(200).json({ genres: sortedDict });
