@@ -52,23 +52,21 @@ export default class SpotifyAPI {
     });
 
     static getTopGenres = asyncHandler(async (req, res) => {
-        const query1 = getTopItemsQuery(req);
+        const query = getTopItemsQuery(req);
         const first50 = spotifyFetch(
             'GET',
-            `/me/top/tracks?${query1.toString()}`,
+            `/me/top/tracks?${query.toString()}`,
             req
         );
 
-        req.query.offset = 50;
-
-        const query2 = getTopItemsQuery(req);
+        query.set('offset', 50);
         const next50 = spotifyFetch(
             'GET',
-            `/me/top/tracks?${query2.toString()}`,
+            `/me/top/tracks?${query.toString()}`,
             req
         );
 
-        const top100tracks = [...((await first50).items), ...((await next50).items)];
+        const top100tracks = [...((await first50).items), ...((await next50).items), ...((await next501).items), ...((await next502).items)];
 
         const allArtistIds = top100tracks.reduce((acc, track) => {
             track.artists.forEach(artist => acc.push(artist.id));
