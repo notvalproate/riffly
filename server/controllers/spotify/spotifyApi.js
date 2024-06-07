@@ -8,8 +8,6 @@ export default class SpotifyAPI {
     static spotifyApiUri = 'https://api.spotify.com/v1';
 
     static getUserInfo = asyncHandler(async (req, res) => {
-        console.log(User.name);
-
         let userInfo = await spotifyFetch('GET', '/me', req);
 
         userInfo = SpotifyParser.parseUserInfo(userInfo);
