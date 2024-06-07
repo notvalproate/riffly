@@ -86,4 +86,6 @@ const userSchema = new dynamoose.Schema({
     timestamps: true,
 });
 
-export default dynamoose.model('User', userSchema);
+export default dynamoose.model('User', userSchema, {
+    tableName: 'users',
+});
