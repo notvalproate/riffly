@@ -156,7 +156,7 @@ export default class SpotifyAPI {
     }
 }
 
-async function spotifyFetch(method, path, req) {
+export async function spotifyFetch(method, path, req) {
     const result = await fetch(SpotifyAPI.spotifyApiUri + path, {
         method: method,
         headers: { Authorization: `Bearer ${req.cookies.authToken}` },
