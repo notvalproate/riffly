@@ -2,6 +2,8 @@ import asyncHandler from 'express-async-handler';
 import ApiError from '../../utils/api.error.js';
 import SpotifyParser from '../../utils/spotify.parser.js';
 
+import User from '../../models/user.model.js';
+
 export default class SpotifyAPI {
     static spotifyApiUri = 'https://api.spotify.com/v1';
 
