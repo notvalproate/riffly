@@ -2,8 +2,6 @@ import asyncHandler from 'express-async-handler';
 import ApiError from '../../utils/api.error.js';
 import SpotifyParser from '../../utils/spotify.parser.js';
 
-import User from '../../models/user.model.js';
-
 export default class SpotifyAPI {
     static spotifyApiUri = 'https://api.spotify.com/v1';
 
@@ -11,17 +9,6 @@ export default class SpotifyAPI {
         let userInfo = await spotifyFetch('GET', '/me', req);
 
         userInfo = SpotifyParser.parseUserInfo(userInfo);
-
-        const user = await User.get(userInfo.user.id);
-
-        if (!user) {
-            const newUser = new User({
-                id: userInfo.user.id,
-                displayName: userInfo.user.displayName,
-            });
-
-            await newUser.save();
-        }
 
         res.status(200).json(userInfo);
     });

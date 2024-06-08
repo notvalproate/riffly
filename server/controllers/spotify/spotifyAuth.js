@@ -2,6 +2,8 @@ import crypto from 'crypto';
 import asyncHandler from 'express-async-handler';
 import ApiError from '../../utils/api.error.js';
 import env from '../../utils/environment.js';
+import { spotifyFetch } from './spotifyApi.js';
+import User from '../../models/user.model.js';
 
 const clientID = env.spotify.clientID;
 const clientSecret = env.spotify.clientSecret;
@@ -64,6 +66,21 @@ export default class SpotifyAuth {
 
         const authInfo = await result.json();
         setCookieTokens(authInfo, res);
+
+        req.cookies.authToken = authInfo.access_token;
+
+        let userInfo = await spotifyFetch('GET', '/me', req);
+
+        const user = await User.get(userInfo.id);
+
+        if (!user) {
+            const newUser = new User({
+                id: userInfo.id,
+                displayName: userInfo.display_name,
+            });
+
+            await newUser.save();
+        }
 
         res.status(204).send();
     });

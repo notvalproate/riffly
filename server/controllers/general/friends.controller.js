@@ -1,5 +1,5 @@
 import asyncHandler from 'express-async-handler';
-import { spotifyFetch } from "../spotify/spotifyApi"
+import { spotifyFetch } from "../spotify/spotifyApi.js"
 
 export default class Friends {
     static getList = asyncHandler(async (req, res) => {
