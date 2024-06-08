@@ -51,6 +51,71 @@ export default class SpotifyAPI {
         res.status(200).json(topArtists);
     });
 
+    static getTopGenres = asyncHandler(async (req, res) => {
+        const MAX_TRACKS_PER_REQUEST = 50;
+        const requestCount = 3;
+        const songCount = MAX_TRACKS_PER_REQUEST * requestCount;
+
+        const query = getTopItemsQuery(req);
+        const pendingTracks = [];
+
+        for(let i = 0; i < requestCount; i++) {
+            query.set('offset', i * MAX_TRACKS_PER_REQUEST);
+
+            const tracks = spotifyFetch(
+                'GET',
+                `/me/top/tracks?${query.toString()}`,
+                req
+            );
+
+            pendingTracks.push(tracks);
+        }
+
+        const topTracks = (await Promise.all(pendingTracks)).flatMap((tracks) => tracks.items);
+        const allArtistIds = topTracks.map((track) => track.artists[0].id);
+        const maxArtistsInBatch = 50;
+
+        const fetch50ArtistsGenres = async (artistsIds) => {
+            if(artistsIds.length > maxArtistsInBatch) {
+                throw new ApiError(500, 'Too many artists');
+            }
+
+            const artistsQuery = new URLSearchParams({
+                ids: artistsIds.join(','),
+            });
+    
+            const artists = spotifyFetch(
+                'GET',
+                `/artists?${artistsQuery.toString()}`,
+                req
+            );
+
+            return artists;
+        }
+
+        let batches = [];
+
+        while(allArtistIds.length > 0) {
+            const artistsBatch = allArtistIds.splice(0, maxArtistsInBatch);
+            const batchResults = fetch50ArtistsGenres(artistsBatch);
+
+            batches.push(batchResults);
+        }
+
+        let genreDict = {};
+
+        for(let i = 0; i < batches.length; i++) {
+            batches[i] = await batches[i];
+            batches[i].artists.forEach(artist => artist.genres.forEach(genre => genreDict[genre] = (genreDict[genre] || 0) + 1));
+        }
+
+        const sortedDict = Object.fromEntries(
+            Object.entries(genreDict).sort(([,a] , [,b]) => b - a).slice(0, 25).map(([key, value]) => [key, value / songCount])
+        );
+
+        res.status(200).json({ genres: sortedDict });
+    });
+
     static async getSongByISRC(isrc, req) {
         const params = new URLSearchParams({
             type: 'track',
