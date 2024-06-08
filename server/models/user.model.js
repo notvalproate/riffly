@@ -6,7 +6,7 @@ const userSchema = new dynamoose.Schema({
         hashKey: true,
         required: true,
     },
-    username: {
+    displayName: {
         type: String,
         required: true,
     },
@@ -34,7 +34,7 @@ const userSchema = new dynamoose.Schema({
         type: Object,
         schema: {
             list: {
-                type: Set,
+                type: Array,
                 schema: [{
                     type: Object,
                     schema: {
@@ -47,7 +47,7 @@ const userSchema = new dynamoose.Schema({
                 required: true,
             },
             requests: {
-                type: Set,
+                type: Array,
                 schema: [{
                     type: Object,
                     schema: {
@@ -66,7 +66,7 @@ const userSchema = new dynamoose.Schema({
         },
     },
     recommendations: {
-        type: Set,
+        type: Array,
         schema: [{
             type: Object,
             schema: {
