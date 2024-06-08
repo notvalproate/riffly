@@ -97,6 +97,10 @@ export class SongPlayerComponent implements OnInit, OnDestroy {
 
                     this.userInfoService.getLyrics(this.songCardData.currentISRC).subscribe({
                         next: (resp: any) => {
+                            if(resp.body.isrc !== this.songCardData.currentISRC) {
+                                return;
+                            }
+
                             this.lyricsData.loadingLyrics = false;
 
                             if(resp.body === null) {

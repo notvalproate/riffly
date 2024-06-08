@@ -47,6 +47,7 @@ async function getFromGenius(currentTrack, isrc, res) {
             const json = {
                 provider: 'genius',
                 url: gTrack.url,
+                isrc: isrc,
                 lyricsBody: gLyrics,
             };
 
@@ -84,6 +85,7 @@ async function getFromMusixmatch(isrc, res) {
     const json = {
         provider: 'musixmatch',
         url: mTrack.track_share_url,
+        isrc: isrc,
         lyricsBody: mLyrics,
     };
 
