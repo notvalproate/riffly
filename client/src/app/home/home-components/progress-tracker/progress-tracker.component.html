@@ -1,0 +1,15 @@
+@if(progressData){
+    <div class="progress-wrapper">
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar" [style.width]="progressData.currentProgressPercent"></div>
+        </div>
+        <div class="progress-times">
+            <span class="progress-time">
+                {{msToMinutesString(progressData.currentSongProgress)}}
+            </span>
+            <span class="progress-time">
+                {{msToMinutesString(progressData.currentSongLength)}}
+            </span>
+        </div>
+    </div>
+}

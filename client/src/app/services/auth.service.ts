@@ -6,7 +6,7 @@ import { ApiService } from './api.service';
 })
 export class AuthService extends ApiService {
     hasAuthToken() {
-        return this.http.get(this.apiUrl + '/auth/hasAuthToken', this.requestOptions);
+        return this.http.get(this.apiUrl + '/auth/token', this.requestOptions);
     }
 
     hasError() {
@@ -35,13 +35,13 @@ export class AuthService extends ApiService {
                 state: state
             });
 
-            return this.http.get(this.apiUrl + '/auth/info?' + authParams.toString(), this.requestOptions);
+            return this.http.post(this.apiUrl + '/auth/info?' + authParams.toString(), {}, this.requestOptions);
         }
 
         return undefined;
     }
 
     logout() {
-        return this.http.get(this.apiUrl + '/auth/logout', this.requestOptions);
+        return this.http.delete(this.apiUrl + '/auth/logout', this.requestOptions);
     }
 }

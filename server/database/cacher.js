@@ -1,25 +1,29 @@
-const { createClient } = require('redis');
-require('dotenv').config();
+import { createClient } from 'redis';
+import env from '../utils/environment.js';
 
-// NOT GOOD TO EXPORT VARIABLE DECLARED WITH LET
-let client = null;
-
-if(process.env.MODE === 'development') {
-    client = createClient({
-        password: process.env.REDIS_PASSWORD,
-        socket: {
-            host: process.env.REDIS_HOST,
-            port: process.env.REDIS_PORT,
-        },
-    });
-} else {
-    client = createClient();
+function createRedisClient() {
+    if (env.app.mode === 'development') {
+        return createClient({
+            socket: {
+                host: env.redis.host,
+                port: env.redis.port,
+            },
+            password: env.redis.password,
+        });
+    } else {
+        return createClient();
+    }
 }
 
-client.connect().then(() => {
-    console.log("Successfully connected to redis");
-}).catch((e) => {
-    console.log(e);
-});
+const client = createRedisClient();
 
-module.exports = client;
+client
+    .connect()
+    .then(() => {
+        console.log('Successfully connected to redis');
+    })
+    .catch((e) => {
+        console.log(e);
+    });
+
+export default client;

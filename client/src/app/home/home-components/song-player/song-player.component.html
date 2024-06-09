@@ -1,0 +1,17 @@
+@if (isPlayerActive) {
+    <div class="content-wrapper">
+        <div class="player">
+
+            <app-song-card [songCardData]="songCardData" ></app-song-card>
+            <app-progress-tracker [progressData]="progressData" ></app-progress-tracker>
+
+
+        </div>
+        <app-lyrics-display [lyricsData]="lyricsData"></app-lyrics-display>
+
+
+    </div>
+} @else {
+    <h3>Not listening to anything</h3>
+    <span>No Lyrics Available</span>
+}

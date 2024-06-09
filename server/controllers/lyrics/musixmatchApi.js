@@ -1,23 +1,27 @@
-const { ApiError } = require('../../utils/api.error.js');
+import ApiError from '../../utils/api.error.js';
+import env from '../../utils/environment.js';
 
-const musixMatchToken = process.env.MUSIX_MATCH_TOKEN;
+const musixMatchToken = env.lyrics.musixMatchToken;
 
-class MusixmatchAPI {
-    static musixmatchApiUrl = 'https://api.musixmatch.com/ws/1.1'
+export default class MusixmatchAPI {
+    static musixmatchApiUrl = 'https://api.musixmatch.com/ws/1.1';
 
     static async getTrackByISRC(isrc) {
         const params = new URLSearchParams({
             apikey: musixMatchToken,
             track_isrc: isrc,
         });
-    
-        const json = await musixMatchFetch('GET', `/track.get?${params.toString()}`);
+
+        const json = await musixMatchFetch(
+            'GET',
+            `/track.get?${params.toString()}`
+        );
         const status = json.message.header.status_code;
-    
-        if(status !== 200) {
+
+        if (status !== 200) {
             return null;
         }
-    
+
         return json.message.body.track;
     }
 
@@ -26,30 +30,33 @@ class MusixmatchAPI {
             apikey: musixMatchToken,
             track_id: id,
         });
-    
-        const json = await musixMatchFetch('GET', `/track.lyrics.get?${params.toString()}`);
+
+        const json = await musixMatchFetch(
+            'GET',
+            `/track.lyrics.get?${params.toString()}`
+        );
         const status = json.message.header.status_code;
 
-        if(status !== 200) {
+        if (status !== 200) {
             return null;
         }
 
         const lyricsBody = json.message.body.lyrics.lyrics_body;
 
-        if(lyricsBody === '') {
+        if (lyricsBody === '') {
             return null;
-        }  
-        
+        }
+
         return lyricsBody;
     }
-};
+}
 
 async function musixMatchFetch(method, path) {
     const result = await fetch(MusixmatchAPI.musixmatchApiUrl + path, {
         method: method,
     });
 
-    if(!result.ok) {
+    if (!result.ok) {
         throw new ApiError(result.status, result.statusText);
     }
 
@@ -59,7 +66,3 @@ async function musixMatchFetch(method, path) {
 }
 
 Object.freeze(MusixmatchAPI);
-
-module.exports = {
-    MusixmatchAPI,
-}

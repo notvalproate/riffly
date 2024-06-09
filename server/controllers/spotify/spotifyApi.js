@@ -1,8 +1,8 @@
-const asyncHandler = require('express-async-handler');
-const { ApiError } = require('../../utils/api.error.js');
-const { SpotifyParser } = require('../../utils/spotify.parser.js');
+import asyncHandler from 'express-async-handler';
+import ApiError from '../../utils/api.error.js';
+import SpotifyParser from '../../utils/spotify.parser.js';
 
-class SpotifyAPI {
+export default class SpotifyAPI {
     static spotifyApiUri = 'https://api.spotify.com/v1';
 
     static getUserInfo = asyncHandler(async (req, res) => {
@@ -14,12 +14,16 @@ class SpotifyAPI {
     });
 
     static getPlayerInfo = asyncHandler(async (req, res) => {
-        let playerInfo = await spotifyFetch('GET', '/me/player?additional_types=episode', req);
+        let playerInfo = await spotifyFetch(
+            'GET',
+            '/me/player?additional_types=episode',
+            req
+        );
 
-        if(playerInfo.no_content) {
+        if (playerInfo.no_content) {
             return res.status(204).send();
         }
-        
+
         playerInfo = SpotifyParser.parsePlayerInfo(playerInfo);
 
         res.status(200).json(playerInfo);
@@ -27,16 +31,89 @@ class SpotifyAPI {
 
     static getTopTracks = asyncHandler(async (req, res) => {
         const query = getTopItemsQuery(req);
-        const topTracks = await spotifyFetch('GET', `/me/top/tracks?${query.toString()}`, req);
+        const topTracks = await spotifyFetch(
+            'GET',
+            `/me/top/tracks?${query.toString()}`,
+            req
+        );
 
         res.status(200).json(topTracks);
     });
 
     static getTopArtists = asyncHandler(async (req, res) => {
         const query = getTopItemsQuery(req);
-        const topArtists = await spotifyFetch('GET', `/me/top/artists?${query.toString()}`, req);
+        const topArtists = await spotifyFetch(
+            'GET',
+            `/me/top/artists?${query.toString()}`,
+            req
+        );
 
         res.status(200).json(topArtists);
+    });
+
+    static getTopGenres = asyncHandler(async (req, res) => {
+        const MAX_TRACKS_PER_REQUEST = 50;
+        const requestCount = 3;
+        const songCount = MAX_TRACKS_PER_REQUEST * requestCount;
+
+        const query = getTopItemsQuery(req);
+        const pendingTracks = [];
+
+        for(let i = 0; i < requestCount; i++) {
+            query.set('offset', i * MAX_TRACKS_PER_REQUEST);
+
+            const tracks = spotifyFetch(
+                'GET',
+                `/me/top/tracks?${query.toString()}`,
+                req
+            );
+
+            pendingTracks.push(tracks);
+        }
+
+        const topTracks = (await Promise.all(pendingTracks)).flatMap((tracks) => tracks.items);
+        const allArtistIds = topTracks.map((track) => track.artists[0].id);
+        const maxArtistsInBatch = 50;
+
+        const fetch50ArtistsGenres = async (artistsIds) => {
+            if(artistsIds.length > maxArtistsInBatch) {
+                throw new ApiError(500, 'Too many artists');
+            }
+
+            const artistsQuery = new URLSearchParams({
+                ids: artistsIds.join(','),
+            });
+    
+            const artists = spotifyFetch(
+                'GET',
+                `/artists?${artistsQuery.toString()}`,
+                req
+            );
+
+            return artists;
+        }
+
+        let batches = [];
+
+        while(allArtistIds.length > 0) {
+            const artistsBatch = allArtistIds.splice(0, maxArtistsInBatch);
+            const batchResults = fetch50ArtistsGenres(artistsBatch);
+
+            batches.push(batchResults);
+        }
+
+        let genreDict = {};
+
+        for(let i = 0; i < batches.length; i++) {
+            batches[i] = await batches[i];
+            batches[i].artists.forEach(artist => artist.genres.forEach(genre => genreDict[genre] = (genreDict[genre] || 0) + 1));
+        }
+
+        const sortedDict = Object.fromEntries(
+            Object.entries(genreDict).sort(([,a] , [,b]) => b - a).slice(0, 25).map(([key, value]) => [key, value / songCount])
+        );
+
+        res.status(200).json({ genres: sortedDict });
     });
 
     static async getSongByISRC(isrc, req) {
@@ -44,10 +121,14 @@ class SpotifyAPI {
             type: 'track',
             q: `isrc:${isrc}`,
         });
-    
-        let searches = await spotifyFetch('GET', `/search?${params.toString()}`, req);
 
-        if(searches.tracks.items.length === 0) {
+        let searches = await spotifyFetch(
+            'GET',
+            `/search?${params.toString()}`,
+            req
+        );
+
+        if (searches.tracks.items.length === 0) {
             return null;
         }
 
@@ -58,23 +139,29 @@ class SpotifyAPI {
         return {
             title: title,
             artists: artists,
-        }
+        };
     }
 }
 
-async function spotifyFetch(method, path, req) {
-    const result = await fetch(SpotifyAPI.spotifyApiUri + path, {
+export async function spotifyFetch(method, path, req, body) {
+    const options = {
         method: method,
         headers: { Authorization: `Bearer ${req.cookies.authToken}` },
-    });
-    
-    if(result.status === 204) {
+    }
+
+    if(typeof body === 'object') {
+        options.body = JSON.stringify(body);
+    }
+ 
+    const result = await fetch(SpotifyAPI.spotifyApiUri + path, options);
+
+    if (result.status === 204) {
         return { no_content: true };
     }
 
     const json = await result.json();
 
-    if(!result.ok) {
+    if (!result.ok) {
         throw new ApiError(json.error.status, json.error.message);
     }
 
@@ -99,7 +186,3 @@ function getTopItemsQuery(req) {
 }
 
 Object.freeze(SpotifyAPI);
-
-module.exports = {
-    SpotifyAPI,
-};

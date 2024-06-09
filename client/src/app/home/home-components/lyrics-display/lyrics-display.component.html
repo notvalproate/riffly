@@ -1,0 +1,16 @@
+@if(lyricsData){
+    <div class="lyrics">
+        @if (lyricsData.loadingLyrics) {
+            <span>Loading Lyrics...</span>
+        } @else {
+            @if (lyricsData.currentLyrics.length > 0) {
+                <h3 class="lyrics-title"><a class="redirect-link" href="{{lyricsData.lyricsUrl}}" target="_blank">LYRICS BY {{lyricsData.lyricsProvider.toUpperCase()}}</a></h3>
+            }
+            @for (item of lyricsData.currentLyrics; track $index) {
+                <span>{{item}}</span><br>
+            } @empty {
+                <span>No Lyrics Available</span>
+            }
+        }
+    </div>
+}

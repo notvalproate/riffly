@@ -1,9 +1,8 @@
-
-class SpotifyParser {
+export default class SpotifyParser {
     static parseUserInfo(userinfo) {
         let images = null;
 
-        if(userinfo.images.length) {
+        if (userinfo.images.length) {
             images = {
                 default: userinfo.images[0].url,
                 large: userinfo.images[1].url,
@@ -22,8 +21,28 @@ class SpotifyParser {
         };
     }
 
+    static parseFriendInfo(userinfo) {
+        let images = null;
+
+        if (userinfo.images.length) {
+            images = {
+                default: userinfo.images[0].url,
+                large: userinfo.images[1].url,
+            };
+        }
+
+        return {
+            user: {
+                id: userinfo.id,
+                displayName: userinfo.display_name,
+                url: userinfo.external_urls.spotify,
+            },
+            images: images,
+        };
+    }
+
     static parsePlayerInfo(playerInfo) {
-        if(playerInfo.currently_playing_type === 'track') {
+        if (playerInfo.currently_playing_type === 'track') {
             return this.parseTrackInfo(playerInfo);
         } else {
             return this.parseEpisodeInfo(playerInfo);
@@ -86,10 +105,6 @@ class SpotifyParser {
 
         return parsed;
     }
-};
+}
 
 Object.freeze(SpotifyParser);
-
-module.exports = {
-    SpotifyParser,
-}
