@@ -18,7 +18,7 @@ export default class Friends {
             throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
         }
 
-        const friends = await getUsersBatch(user.friends.list);
+        const friends = await getUsersBatch(user.friends.list, req);
 
         res.status(200).json({ friendsList: friends});
     });
@@ -32,12 +32,12 @@ export default class Friends {
             throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
         }
 
-        const pendingRequests = await getUsersBatch(user.friends.requests);
+        const requests = await getUsersBatch(user.friends.requests, req);
 
-        res.status(200).json({ pendingRequests: pendingRequests});
+        res.status(200).json({ requests: requests});
     });
 
-    static sendRequest = asyncHandler(async (req, res) => {
+    static getPendingRequests = asyncHandler(async (req, res) => {
         let userInfo = await spotifyFetch('GET', '/me', req);
 
         const user = await User.get(userInfo.id);
@@ -46,14 +46,32 @@ export default class Friends {
             throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
         }
 
-        if (user.friends.list.length >= MAX_FRIENDS) {
-            throw new ApiError(400, 'User has reached the maximum number of friends!');
-        }
+        const pending = await getUsersBatch(user.friends.pending, req);
 
+        res.status(200).json({ pending: pending});
+    });
+
+    static sendRequest = asyncHandler(async (req, res) => {
         const requestedId = req.body.id;
 
         if (!requestedId) {
             throw new ApiError(400, 'No id provided in request body!');
+        }
+
+        let userInfo = await spotifyFetch('GET', '/me', req);
+
+        const user = await User.get(userInfo.id);
+
+        if (!user) {
+            throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
+        }
+
+        if(user.id === requestedId) {
+            throw new ApiError(400, 'You cannot send a friend request to yourself!');
+        }
+
+        if (user.friends.list.length >= MAX_FRIENDS) {
+            throw new ApiError(400, 'User has reached the maximum number of friends!');
         }
 
         let requestedUser = await User.get(requestedId);
@@ -66,37 +84,21 @@ export default class Friends {
             throw new ApiError(400, 'User is already a friend');
         }
 
-        if (user.friends.requests.some(request => request.id === requestedId)) {
-            throw new ApiError(400, 'Request already sent');
+        if (user.friends.pending.some(request => request.id === requestedId)) {
+            throw new ApiError(400, 'Request already sent!');
         }
 
-        if (user.friends.pending.some(request => request.id === requestedId)) {
+        if (user.friends.requests.some(request => request.id === requestedId)) {
             throw new ApiError(400, 'You already have a pending request from this user');
         }
 
-        const userUpdate = User.update({
-            id: user.id,
-        }, {
-            friends: {
-                pending: {
-                    $ADD: {
-                        id: requestedId,
-                    },
-                },
-            },
-        });
+        // OPTIMIZE THIS LATER TO USE UPDATE SOMEHOW TO ADD TO THE LIST ATLEAST RATHER THAN PUSHING AND OVERWRITING WHOLE OBJECT
 
-        const requestedUpdate = User.update({
-            id: requestedId,
-        }, {
-            friends: {
-                requests: {
-                    $ADD: {
-                        id: user.id,
-                    },
-                },
-            },
-        });
+        user.friends.pending.push({ id: requestedId });
+        requestedUser.friends.requests.push({ id: userInfo.id });
+
+        const userUpdate = user.save();
+        const requestedUpdate = requestedUser.save();
 
         await userUpdate;
         await requestedUpdate;
@@ -105,7 +107,7 @@ export default class Friends {
     });
 };
 
-async function getUsersBatch(users) {
+async function getUsersBatch(users, req) {
     const parsedUsers = [];
 
     users.forEach(async (user) => {
