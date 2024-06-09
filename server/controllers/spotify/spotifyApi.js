@@ -143,11 +143,17 @@ export default class SpotifyAPI {
     }
 }
 
-export async function spotifyFetch(method, path, req) {
-    const result = await fetch(SpotifyAPI.spotifyApiUri + path, {
+export async function spotifyFetch(method, path, req, body) {
+    const options = {
         method: method,
         headers: { Authorization: `Bearer ${req.cookies.authToken}` },
-    });
+    }
+
+    if(typeof body === 'object') {
+        options.body = JSON.stringify(body);
+    }
+ 
+    const result = await fetch(SpotifyAPI.spotifyApiUri + path, options);
 
     if (result.status === 204) {
         return { no_content: true };

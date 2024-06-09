@@ -59,6 +59,19 @@ const userSchema = new dynamoose.Schema({
                 }],
                 required: true,
             },
+            pending: {
+                type: Array,
+                schema: [{
+                    type: Object,
+                    schema: {
+                        id: {
+                            type: String,
+                            required: true,
+                        },
+                    },
+                }],
+                required: true,
+            },
         },
         default: {
             list: [],

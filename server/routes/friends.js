@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get('/list', Friends.getList);
 router.get('/requests', Friends.getRequests);
+router.post('/request', Friends.sendRequest);
 
 export default router;
