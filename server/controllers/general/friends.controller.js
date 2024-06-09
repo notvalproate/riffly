@@ -47,25 +47,54 @@ export default class Friends {
             throw new ApiError(400, 'User has reached the maximum number of friends!');
         }
 
-        const id = req.body.id;
+        const requestedId = req.body.id;
 
-        if (!id) {
+        if (!requestedId) {
             throw new ApiError(400, 'No id provided in request body!');
         }
 
-        if (user.friends.list.some(friend => friend.id === id)) {
+        let requestedUser = await User.get(requestedId);
+
+        if (!requestedUser) {
+            throw new ApiError(404, 'User not found');
+        }
+
+        if (user.friends.list.some(friend => friend.id === requestedId)) {
             throw new ApiError(400, 'User is already a friend');
         }
 
-        if (user.friends.requests.some(request => request.id === id)) {
+        if (user.friends.requests.some(request => request.id === requestedId)) {
             throw new ApiError(400, 'Request already sent');
         }
 
-        if (user.friends.pending.some(request => request.id === id)) {
+        if (user.friends.pending.some(request => request.id === requestedId)) {
             throw new ApiError(400, 'You already have a pending request from this user');
         }
 
+        const userUpdate = User.update({
+            id: user.id,
+        }, {
+            $ADD: {
+                'friends.pending': {
+                    id: requestedId,
+                },
+            },
+        });
 
+        const requestedUpdate = User.update({
+            id: requestedId,
+        }, {
+            $ADD: {
+                'friends.requests': {
+                    id: user.id,
+                },
+            },
+        });
+
+        await userUpdate;
+        await requestedUpdate;
+
+        res.status(204).send();
     });
 };
 
