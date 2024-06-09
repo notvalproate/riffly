@@ -35,6 +35,7 @@ jobs:
             sudo npm i
             touch .env
             echo "${{ secrets.API_ENV }}" > .env
+            redis-cli flushall
             redis-cli shutdown
             redis-server ./redis.conf --daemonize yes
             sudo pm2 stop server
