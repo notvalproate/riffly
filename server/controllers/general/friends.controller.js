@@ -1,4 +1,7 @@
 import asyncHandler from 'express-async-handler';
+
+import ApiError from '../../utils/api.error.js';
+
 import SpotifyParser from '../../utils/spotify.parser.js';
 import { spotifyFetch } from "../spotify/spotifyApi.js"
 import User from "../../models/user.model.js"
@@ -74,9 +77,11 @@ export default class Friends {
         const userUpdate = User.update({
             id: user.id,
         }, {
-            $ADD: {
-                'friends.pending': {
-                    id: requestedId,
+            friends: {
+                pending: {
+                    $ADD: {
+                        id: requestedId,
+                    },
                 },
             },
         });
@@ -84,9 +89,11 @@ export default class Friends {
         const requestedUpdate = User.update({
             id: requestedId,
         }, {
-            $ADD: {
-                'friends.requests': {
-                    id: user.id,
+            friends: {
+                requests: {
+                    $ADD: {
+                        id: user.id,
+                    },
                 },
             },
         });

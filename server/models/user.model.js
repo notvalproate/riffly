@@ -76,6 +76,7 @@ const userSchema = new dynamoose.Schema({
         default: {
             list: [],
             requests: [],
+            pending: [],
         },
     },
     recommendations: {

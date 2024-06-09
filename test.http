@@ -1,0 +1,7 @@
+POST http://localhost:4000/me/friends/request
+Cookie: authToken=BQCShR_1k8lKMPQ2U4YZJzYzXqmdHbT0swZFB6pPXJzeJG8dTTLagmHVZ254b1wfbmG0pXceWEix020hmado8hTUXEF-zdXrWWnIYuC0DH_uY6yJgsNt_Qd1sDx1dZ4di48jeiVDmlzxTtcxbiLAvTy_HIS032PQYo7mRs2pUkRm8v_--8b_asKTug7p8PuQcgw9yFVGuwnpg7BdbrktcCLZJsJGvPhmyAiv
+Content-Type: application/json
+
+{
+    "id": "21gncly3nhfcfzca7cnhurdta"
+}

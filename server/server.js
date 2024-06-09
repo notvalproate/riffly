@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import compression from 'compression';
+import bodyParser from 'body-parser';
 
 import configDynamoose from './database/dynamo.js';
 
@@ -16,6 +17,8 @@ import errorHandler from './middleware/error.handler.js';
 configDynamoose();
 const app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     compression({
         threshold: 0,
