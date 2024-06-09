@@ -1,3 +1,5 @@
+import env from "../utils/environment.js";
+
 const errorHandler = (err, req, res, next) => {
     const errStatus = err.statusCode || 500;
     const errMsg =
@@ -10,7 +12,7 @@ const errorHandler = (err, req, res, next) => {
         message: errMsg,
     };
 
-    if (process.env.NODE_ENV === 'development') {
+    if (env.app.mode === 'development') {
         error.stack = err.stack;
     }
 
