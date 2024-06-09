@@ -9,6 +9,28 @@ import User from "../../models/user.model.js"
 const MAX_FRIENDS = 60;
 
 export default class Friends {
+    static getAll = asyncHandler(async (req, res) => {
+        let userInfo = await spotifyFetch('GET', '/me', req);
+
+        const user = await User.get(userInfo.id);
+
+        if (!user) {
+            throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
+        }
+
+        const list = await getUsersBatch(user.friends.list, req);
+        const requests = await getUsersBatch(user.friends.requests, req);
+        const pending = await getUsersBatch(user.friends.pending, req);
+
+        res.status(200).json({
+            friends: {
+                list: list,
+                requests: requests,
+                pending: pending
+            }
+        });
+    });
+
     static getList = asyncHandler(async (req, res) => {
         let userInfo = await spotifyFetch('GET', '/me', req);
 
@@ -18,9 +40,9 @@ export default class Friends {
             throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
         }
 
-        const friends = await getUsersBatch(user.friends.list, req);
+        const list = await getUsersBatch(user.friends.list, req);
 
-        res.status(200).json({ friendsList: friends});
+        res.status(200).json({ list: list});
     });
 
     static getRequests = asyncHandler(async (req, res) => {
