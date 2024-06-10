@@ -199,6 +199,9 @@ export default class Friends {
         const j = requestedUser.friends.pending.findIndex(request => request.id === userInfo.id);
         requestedUser.friends.pending.splice(j, 1);
 
+        user.friends.list.push({ id: requestedId });
+        requestedUser.friends.list.push({ id: userInfo.id });
+
         const userUpdate = user.save();
         const requestedUpdate = requestedUser.save();
 
