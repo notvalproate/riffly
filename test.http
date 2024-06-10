@@ -1,0 +1,2 @@
+DELETE http://localhost:4000/me/friends/request?id=5f7b3b3b7f3b3b3b3b3b3b3b
+Cookie: authToken=

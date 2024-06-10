@@ -74,7 +74,7 @@ export default class Friends {
     });
 
     static sendRequest = asyncHandler(async (req, res) => {
-        const requestedId = req.body.id;
+        const requestedId = req.query.id;
 
         if (!requestedId) {
             throw new ApiError(400, 'No id provided in request body!');
@@ -85,7 +85,7 @@ export default class Friends {
         const user = await User.get(userInfo.id);
 
         if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
+            throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
         }
 
         if(user.id === requestedId) {
@@ -118,6 +118,46 @@ export default class Friends {
 
         user.friends.pending.push({ id: requestedId });
         requestedUser.friends.requests.push({ id: userInfo.id });
+
+        const userUpdate = user.save();
+        const requestedUpdate = requestedUser.save();
+
+        await userUpdate;
+        await requestedUpdate;
+
+        res.status(204).send();
+    });
+
+    static rejectRequest = asyncHandler(async (req, res) => {
+        const requestedId = req.query.id;
+
+        if (!requestedId) {
+            throw new ApiError(400, 'No id provided in request body!');
+        }
+
+        let userInfo = await spotifyFetch('GET', '/me', req);
+
+        const user = await User.get(userInfo.id);
+
+        if (!user) {
+            throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
+        }
+
+        if (!user.friends.requests.some(friend => friend.id === requestedId)) {
+            throw new ApiError(400, 'User does not have request from this ID');
+        }
+
+        const requestedUser = await User.get(requestedId);
+
+        if (!requestedUser) {
+            throw new ApiError(404, 'User not found');
+        }
+
+        const i = user.friends.requests.findIndex(request => request.id === requestedId);
+        user.friends.requests.splice(i, 1);
+
+        const j = requestedUser.friends.pending.findIndex(request => request.id === userInfo.id);
+        requestedUser.friends.pending.splice(j, 1);
 
         const userUpdate = user.save();
         const requestedUpdate = requestedUser.save();
