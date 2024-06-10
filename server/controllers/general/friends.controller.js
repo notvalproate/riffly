@@ -12,15 +12,11 @@ export default class Friends {
     static getAll = asyncHandler(async (req, res) => {
         let userInfo = await spotifyFetch('GET', '/me', req);
 
-        const user = await User.get(userInfo.id);
+        const user = await getUser(userInfo.id);
 
-        if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
-        }
-
-        const list = await getUsersBatch(user.friends.list, req);
-        const requests = await getUsersBatch(user.friends.requests, req);
-        const pending = await getUsersBatch(user.friends.pending, req);
+        const list = await getUserDataBatch(user.friends.list, req);
+        const requests = await getUserDataBatch(user.friends.requests, req);
+        const pending = await getUserDataBatch(user.friends.pending, req);
 
         res.status(200).json({
             friends: {
@@ -34,13 +30,9 @@ export default class Friends {
     static getList = asyncHandler(async (req, res) => {
         let userInfo = await spotifyFetch('GET', '/me', req);
 
-        const user = await User.get(userInfo.id);
+        const user = await getUser(userInfo.id);
 
-        if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
-        }
-
-        const list = await getUsersBatch(user.friends.list, req);
+        const list = await getUserDataBatch(user.friends.list, req);
 
         res.status(200).json({ list: list});
     });
@@ -48,13 +40,9 @@ export default class Friends {
     static getRequests = asyncHandler(async (req, res) => {
         let userInfo = await spotifyFetch('GET', '/me', req);
 
-        const user = await User.get(userInfo.id);
+        const user = await getUser(userInfo.id);
 
-        if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
-        }
-
-        const requests = await getUsersBatch(user.friends.requests, req);
+        const requests = await getUserDataBatch(user.friends.requests, req);
 
         res.status(200).json({ requests: requests});
     });
@@ -62,41 +50,25 @@ export default class Friends {
     static getPendingRequests = asyncHandler(async (req, res) => {
         let userInfo = await spotifyFetch('GET', '/me', req);
 
-        const user = await User.get(userInfo.id);
+        const user = await getUser(userInfo.id);
 
-        if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registeration, Please re-login and try again!');
-        }
-
-        const pending = await getUsersBatch(user.friends.pending, req);
+        const pending = await getUserDataBatch(user.friends.pending, req);
 
         res.status(200).json({ pending: pending});
     });
 
     static cancelPendingRequest = asyncHandler(async (req, res) => {
-        const requestedId = req.query.id;
-
-        if (!requestedId) {
-            throw new ApiError(400, 'No id provided in request query!');
-        }
+        const requestedId = getRequestedId(req);
 
         let userInfo = await spotifyFetch('GET', '/me', req);
 
-        const user = await User.get(userInfo.id);
-
-        if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
-        }
+        const user = await getUser(userInfo.id);
 
         if (!user.friends.pending.some(friend => friend.id === requestedId)) {
             throw new ApiError(400, 'User does not have request to this ID');
         }
 
-        const requestedUser = await User.get(requestedId);
-
-        if (!requestedUser) {
-            throw new ApiError(404, 'User not found');
-        }
+        const requestedUser = await getUser(requestedId);
 
         const i = user.friends.pending.findIndex(request => request.id === requestedId);
         user.friends.pending.splice(i, 1);
@@ -114,19 +86,11 @@ export default class Friends {
     });
 
     static sendRequest = asyncHandler(async (req, res) => {
-        const requestedId = req.query.id;
-
-        if (!requestedId) {
-            throw new ApiError(400, 'No id provided in request query!');
-        }
+        const requestedId = getRequestedId(req);
 
         let userInfo = await spotifyFetch('GET', '/me', req);
 
-        const user = await User.get(userInfo.id);
-
-        if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
-        }
+        const user = await getUser(userInfo.id);
 
         if(user.id === requestedId) {
             throw new ApiError(400, 'You cannot send a friend request to yourself!');
@@ -136,10 +100,10 @@ export default class Friends {
             throw new ApiError(400, 'User has reached the maximum number of friends!');
         }
 
-        let requestedUser = await User.get(requestedId);
+        let requestedUser = await getUser(requestedId);
 
-        if (!requestedUser) {
-            throw new ApiError(404, 'User not found');
+        if (requestedUser.friends.list.length >= MAX_FRIENDS) {
+            throw new ApiError(400, 'Requested user has reached the maximum number of friends!');
         }
 
         if (user.friends.list.some(friend => friend.id === requestedId)) {
@@ -169,29 +133,17 @@ export default class Friends {
     });
 
     static rejectRequest = asyncHandler(async (req, res) => {
-        const requestedId = req.query.id;
-
-        if (!requestedId) {
-            throw new ApiError(400, 'No id provided in request query!');
-        }
+        const requestedId = getRequestedId(req);
 
         let userInfo = await spotifyFetch('GET', '/me', req);
 
-        const user = await User.get(userInfo.id);
-
-        if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
-        }
+        const user = await getUser(userInfo.id);
 
         if (!user.friends.requests.some(friend => friend.id === requestedId)) {
             throw new ApiError(400, 'User does not have request from this ID');
         }
 
-        const requestedUser = await User.get(requestedId);
-
-        if (!requestedUser) {
-            throw new ApiError(404, 'User not found');
-        }
+        const requestedUser = await getUser(requestedId);
 
         const i = user.friends.requests.findIndex(request => request.id === requestedId);
         user.friends.requests.splice(i, 1);
@@ -209,29 +161,17 @@ export default class Friends {
     });
 
     static acceptRequest = asyncHandler(async (req, res) => {
-        const requestedId = req.query.id;
-
-        if (!requestedId) {
-            throw new ApiError(400, 'No id provided in request query!');
-        }
+        const requestedId = getRequestedId(req);
 
         let userInfo = await spotifyFetch('GET', '/me', req);
 
-        const user = await User.get(userInfo.id);
-
-        if (!user) {
-            throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
-        }
+        const user = await getUser(userInfo.id);
 
         if (!user.friends.requests.some(friend => friend.id === requestedId)) {
             throw new ApiError(400, 'User does not have request from this ID');
         }
 
-        const requestedUser = await User.get(requestedId);
-
-        if (!requestedUser) {
-            throw new ApiError(404, 'User not found');
-        }
+        const requestedUser = await getUser(requestedId);
 
         const i = user.friends.requests.findIndex(request => request.id === requestedId);
         user.friends.requests.splice(i, 1);
@@ -252,7 +192,27 @@ export default class Friends {
     });
 };
 
-async function getUsersBatch(users, req) {
+function getRequestedId(req) {
+    const requestedId = req.query.id;
+
+    if (!requestedId) {
+        throw new ApiError(400, 'No id provided in request query!');
+    }
+
+    return requestedId;
+}
+
+async function getUser(id) {
+    const user = await User.get(id);
+
+    if (!user) {
+        throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
+    }
+
+    return user;
+}
+
+async function getUserDataBatch(users, req) {
     const parsedUsers = [];
 
     users.forEach(async (user) => {
