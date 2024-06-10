@@ -8,7 +8,8 @@ router.get('/list', Friends.getList);
 router.get('/requests', Friends.getRequests);
 router.get('/pending', Friends.getPendingRequests);
 
-router.put('/request', Friends.sendRequest);
+router.post('/request', Friends.sendRequest);
+router.put('/request', Friends.acceptRequest);
 router.delete('/request', Friends.rejectRequest);
 
 export default router;

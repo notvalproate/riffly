@@ -73,7 +73,7 @@ export default class SpotifyAuth {
 
         const user = await User.get(userInfo.id);
 
-        console.log(user.friends.requests);
+        console.log(user.friends.pending);
 
         if (!user) {
             const newUser = new User({
