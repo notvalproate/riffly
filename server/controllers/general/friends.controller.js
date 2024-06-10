@@ -190,6 +190,34 @@ export default class Friends {
 
         res.status(204).send();
     });
+
+    static removeFriend = asyncHandler(async (req, res) => {
+        const requestedId = getRequestedId(req);
+
+        let userInfo = await spotifyFetch('GET', '/me', req);
+
+        const user = await getUser(userInfo.id);
+
+        if (!user.friends.list.some(friend => friend.id === requestedId)) {
+            throw new ApiError(400, 'User is already not friends with this ID');
+        }
+
+        const requestedUser = await getUser(requestedId);
+
+        const i = user.friends.list.findIndex(friend => friend.id === requestedId);
+        user.friends.list.splice(i, 1);
+        
+        const j = requestedUser.friends.list.findIndex(friend => friend.id === userInfo.id);
+        requestedUser.friends.list.splice(j, 1);
+
+        const userUpdate = user.save();
+        const requestedUpdate = requestedUser.save();
+
+        await userUpdate;
+        await requestedUpdate;
+
+        res.status(204).send();
+    });
 };
 
 function getRequestedId(req) {

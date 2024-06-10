@@ -4,7 +4,9 @@ import Friends from '../controllers/general/friends.controller.js';
 const router = express.Router();
 
 router.get('/', Friends.getAll);
+
 router.get('/list', Friends.getList);
+router.delete('/list', Friends.removeFriend);
 
 router.get('/pending', Friends.getPendingRequests);
 router.delete('/pending', Friends.cancelPendingRequest);
