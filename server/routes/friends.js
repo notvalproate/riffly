@@ -5,9 +5,11 @@ const router = express.Router();
 
 router.get('/', Friends.getAll);
 router.get('/list', Friends.getList);
-router.get('/requests', Friends.getRequests);
-router.get('/pending', Friends.getPendingRequests);
 
+router.get('/pending', Friends.getPendingRequests);
+router.delete('/pending', Friends.cancelPendingRequest);
+
+router.get('/requests', Friends.getRequests);
 router.post('/request', Friends.sendRequest);
 router.put('/request', Friends.acceptRequest);
 router.delete('/request', Friends.rejectRequest);

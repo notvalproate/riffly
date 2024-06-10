@@ -73,11 +73,51 @@ export default class Friends {
         res.status(200).json({ pending: pending});
     });
 
+    static cancelPendingRequest = asyncHandler(async (req, res) => {
+        const requestedId = req.query.id;
+
+        if (!requestedId) {
+            throw new ApiError(400, 'No id provided in request query!');
+        }
+
+        let userInfo = await spotifyFetch('GET', '/me', req);
+
+        const user = await User.get(userInfo.id);
+
+        if (!user) {
+            throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
+        }
+
+        if (!user.friends.pending.some(friend => friend.id === requestedId)) {
+            throw new ApiError(400, 'User does not have request to this ID');
+        }
+
+        const requestedUser = await User.get(requestedId);
+
+        if (!requestedUser) {
+            throw new ApiError(404, 'User not found');
+        }
+
+        const i = user.friends.pending.findIndex(request => request.id === requestedId);
+        user.friends.pending.splice(i, 1);
+
+        const j = requestedUser.friends.requests.findIndex(request => request.id === userInfo.id);
+        requestedUser.friends.requests.splice(j, 1);
+
+        const userUpdate = user.save();
+        const requestedUpdate = requestedUser.save();
+
+        await userUpdate;
+        await requestedUpdate;
+
+        res.status(204).send();
+    });
+
     static sendRequest = asyncHandler(async (req, res) => {
         const requestedId = req.query.id;
 
         if (!requestedId) {
-            throw new ApiError(400, 'No id provided in request body!');
+            throw new ApiError(400, 'No id provided in request query!');
         }
 
         let userInfo = await spotifyFetch('GET', '/me', req);
@@ -132,7 +172,7 @@ export default class Friends {
         const requestedId = req.query.id;
 
         if (!requestedId) {
-            throw new ApiError(400, 'No id provided in request body!');
+            throw new ApiError(400, 'No id provided in request query!');
         }
 
         let userInfo = await spotifyFetch('GET', '/me', req);
@@ -172,7 +212,7 @@ export default class Friends {
         const requestedId = req.query.id;
 
         if (!requestedId) {
-            throw new ApiError(400, 'No id provided in request body!');
+            throw new ApiError(400, 'No id provided in request query!');
         }
 
         let userInfo = await spotifyFetch('GET', '/me', req);
