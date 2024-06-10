@@ -14,15 +14,15 @@ export default class Friends {
 
         const user = await getUser(userInfo.id);
 
-        const list = await getUserDataBatch(user.friends.list, req);
-        const requests = await getUserDataBatch(user.friends.requests, req);
-        const pending = await getUserDataBatch(user.friends.pending, req);
+        const list = getUserDataBatch(user.friends.list, req);
+        const requests = getUserDataBatch(user.friends.requests, req);
+        const pending = getUserDataBatch(user.friends.pending, req);
 
         res.status(200).json({
             friends: {
-                list: list,
-                requests: requests,
-                pending: pending
+                list: await list,
+                requests: await requests,
+                pending: await pending
             }
         });
     });
