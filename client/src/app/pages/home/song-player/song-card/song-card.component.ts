@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { SongCardData } from '../../../../shared/interfaces/SongCardData';
+import { SongCardData } from '../../../../../shared/interfaces/SongCardData';
 
 @Component({
   selector: 'app-song-card',
