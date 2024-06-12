@@ -3,12 +3,13 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserInfoService } from '../services/user-info.service';
 
+import { FriendSidebarComponent } from '../general/friend-sidebar/friend-sidebar.component';
 import { SongPlayerComponent } from './home-components/song-player/song-player.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [SongPlayerComponent],
+  imports: [SongPlayerComponent, FriendSidebarComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
