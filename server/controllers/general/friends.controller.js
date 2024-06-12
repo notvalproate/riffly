@@ -234,7 +234,7 @@ async function getUser(id) {
     const user = await User.get(id);
 
     if (!user) {
-        throw new ApiError(404, 'User not found, Mostly an error in registration, Please re-login and try again!');
+        throw new ApiError(404, 'User not found');
     }
 
     return user;
