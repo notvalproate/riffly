@@ -21,15 +21,16 @@
         justify-content: space-between;
         user-select: none;
 
-        width: 80%;
-        height: 55%;
+        width: 85%;
+        height: 65%;
 
         .add-friend-input {
             display: flex;
             justify-content: space-between;
-            height: 50%;
+            height: 40%;
 
             .friend-id-input {
+                background-color: $color-text;
                 font-family: 'Segoe UI', sans-serif;
                 box-sizing: border-box;
                 padding-left: 10px;
@@ -37,25 +38,32 @@
                 height: 100%;
                 width: 85%;
                 border-radius: 5px;
-                transition: 200ms;
             }
 
             .friend-id-input:focus {
-                outline: $color-secondary 3px solid;
+                outline: $color-accent 2px solid;
             }
 
             .add-friend-button {
+                background-color: $color-text;
                 border: none;
                 height: 100%;
                 width: 12%;
                 transition: 200ms;
                 border-radius: 5px;
+                text-align: center;
             }
 
             .add-friend-button:hover {
                 background-color: $color-accent;
                 cursor: pointer;
             }
+        }
+
+        .add-error {
+            font-size: 0.75rem;
+            color: $color-primary;
+            height: 20%;
         }
     }
 }
