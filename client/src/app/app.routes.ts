@@ -5,8 +5,8 @@ import { HomeComponent } from './home/home.component';
 import { ChartsComponent } from './charts/charts.component';
 import { AuthComponent } from './auth/auth.component';
 
-import { authGuard } from './guards/auth.guard';
-import { authpageGuard } from './guards/authpage.guard';
+import { authGuard } from '../shared/guards/auth.guard';
+import { authpageGuard } from '../shared/guards/authpage.guard';
 
 export const routes: Routes = [
     {'path': '', component:LoginComponent, canActivate: [authGuard] },

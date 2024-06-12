@@ -1,5 +1,5 @@
 import { Component , Input} from '@angular/core';
-import { ProgressData } from '../../../interfaces/ProgressData';
+import { ProgressData } from '../../../../shared/interfaces/ProgressData';
 
 
 @Component({

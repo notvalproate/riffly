@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
-import { PollingService } from '../../../services/polling.service';
-import { UserInfoService } from '../../../services/user-info.service';
+import { PollingService } from '../../../shared/services/polling.service';
+import { UserInfoService } from '../../../shared/services/user-info.service';
 
-import { SongCardComponent } from '../song-card/song-card.component';
-import { ProgressTrackerComponent } from '../progress-tracker/progress-tracker.component';
-import { LyricsDisplayComponent } from '../lyrics-display/lyrics-display.component';
+import { SongCardComponent } from './song-card/song-card.component';
+import { ProgressTrackerComponent } from './progress-tracker/progress-tracker.component';
+import { LyricsDisplayComponent } from './lyrics-display/lyrics-display.component';
 
-import { SongCardData } from '../../../interfaces/SongCardData';
-import { ProgressData } from '../../../interfaces/ProgressData';
-import { LyricsData } from '../../../interfaces/LyricsData';
+import { SongCardData } from '../../../shared/interfaces/SongCardData';
+import { ProgressData } from '../../../shared/interfaces/ProgressData';
+import { LyricsData } from '../../../shared/interfaces/LyricsData';
 
 @Component({
   selector: 'app-song-player',
