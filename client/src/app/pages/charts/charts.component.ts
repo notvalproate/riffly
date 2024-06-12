@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { UserChartsService } from '../services/user-charts.service';
+import { AuthService } from '../../../shared/services/auth.service';
+import { UserChartsService } from './services/user-charts.service';
 
 @Component({
   selector: 'app-charts',

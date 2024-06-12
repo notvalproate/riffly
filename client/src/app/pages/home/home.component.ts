@@ -1,10 +1,10 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { UserInfoService } from '../services/user-info.service';
+import { AuthService } from '../../../shared/services/auth.service';
+import { UserInfoService } from '../../../shared/services/user-info.service';
 
-import { FriendSidebarComponent } from '../general/friend-sidebar/friend-sidebar.component';
-import { SongPlayerComponent } from './home-components/song-player/song-player.component';
+import { FriendSidebarComponent } from '../../general/friend-sidebar/friend-sidebar.component';
+import { SongPlayerComponent } from './song-player/song-player.component';
 
 @Component({
   selector: 'app-home',

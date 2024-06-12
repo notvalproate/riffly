@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { LyricsData } from '../../../interfaces/LyricsData';
+import { LyricsData } from '../../../../../shared/interfaces/LyricsData';
 
 @Component({
   selector: 'app-lyrics-display',
