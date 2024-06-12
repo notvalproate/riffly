@@ -60,10 +60,17 @@
             }
         }
 
-        .add-error {
+        .send-status {
             font-size: 0.75rem;
-            color: $color-primary;
             height: 20%;
+
+            .send-error {
+                color: $color-primary;
+            }
+
+            .send-success {
+                color: $color-accent;
+            }
         }
     }
 }

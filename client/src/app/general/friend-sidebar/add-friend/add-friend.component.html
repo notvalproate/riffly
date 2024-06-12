@@ -12,9 +12,11 @@
                 (ngModelChange)="clearError()">
             <button (click)="sendFriendRequest()" class="add-friend-button"><fa-icon [icon]="fauserPlus"></fa-icon></button>
         </div>
-        <span class="add-error">
+        <span class="send-status">
             @if (errorOccured) {
-                Error: {{errorMessage}}
+                <span class="send-error">Error: {{errorMessage}}</span>
+            } @else if (successOccured) {
+                <span class="send-success">Friend Request Sent!</span>
             }
         </span>
     </div>
