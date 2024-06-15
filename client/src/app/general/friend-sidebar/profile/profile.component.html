@@ -1,9 +1,15 @@
 <div class="profile-container">
     <div class="profile-wrapper">
-        <img class="profile-picture" src="assets/mei.jpg" alt="profile-picture">
+        <div class="profile-icon">
+            @if (profilePictureUrl) {
+                <img class="profile-picture" src="{{ profilePictureUrl }}" alt="profile-picture">
+            } @else {
+                <span class="profile-initial">{{ displayName[0] }}</span>
+            }
+        </div>
         <div class="name-wrapper">
-            <p class="display-name">Ian Sushruth Tauro/p>
-            <p class="user-id" (click)="copyId()"><fa-icon [icon]="faCopy"></fa-icon> 29iwka9209jw82u042i2j4</p>
+            <p class="display-name">{{ displayName }}</p>
+            <p class="user-id" (click)="copyId()"><fa-icon [icon]="faCopy"></fa-icon> {{ profileId }}</p>
         </div>
     </div>
     <button class="profile-dropdown" (click)="displayDropdown(); preventCloseOnClick()">
