@@ -18,6 +18,7 @@ export class AddFriendComponent {
 
     successOccured : boolean = false;
     errorOccured : boolean = false;
+    sendingRequest: boolean = false;
     errorMessage : string = '';
 
     fauserPlus = faUserPlus;
@@ -28,16 +29,22 @@ export class AddFriendComponent {
     }
 
     sendFriendRequest() : void {
-        if(this.errorOccured || this.successOccured) {
+        if(this.errorOccured || this.successOccured || this.sendingRequest) {
             return;
         }
 
+        this.sendingRequest = true;
+
         this.friends.sendRequest(this.inputId).subscribe({
             next: (resp: any) => {
+                this.sendingRequest = false;
+
                 console.log(resp);
                 this.successOccured = true;
             },
             error: (resp: any) => {
+                this.sendingRequest = false;
+
                 this.errorOccured = true;
                 this.errorMessage = resp.error.message;
             },
