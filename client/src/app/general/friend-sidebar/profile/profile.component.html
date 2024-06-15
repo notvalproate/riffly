@@ -6,12 +6,12 @@
             <p class="user-id" (click)="copyId()"><fa-icon [icon]="faCopy"></fa-icon> 29iwka9209jw82u042i2j4</p>
         </div>
     </div>
-    <button class="profile-dropdown" (click)="displayDropdown()">
-        <div class="ellipsis-dropdown">
+    <button class="profile-dropdown" (click)="displayDropdown(); preventCloseOnClick()">
+        <div #dropdownButton class="ellipsis-dropdown">
             <fa-icon [icon]="faEllipsisVertical"></fa-icon>
         </div>
         @if (dropdownVisible) {
-            <ul class="options-dropdown">
+            <ul #dropdownMenu class="options-dropdown" (click)="preventCloseOnClick()">
                 <li class="dropdown-item warning-item">Logout</li>
                 <li class="dropdown-item warning-item">Delete Account</li>
             </ul>
