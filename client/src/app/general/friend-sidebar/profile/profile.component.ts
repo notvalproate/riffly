@@ -16,11 +16,13 @@ export class ProfileComponent {
 
     clipboard: Clipboard = inject(Clipboard);
 
+    dropdownVisible: boolean = false;
+
     copyId() : void {
         this.clipboard.copy("testcopy");
     }
 
     displayDropdown() : void {
-        console.log("Displaying dropdown");
+        this.dropdownVisible = true;
     }
 }

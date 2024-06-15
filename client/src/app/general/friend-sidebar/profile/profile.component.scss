@@ -50,21 +50,60 @@
     }
 
     .profile-dropdown {
+        position: relative;
+
         background: none;
         border: none;
         width: 10%;
 
-        opacity: 60%;
         color: $color-text;
         text-align: center;
         font-size: 1.5rem;
 
         transform: translateX(50%);
-        transition: 200ms;
 
-        &:hover {
-            opacity: 100%;
-            cursor: pointer;
+        .ellipsis-dropdown {
+            width: 100%;
+            opacity: 60%;
+
+            transition: 200ms;
+            &:hover {
+                opacity: 90%;
+                cursor: pointer;
+            }
+        }
+
+        .options-dropdown {
+            list-style: none;
+            padding: 0;
+
+            position: absolute;
+            top: 0;
+            right: 100%;
+
+            background-color: $color-secondary;
+            font-size: 1rem;
+            text-wrap: nowrap;
+            border-radius: 5px;
+            padding: 10px 0;
+            text-align: left;
+
+            .dropdown-item {
+                padding: 10px 30px 10px 15px;
+
+                transition: 200ms;
+
+                &:hover {
+                    background-color: $color-secondary-light;
+                    cursor: pointer;
+                }
+            }
+
+            .warning-item {
+                &:hover {
+                    background-color: $color-primary !important;
+                }
+            }
         }
     }
 }
