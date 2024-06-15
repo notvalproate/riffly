@@ -18,8 +18,8 @@
         </div>
         @if (dropdownVisible) {
             <ul #dropdownMenu class="options-dropdown" (click)="preventCloseOnClick()">
-                <li class="dropdown-item warning-item">Logout</li>
-                <li class="dropdown-item warning-item">Delete Account</li>
+                <li class="dropdown-item warning-item" (click)="logout()">Logout</li>
+                <li class="dropdown-item warning-item" (click)="deleteAccount()">Delete Account</li>
             </ul>
         }
     </button>
