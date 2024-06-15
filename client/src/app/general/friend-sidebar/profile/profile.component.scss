@@ -13,7 +13,7 @@
         display: flex;
         align-items: center;
         column-gap: 15px;
-        width: 80%;
+        width: 70%;
         height: 60%;
 
         .profile-picture {
@@ -23,6 +23,29 @@
 
         .display-name {
             font-size: 2rem;
+        }
+
+        .user-id {
+            color: $color-text;
+            opacity: 60%;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .profile-dropdown {
+        background: none;
+        border: none;
+        width: 10%;
+
+        color: $color-text;
+        text-align: center;
+        font-size: 1.5rem;
+
+        &:hover {
+            cursor: pointer;
         }
     }
 }

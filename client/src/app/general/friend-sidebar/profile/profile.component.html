@@ -3,7 +3,8 @@
         <img class="profile-picture" src="assets/mei.jpg" alt="profile-picture">
         <div class="name-wrapper">
             <p class="display-name">Ian</p>
-            <p class="user-id">29iwka9wuj4m</p>
+            <p class="user-id" (click)="copyId()"><fa-icon [icon]="faCopy"></fa-icon> 29iwka9wuj4m</p>
         </div>
     </div>
+    <button class="profile-dropdown" (click)="displayDropdown()"><fa-icon [icon]="faEllipsisVertical"></fa-icon></button>
 </div>
