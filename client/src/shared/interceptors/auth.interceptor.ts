@@ -10,20 +10,20 @@ export class AuthInterceptor implements HttpInterceptor {
     private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     private authService: AuthService = inject(AuthService);
 
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    intercept(req: HttpRequest<any>, next: HttpHandler) : Observable<HttpEvent<any>> {
         return next.handle(req).pipe(
             catchError(error => {
                 if (error instanceof HttpErrorResponse && error.status === 401) {
                     return this.handle401Error(req, next);
-                } else {
-                    console.log('Error: ', error);
-                    return throwError(() => new Error(error));
                 }
+
+                console.log('Error: ', error);
+                return throwError(() => error);
             })
         )
     }
 
-    private handle401Error(req: HttpRequest<any>, next: HttpHandler) {
+    private handle401Error(req: HttpRequest<any>, next: HttpHandler) : Observable<HttpEvent<any>> {
         if (!this.isRefreshing) {
             this.isRefreshing = true;
             this.refreshTokenSubject.next(null);
