@@ -1,0 +1,75 @@
+@import '../../../styles/colors';
+
+.add-friend-container {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: $color-background;
+    color: $color-text;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    height: 15%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .add-friend-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        user-select: none;
+
+        width: 85%;
+        height: 65%;
+
+        .add-friend-input {
+            display: flex;
+            justify-content: space-between;
+            height: 40%;
+
+            .friend-id-input {
+                background-color: $color-text;
+                font-family: 'Segoe UI', sans-serif;
+                box-sizing: border-box;
+                padding-left: 10px;
+                border: none;
+                height: 100%;
+                width: 85%;
+                border-radius: 5px;
+            }
+
+            .friend-id-input:focus {
+                outline: $color-accent 2px solid;
+            }
+
+            .add-friend-button {
+                background-color: $color-text;
+                border: none;
+                height: 100%;
+                width: 12%;
+                transition: 200ms;
+                border-radius: 5px;
+                text-align: center;
+            }
+
+            .add-friend-button:hover {
+                background-color: $color-accent;
+                cursor: pointer;
+            }
+        }
+
+        .send-status {
+            font-size: 0.75rem;
+            height: 20%;
+
+            .send-error {
+                color: $color-primary;
+            }
+
+            .send-success {
+                color: $color-accent;
+            }
+        }
+    }
+}
+

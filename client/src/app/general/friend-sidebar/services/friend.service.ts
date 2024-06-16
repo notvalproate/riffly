@@ -30,7 +30,7 @@ export class FriendService extends ApiService {
             id: requestedId,
         });
 
-        return this.http.post(this.apiUrl + '/me/friends/request?' + params.toString(), this.requestOptions);
+        return this.http.post(this.apiUrl + '/me/friends/request?' + params.toString(), {}, this.requestOptions);
     }
 
     acceptRequest(requestedId: string) {
@@ -38,7 +38,7 @@ export class FriendService extends ApiService {
             id: requestedId,
         });
 
-        return this.http.put(this.apiUrl + '/me/friends/request?' + params.toString(), this.requestOptions);
+        return this.http.put(this.apiUrl + '/me/friends/request?' + params.toString(), {}, this.requestOptions);
     }
 
     rejectRequest(requestedId: string) {

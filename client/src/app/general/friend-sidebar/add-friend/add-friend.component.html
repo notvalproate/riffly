@@ -1,0 +1,23 @@
+<div class="add-friend-container">
+    <div class="add-friend-wrapper">
+        <label>Add Friend</label>
+        <div class="add-friend-input">
+            <input
+                type="text"
+                class="friend-id-input"
+                id="id-input"
+                placeholder="Enter the Spotify User ID"
+                autocomplete="off"
+                [(ngModel)]="inputId"
+                (ngModelChange)="clearError()">
+            <button (click)="sendFriendRequest()" class="add-friend-button"><fa-icon [icon]="fauserPlus"></fa-icon></button>
+        </div>
+        <span class="send-status">
+            @if (errorOccured) {
+                <span class="send-error">Error: {{errorMessage}}</span>
+            } @else if (successOccured) {
+                <span class="send-success">Friend Request Sent!</span>
+            }
+        </span>
+    </div>
+</div>
