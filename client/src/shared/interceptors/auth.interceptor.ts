@@ -11,20 +11,23 @@ export class AuthInterceptor implements HttpInterceptor {
     private authService: AuthService = inject(AuthService);
 
     intercept(req: HttpRequest<any>, next: HttpHandler) : Observable<HttpEvent<any>> {
-        if(req.url.includes('/auth/refresh') || req.url.includes('/auth/token') || req.url.includes('/auth/logout')) {
-            return next.handle(req);
+        return next.handle(req).pipe(
+            catchError(error => this.handleError(error, req, next))
+        )
+    }
+
+    private handleError(error: any, req: HttpRequest<any>, next: HttpHandler) : Observable<HttpEvent<any>> {
+        if (error instanceof HttpErrorResponse) {
+            if(req.url.includes('/auth/') || error.status !== 401) {
+                console.log('HTTP Error: ', error);
+                return throwError(() => error);
+            }
+
+            return this.handle401Error(req, next);
         }
 
-        return next.handle(req).pipe(
-            catchError(error => {
-                if (error instanceof HttpErrorResponse && error.status === 401) {
-                    return this.handle401Error(req, next);
-                }
-
-                console.log('Error: ', error);
-                return throwError(() => error);
-            })
-        )
+        console.log('Internal Error: ', error);
+        return throwError(() => error);
     }
 
     private handle401Error(req: HttpRequest<any>, next: HttpHandler) : Observable<HttpEvent<any>> {
