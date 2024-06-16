@@ -1,10 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ApiService } from './api.service';
+import { map } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService extends ApiService {
+    router : Router = inject(Router);
+
     hasAuthToken() {
         return this.http.get(this.apiUrl + '/auth/token', this.requestOptions);
     }
@@ -41,7 +45,15 @@ export class AuthService extends ApiService {
         return undefined;
     }
 
+    refreshToken() {
+        return this.http.post(this.apiUrl + '/auth/refresh', {}, this.requestOptions);
+    }
+
     logout() {
-        return this.http.delete(this.apiUrl + '/auth/logout', this.requestOptions);
+        return this.http.delete(this.apiUrl + '/auth/logout', this.requestOptions).pipe(
+            map(() => {
+                this.router.navigate(['/login']);
+            })
+        );
     }
 }
