@@ -11,6 +11,10 @@ export class AuthInterceptor implements HttpInterceptor {
     private authService: AuthService = inject(AuthService);
 
     intercept(req: HttpRequest<any>, next: HttpHandler) : Observable<HttpEvent<any>> {
+        if(req.url.includes('/auth/refresh') || req.url.includes('/auth/token')) {
+            return next.handle(req);
+        }
+
         return next.handle(req).pipe(
             catchError(error => {
                 if (error instanceof HttpErrorResponse && error.status === 401) {
