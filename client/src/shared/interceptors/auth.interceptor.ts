@@ -11,7 +11,7 @@ export class AuthInterceptor implements HttpInterceptor {
     private authService: AuthService = inject(AuthService);
 
     intercept(req: HttpRequest<any>, next: HttpHandler) : Observable<HttpEvent<any>> {
-        if(req.url.includes('/auth/refresh') || req.url.includes('/auth/token')) {
+        if(req.url.includes('/auth/refresh') || req.url.includes('/auth/token') || req.url.includes('/auth/logout')) {
             return next.handle(req);
         }
 
@@ -38,8 +38,7 @@ export class AuthInterceptor implements HttpInterceptor {
                     return next.handle(req);
                 }),
                 catchError((error) => {
-                    // this.authService.logout();
-                    return throwError(() => new Error(error));
+                    return this.logoutAndThrow(error);
                 }),
                 finalize(() => {
                     this.isRefreshing = false;
@@ -54,5 +53,11 @@ export class AuthInterceptor implements HttpInterceptor {
                 })
             );
         }
+    }
+
+    private logoutAndThrow(error: any) : Observable<never> {
+        return this.authService.logout().pipe(
+            switchMap(() => throwError(() => error))
+        );
     }
 }

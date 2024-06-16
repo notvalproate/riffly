@@ -72,14 +72,7 @@ export class ProfileComponent implements OnInit {
     }
 
     logout() : void {
-        this.auth.logout().subscribe({
-            next: (resp: any) => {
-                this.router.navigate(['login']);
-            },
-            error: (resp: any) => {
-                console.log(resp.error);
-            }
-        });
+        this.auth.logout().subscribe();
     }
 
     deleteAccount() : void {
