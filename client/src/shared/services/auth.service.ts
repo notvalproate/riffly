@@ -41,6 +41,10 @@ export class AuthService extends ApiService {
         return undefined;
     }
 
+    refreshToken() {
+        return this.http.post(this.apiUrl + '/auth/refresh', {}, this.requestOptions);
+    }
+
     logout() {
         return this.http.delete(this.apiUrl + '/auth/logout', this.requestOptions);
     }
