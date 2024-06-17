@@ -7,6 +7,7 @@ const env = {
         port: process.env.PORT || 4000,
         domain: process.env.DOMAIN || 'localhost',
         client: process.env.CLIENT_URL || 'http://localhost:4200',
+        version: process.env.RIFFLY_VERSION || '1.0.0',
     },
     spotify: {
         clientID: process.env.SPOTIFY_CLIENT_ID,
