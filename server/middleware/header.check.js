@@ -6,8 +6,6 @@ const checkHeaders = asyncHandler((req, res, next) => {
     const clientHeader = req.get('X-Riffly-Client-Type');
     const versionHeader = req.get('X-Riffly-Version');
 
-    console.log(clientHeader, versionHeader);
-
     if (!clientHeader || !versionHeader) {
         throw new ApiError(400, 'Invalid Client - Request Denied');
     }
