@@ -1,0 +1,12 @@
+<div class="list-container" id="listContainer">
+    <div *ngFor="let user of list; let i = index" class="user">
+        <img class="user-image" [src]="user.profilePictureUrl" alt="userImage">
+        <span [ngClass]="{'online': user.status, 'offline': !user.status}" class="user-name">{{user.name}}</span>
+        @if(type == 2){
+            <div class="buttons">
+                <button class="add-friend-btn" (click)="addFriend(user.id)"><fa-icon [icon]="faCircleXmark" class="cross"></fa-icon></button>
+                <button class="reject-friend-btn" (click)="rejectFriend(user.id)"><fa-icon [icon]="faCircleCheck" class="check"></fa-icon></button>
+            </div>
+        }
+    </div>
+</div>

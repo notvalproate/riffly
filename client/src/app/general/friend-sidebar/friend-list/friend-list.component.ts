@@ -1,30 +1,33 @@
 import { Component } from '@angular/core';
+import { NamesListComponent } from './names-list/names-list.component';
+import { FriendService } from '../services/friend.service';
+import { List } from './list';
+import { Friends, Request, Pending } from './lists';
 
 @Component({
   selector: 'app-friend-list',
   standalone: true,
-  imports: [],
+  imports: [NamesListComponent],
   templateUrl: './friend-list.component.html',
   styleUrl: './friend-list.component.scss'
 })
 export class FriendListComponent {
-  private updateBackgroundColor(color: string): void {
-    const friendsElement = document.getElementById('friends');
-    if (friendsElement) {
-      friendsElement.style.backgroundColor = color;
-    }
-  }
+  friends_list: List[] = Friends;
+  request_list: List[] = Request;
+  pending_list: List[] = Pending;
+
+  type: number = 0;
 
   displayFriends(): void {
-    this.updateBackgroundColor('black');
+    this.type = 0;
   }
 
   displayPending(): void {
-    this.updateBackgroundColor('blue');
+    this.type = 1;
   }
 
   displayRequests(): void {
-    this.updateBackgroundColor('green');
+    this.type = 2;
   }
 }
 

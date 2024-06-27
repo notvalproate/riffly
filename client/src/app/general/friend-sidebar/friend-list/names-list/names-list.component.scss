@@ -1,0 +1,61 @@
+@import "../../../../styles/colors";
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background-color: $color-background;
+
+    .user{
+        height: 50px;
+        width: 100%;
+        border-bottom: 1px solid $color-accent;
+        display: flex;
+        align-items: center;
+
+        .user-image{
+            height: 35px;
+            width: 35px;
+            border-radius: 35px;
+        }
+
+        .user-name{
+            margin-left: 10px;
+        }
+
+        .online{
+            color: $color-text;
+        }
+
+        .offline{
+            color: $color-accent;
+        }
+
+        .buttons{
+            position: absolute;
+            right: 10px;
+            .add-friend-btn{
+                height: 30px;
+                width: 30px;
+                background-color: transparent;
+                border: none;
+
+                .cross {
+                    color: red;
+                }
+            }
+            .reject-friend-btn{
+                height: 20px;
+                width: 20px;
+                background-color: transparent;
+                border: none;
+
+                .check {
+                    color: green;
+                }
+            }
+        }
+    }
+}
