@@ -1,7 +1,7 @@
 @if(lyricsData){
     <div class="lyrics">
         @if (lyricsData.loadingLyrics) {
-            <span>Loading Lyrics...</span>
+            <span>No Lyrics Available</span>
         } @else {
             @if (lyricsData.currentLyrics.length > 0) {
                 <h3 class="lyrics-title"><a class="redirect-link" href="{{lyricsData.lyricsUrl}}" target="_blank">LYRICS BY {{lyricsData.lyricsProvider.toUpperCase()}}</a></h3>
