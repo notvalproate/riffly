@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { NamesListComponent } from './names-list/names-list.component';
-import { FriendService } from '../services/friend.service';
 import { List } from './list';
 import { Friends, Request, Pending } from './lists';
+import { CommonModule } from '@angular/common';
+import { FriendService } from '../services/friend.service';
 
 @Component({
   selector: 'app-friend-list',
   standalone: true,
-  imports: [NamesListComponent],
+  imports: [CommonModule, NamesListComponent],
   templateUrl: './friend-list.component.html',
   styleUrl: './friend-list.component.scss'
 })

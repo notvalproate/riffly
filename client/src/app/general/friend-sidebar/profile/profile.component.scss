@@ -1,124 +1,114 @@
 @import '../../../styles/colors';
 
-.profile-container {
-    width: 100%;
-    height: 15%;
-    background-color: $color-background;
+.profile-wrapper {
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    column-gap: 15px;
+    width: 70%;
+    height: 60%;
 
-    .profile-wrapper {
+    .profile-icon {
+        aspect-ratio: 1 / 1;
+        height: 100%;
+        border-radius: 200px;
+        background-color: $color-secondary;
         display: flex;
+        justify-content: center;
         align-items: center;
-        column-gap: 15px;
-        width: 70%;
-        height: 60%;
+        user-select: none;
 
-        .profile-icon {
-            aspect-ratio: 1 / 1;
+        .profile-picture {
             height: 100%;
             border-radius: 200px;
-            background-color: $color-secondary;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            user-select: none;
-
-            .profile-picture {
-                height: 100%;
-                border-radius: 200px;
-            }
-
-            .profile-initial {
-                font-size: 3rem;
-                transform: translateY(-5%);
-            }
         }
 
-        .name-wrapper {
-            overflow: hidden;
-
-            .display-name {
-                font-size: 1.5rem;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .user-id {
-                margin-top: 2px;
-                font-size: 0.9rem;
-                color: $color-text;
-                opacity: 60%;
-                transition: 200ms;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-
-                &:hover {
-                    opacity: 70%;
-                    cursor: pointer;
-                }
-            }
+        .profile-initial {
+            font-size: 3rem;
+            transform: translateY(-5%);
         }
     }
 
-    .profile-dropdown {
-        position: relative;
+    .name-wrapper {
+        overflow: hidden;
 
-        background: none;
-        border: none;
-        width: 10%;
+        .display-name {
+            font-size: 1.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
-        color: $color-text;
-        text-align: center;
-        font-size: 1.5rem;
-
-        transform: translateX(50%);
-
-        .ellipsis-dropdown {
-            width: 100%;
+        .user-id {
+            margin-top: 2px;
+            font-size: 0.9rem;
+            color: $color-text;
             opacity: 60%;
+            transition: 200ms;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &:hover {
+                opacity: 70%;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.profile-dropdown {
+    position: relative;
+
+    background: none;
+    border: none;
+    width: 10%;
+
+    color: $color-text;
+    text-align: center;
+    font-size: 1.5rem;
+
+    transform: translateX(50%);
+
+    .ellipsis-dropdown {
+        width: 100%;
+        opacity: 60%;
+
+        transition: 200ms;
+        &:hover {
+            opacity: 90%;
+            cursor: pointer;
+        }
+    }
+
+    .options-dropdown {
+        list-style: none;
+        padding: 0;
+
+        position: absolute;
+        top: 0;
+        right: 100%;
+
+        background-color: $color-secondary;
+        font-size: 1rem;
+        text-wrap: nowrap;
+        border-radius: 5px;
+        padding: 10px 0;
+        text-align: left;
+
+        .dropdown-item {
+            padding: 10px 30px 10px 15px;
 
             transition: 200ms;
+
             &:hover {
-                opacity: 90%;
+                background-color: $color-secondary-light;
                 cursor: pointer;
             }
         }
 
-        .options-dropdown {
-            list-style: none;
-            padding: 0;
-
-            position: absolute;
-            top: 0;
-            right: 100%;
-
-            background-color: $color-secondary;
-            font-size: 1rem;
-            text-wrap: nowrap;
-            border-radius: 5px;
-            padding: 10px 0;
-            text-align: left;
-
-            .dropdown-item {
-                padding: 10px 30px 10px 15px;
-
-                transition: 200ms;
-
-                &:hover {
-                    background-color: $color-secondary-light;
-                    cursor: pointer;
-                }
-            }
-
-            .warning-item {
-                &:hover {
-                    background-color: $color-primary !important;
-                }
+        .warning-item {
+            &:hover {
+                background-color: $color-primary !important;
             }
         }
     }

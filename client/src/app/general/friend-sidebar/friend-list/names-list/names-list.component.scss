@@ -3,27 +3,35 @@
 .list-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
     width: 100%;
     position: relative;
-    background-color: $color-background;
+    background-color: $color-background-light;
 
     .user{
         height: 50px;
         width: 100%;
-        border-bottom: 1px solid $color-accent;
+        border-bottom: 1px solid $color-secondary-light;
         display: flex;
         align-items: center;
+        box-sizing: border-box;
+        padding: 0 10px;
 
-        .user-image{
-            height: 35px;
-            width: 35px;
-            border-radius: 35px;
+        .user-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .user-image{
+                height: 35px;
+                width: 35px;
+                border-radius: 35px;
+            }
+
+            .user-name{
+                margin-left: 10px;
+            }
         }
 
-        .user-name{
-            margin-left: 10px;
-        }
 
         .online{
             color: $color-text;
@@ -33,29 +41,38 @@
             color: $color-accent;
         }
 
-        .buttons{
-            position: absolute;
-            right: 10px;
-            .add-friend-btn{
-                height: 30px;
-                width: 30px;
-                background-color: transparent;
-                border: none;
+        .buttons {
+            height: 70%;
+            display: flex;
+            column-gap: 10px;
 
-                .cross {
-                    color: red;
+            .friend-btn {
+                aspect-ratio: 1 / 1;
+                height: 100%;
+                font-size: 1.4rem;
+                background-color: $color-secondary;
+                border: none;
+                border-radius: 5px;
+                opacity: 50%;
+                transition: 200ms;
+
+                &:hover {
+                    cursor: pointer;
+                    opacity: 100%;
                 }
             }
-            .reject-friend-btn{
-                height: 20px;
-                width: 20px;
-                background-color: transparent;
-                border: none;
 
-                .check {
-                    color: green;
-                }
+            .cross {
+                color: $color-primary;
+            }
+
+            .check {
+                color: $color-accent;
             }
         }
+    }
+
+    .user-req {
+        justify-content: space-between;
     }
 }
