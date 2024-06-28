@@ -1,0 +1,54 @@
+@import '../../../styles/colors';
+
+.friend-list-selector {
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+
+    .friend-list-button {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: $color-background-light;
+        color: $color-text;
+        border: none;
+        height: 100%;
+        width: 33%;
+        transition: 200ms;
+        text-align: center;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .friend-list-button-unselected {
+        opacity: 40%;
+
+        &:hover {
+            opacity: 100%;
+        }
+    }
+}
+
+.all-list{
+    width: 100%;
+    background-color: $color-background-light;
+
+    .friends-list{
+        z-index: 3;
+    }
+
+    .pending-list{
+        z-index: 2;
+    }
+
+    .request-list{
+        z-index: 1;
+    }
+
+    .three-list{
+        width: 100%;
+        height: 100%;
+    }
+}

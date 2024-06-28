@@ -1,0 +1,63 @@
+@import '../../styles/colors';
+
+.sidebar-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: $color-background;
+
+    height: 100vh;
+    width: 20vw;
+    min-width: 300px;
+    max-height: 100vh;
+
+    border-left: $color-primary 3px solid;
+}
+
+.profile-container {
+    width: 100%;
+    height: 15%;
+    min-height: 15%;
+    background-color: $color-background;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.add-friend-container {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: $color-background;
+    color: $color-text;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    height: 15%;
+    min-height: 15%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-top: $color-secondary-light 1px solid;
+}
+
+
+.friend-list-container {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: $color-background;
+    color: $color-text;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
