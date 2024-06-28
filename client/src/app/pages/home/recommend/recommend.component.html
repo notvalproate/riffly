@@ -14,11 +14,11 @@
         <div class="song-list">
             @if(type == 0){
                 <div class="two-list daily-list" id="daily">
-                    <app-song-list-display ></app-song-list-display>
+                    <app-song-list-display [list]="daily"></app-song-list-display>
                 </div>
             }@else{
                 <div class="two-list ai-list" id="ai">
-                    <app-song-list-display ></app-song-list-display>
+                    <app-song-list-display [list]="ai"></app-song-list-display>
                 </div>
             }
         </div>

@@ -1,1 +1,16 @@
-<p>song-list-display works!</p>
+<div class="content-container">
+    @for (item of list; track $index){
+        <div class="song">
+            <div class="image-container">
+                <img class="song-image" [src]=item.profilePictureUrl alt="songImage">
+            </div>
+                <div class="song-container">
+                    <h1 class="song-name">{{item.name}}</h1>
+                </div>
+                <div class="buttons">
+                    <button class="song-btn check" (click)="addSong(item.id)"><fa-icon [icon]="faPlus"></fa-icon></button>
+                    <button class="song-btn cross" (click)="recommend(item.id)"><fa-icon [icon]="faShare"></fa-icon></button>
+                </div>
+        </div>
+    }
+</div>
