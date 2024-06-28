@@ -1,10 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, OnInit, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SongListDisplayComponent } from './song-list-display/song-list-display.component';
-import { List } from './list';
-import { Daily, Ai } from './lists';
-
+import { UserInfoService } from '../../../../shared/services/user-info.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-recommend',
@@ -13,23 +12,25 @@ import { Daily, Ai } from './lists';
   templateUrl: './recommend.component.html',
   styleUrl: './recommend.component.scss'
 })
-export class RecommendComponent {
-  private router: Router = inject(Router);
-  type : number = 0;
-  daily: List[] = Daily;
-  ai: List[] = Ai;
+export class RecommendComponent implements OnInit {
+    private router: Router = inject(Router);
+    private userService: UserInfoService = inject(UserInfoService);
+    ai: any = [];
 
+    ngOnInit(): void {
+        this.userService.songId.subscribe((songId) => {
+            console.log("GOT SONG ID " + songId);
+            this.getRecs(songId);
+        });
+    }
 
-  displayDaily() : void {
-    this.type = 0;
-    console.log(this.daily);
-  }
+    goToCharts() {
+        this.router.navigate(['charts']);
+    }
 
-  displayAi() : void {
-    this.type = 1;
-  }
-
-  goToCharts() {
-    this.router.navigate(['charts']);
-  }
+    getRecs(songId: any) {
+        this.userService.getRecommendations(songId).subscribe((data: any) => {
+            this.ai = data.body;
+        });
+    }
 }

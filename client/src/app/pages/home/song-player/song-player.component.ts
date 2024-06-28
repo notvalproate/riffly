@@ -91,6 +91,10 @@ export class SongPlayerComponent implements OnInit, OnDestroy {
                 this.progressData.currentISRC = this.songCardData.currentISRC;
 
                 if(previousISRC !== this.songCardData.currentISRC) {
+                    const [songId] = this.songCardData.currentSongUrl.split('/').slice(-1);
+
+                    this.userInfoService.songId.next(songId);
+
                     this.progressPoller.startPolling(this.increaseProgressByOneSecond.bind(this));
 
                     this.lyricsData.loadingLyrics = true;

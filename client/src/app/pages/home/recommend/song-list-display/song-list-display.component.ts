@@ -12,7 +12,7 @@ import { List } from '../list';
   styleUrl: './song-list-display.component.scss'
 })
 export class SongListDisplayComponent {
-  @Input() list? : List[];
+  @Input() list? : any;
 
   faPlus = faPlus;
   faShare = faShare;
@@ -20,7 +20,7 @@ export class SongListDisplayComponent {
   addSong(id : number){
     console.log("Added song with id: " + id);
   }
-  
+
   recommend(id : number){
     console.log("Recommended song with id: " + id);
   }

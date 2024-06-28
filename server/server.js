@@ -11,6 +11,7 @@ import env from './utils/environment.js';
 import authRoutes from './routes/auth.js';
 import meRoutes from './routes/me.js';
 import trackRoutes from './routes/track.js';
+import recRoutes from './routes/recommendations.js';
 
 import checkHeaders from './middleware/header.check.js';
 import errorHandler from './middleware/error.handler.js';
@@ -38,6 +39,7 @@ app.use(checkHeaders);
 app.use('/auth', authRoutes);
 app.use('/me', meRoutes);
 app.use('/track', trackRoutes);
+app.use('/recommendations', recRoutes);
 
 app.use(errorHandler);
 

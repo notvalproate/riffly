@@ -1,0 +1,4 @@
+GET http://localhost:4000/recommendations?songId=6yipH0hUeAf4YPK40k1oIY
+Cookie: authToken=BQDtO2QIBGLm6L_NvcEUMt8gdM1ABo1T2CSeO1QcL-JaLymuVxthVmVOm-gYuKF063dc6UgwziuW0WGUT80e2sJ_kUw6wFz29hriGhSpu2TwJMJCwvFAdBL_Aox3r2nwzFAALAV2rDAkNYkjM4UM4U04jqey0nqz6xHs9phzmolDk0k9nwKc7PhF76N4R5Q9jojrF9fV1mDl1okSY9I8I6P_hE7tjq2y
+X-Riffly-Client-Type: web
+X-Riffly-Version: b1.0.0
