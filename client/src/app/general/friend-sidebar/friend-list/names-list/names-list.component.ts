@@ -1,8 +1,8 @@
-import { Component , Input} from '@angular/core';
+import { Component , EventEmitter, Input, Output, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { List } from '../list';
+import { FriendService } from '../../services/friend.service';
 
 @Component({
   selector: 'app-names-list',
@@ -12,22 +12,81 @@ import { List } from '../list';
   styleUrl: './names-list.component.scss'
 })
 export class NamesListComponent {
-  @Input() list?: List[];
-  @Input() type?: number;
+    private friendsService : FriendService = inject(FriendService);
 
-  faCheck = faCheck;
-  faXmark = faXmark;
+    @Input() list? : any;
+    @Input() type? : number;
+    @Output() updateList : EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  ngOnInit() {
-    console.log(this.list);
-    console.log(this.type);
-  }
+    faCheck = faCheck;
+    faXmark = faXmark;
+    processingRequest : boolean = false;
 
-  addFriend(id: number){
-    console.log(id);
-  }
+    removeFriend(id: string) {
+        if (this.processingRequest) return;
+        this.processingRequest = true;
 
-  rejectFriend(id: number){
-    console.log(id);
-  }
+        this.friendsService.removeFriend(id).subscribe({
+            next: (res: any) => {
+                this.updateList.emit(true);
+            },
+            error: (error: any) => {
+                console.log("Could not remove friend");
+            },
+            complete: () => {
+                this.processingRequest = false;
+            }
+        });
+    }
+
+    acceptFriend(id: string) {
+        if (this.processingRequest) return;
+        this.processingRequest = true;
+
+        this.friendsService.acceptRequest(id).subscribe({
+            next: (res: any) => {
+                this.updateList.emit(true);
+            },
+            error: (error: any) => {
+                console.log("Could not accept friend request");
+            },
+            complete: () => {
+                this.processingRequest = false;
+            }
+        });
+    }
+
+    cancelFriend(id: string) {
+        if (this.processingRequest) return;
+        this.processingRequest = true;
+
+        this.friendsService.cancelPending(id).subscribe({
+            next: (res: any) => {
+                this.updateList.emit(true);
+            },
+            error: (error: any) => {
+                console.log("Could not cancel friend request");
+            },
+            complete: () => {
+                this.processingRequest = false;
+            }
+        });
+    }
+
+    rejectFriend(id: string) {
+        if (this.processingRequest) return;
+        this.processingRequest = true;
+
+        this.friendsService.rejectRequest(id).subscribe({
+            next: (res: any) => {
+                this.updateList.emit(true);
+            },
+            error: (error: any) => {
+                console.log("Could not reject friend request");
+            },
+            complete: () => {
+                this.processingRequest = false;
+            }
+        });
+    }
 }

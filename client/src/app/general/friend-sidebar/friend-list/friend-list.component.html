@@ -7,15 +7,15 @@
     <div class="all-list">
         @if(type == 0){
             <div class="three-list friends-list" id="friends">
-                <app-names-list [list]="friends_list" [type]=type></app-names-list>
+                <app-names-list [list]="friends_list" [type]=type (updateList)="updateLists($event)"></app-names-list>
             </div>
         }@else if (type == 1) {
             <div class="three-list pending-list" id="pending">
-                <app-names-list [list]="request_list" [type]=type></app-names-list>
+                <app-names-list [list]="pending_list" [type]=type (updateList)="updateLists($event)"></app-names-list>
             </div>
         }@else if (type == 2) {
             <div class="three-list request-list" id="request">
-                <app-names-list [list]="pending_list" [type]=type></app-names-list>
+                <app-names-list [list]="request_list" [type]=type (updateList)="updateLists($event)"></app-names-list>
             </div>
         }
     </div>

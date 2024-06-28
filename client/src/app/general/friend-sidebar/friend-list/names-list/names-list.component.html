@@ -1,18 +1,22 @@
 <div class="list-container" id="listContainer">
     @for (item of list; track $index) {
-        <div class="user" [ngClass]="{'user-req': type != 0}">
+        <div class="user">
             <div class="user-container">
-                <img class="user-image" [src]="item.profilePictureUrl" alt="userImage">
-                <span class="user-name">{{item.name}}</span>
+                <img class="user-image" [src]="item.images.default" alt="userImage">
+                <span class="user-name">{{item.user.displayName}}</span>
             </div>
-            @if(type == 1){
+            @if(type == 0) {
                 <div class="buttons">
-                    <button class="friend-btn cross" (click)="rejectFriend(item.id)"><fa-icon [icon]="faXmark"></fa-icon></button>
+                    <button class="friend-btn cross" (click)="removeFriend(item.user.id)"><fa-icon [icon]="faXmark"></fa-icon></button>
+                </div>
+            } @else if(type == 1){
+                <div class="buttons">
+                    <button class="friend-btn cross" (click)="cancelFriend(item.user.id)"><fa-icon [icon]="faXmark"></fa-icon></button>
                 </div>
             } @else if(type == 2){
                 <div class="buttons">
-                    <button class="friend-btn check" (click)="addFriend(item.id)"><fa-icon [icon]="faCheck"></fa-icon></button>
-                    <button class="friend-btn cross" (click)="rejectFriend(item.id)"><fa-icon [icon]="faXmark"></fa-icon></button>
+                    <button class="friend-btn check" (click)="acceptFriend(item.user.id)"><fa-icon [icon]="faCheck"></fa-icon></button>
+                    <button class="friend-btn cross" (click)="rejectFriend(item.user.id)"><fa-icon [icon]="faXmark"></fa-icon></button>
                 </div>
             }
         </div>
