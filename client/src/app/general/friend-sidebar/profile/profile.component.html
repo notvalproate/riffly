@@ -1,26 +1,24 @@
-<div class="profile-container">
-    <div class="profile-wrapper">
-        <div class="profile-icon">
-            @if (profilePictureUrl) {
-                <img class="profile-picture" src="{{ profilePictureUrl }}" alt="profile-picture">
-            } @else {
-                <span class="profile-initial">{{ displayName[0] }}</span>
-            }
-        </div>
-        <div class="name-wrapper">
-            <p class="display-name">{{ displayName }}</p>
-            <p class="user-id" (click)="copyId()"><fa-icon [icon]="faCopy"></fa-icon> {{ profileId }}</p>
-        </div>
-    </div>
-    <button class="profile-dropdown" (click)="displayDropdown(); preventCloseOnClick()">
-        <div #dropdownButton class="ellipsis-dropdown">
-            <fa-icon [icon]="faEllipsisVertical"></fa-icon>
-        </div>
-        @if (dropdownVisible) {
-            <ul #dropdownMenu class="options-dropdown" (click)="preventCloseOnClick()">
-                <li class="dropdown-item warning-item" (click)="logout()">Logout</li>
-                <li class="dropdown-item warning-item" (click)="deleteAccount()">Delete Account</li>
-            </ul>
+<div class="profile-wrapper">
+    <div class="profile-icon">
+        @if (profilePictureUrl) {
+            <img class="profile-picture" src="{{ profilePictureUrl }}" alt="profile-picture">
+        } @else {
+            <span class="profile-initial">{{ displayName[0] }}</span>
         }
-    </button>
+    </div>
+    <div class="name-wrapper">
+        <p class="display-name">{{ displayName }}</p>
+        <p class="user-id" (click)="copyId()"><fa-icon [icon]="faCopy"></fa-icon> {{ profileId }}</p>
+    </div>
 </div>
+<button class="profile-dropdown" (click)="displayDropdown(); preventCloseOnClick()">
+    <div #dropdownButton class="ellipsis-dropdown">
+        <fa-icon [icon]="faEllipsisVertical"></fa-icon>
+    </div>
+    @if (dropdownVisible) {
+        <ul #dropdownMenu class="options-dropdown" (click)="preventCloseOnClick()">
+            <li class="dropdown-item warning-item" (click)="logout()">Logout</li>
+            <li class="dropdown-item warning-item" (click)="deleteAccount()">Delete Account</li>
+        </ul>
+    }
+</button>
