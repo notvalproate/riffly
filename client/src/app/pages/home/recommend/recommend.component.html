@@ -1,0 +1,26 @@
+
+<div class="content-wrapper">
+    <div class="content">
+        <div class="content-selector">
+            <div class="recommend-selector">
+                <button class="recommend-list-button" [ngClass]="{'friend-list-button-unselected' : type != 0}" (click)="displayDaily()">Daily</button>
+                <button class="recommend-list-button" [ngClass]="{'friend-list-button-unselected' : type != 1}" (click)="displayAi()">AI</button>
+            </div>
+            <div class="extra">
+                <button class="extra-button charts" (click)="goToCharts()">Charts</button>
+                <button class="extra-button forum">Forum</button>
+            </div>
+        </div>    
+        <div class="song-list">
+            @if(type == 0){
+                <div class="two-list daily-list" id="daily">
+                    <app-song-list-display ></app-song-list-display>
+                </div>
+            }@else{
+                <div class="two-list ai-list" id="ai">
+                    <app-song-list-display ></app-song-list-display>
+                </div>
+            }
+        </div>
+    </div>
+</div>
